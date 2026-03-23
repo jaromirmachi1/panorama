@@ -1,6 +1,6 @@
 export const images = {
   hero: {
-    src: "/panorama.webp",
+    src: "/2buildings-2.webp",
     alt: "Panorama Žabiny — vizualizace projektu",
   },
   about: {
@@ -11,17 +11,22 @@ export const images = {
     {
       src: "/velkyBytObyvak_11zon.webp",
       alt: {
-        cz: "Velký byt — obývací pokoj",
-        en: "Large apartment — living room",
+        cz: "Obývací pokoj",
+        en: "Living room",
       },
     },
     {
-      src: "/velkyBytKuchyne_11zon.webp",
-      alt: { cz: "Velký byt — kuchyně", en: "Large apartment — kitchen" },
+      src: "/loznice.webp",
+      alt: { cz: "Ložnice", en: "Bedroom" },
     },
+
     {
       src: "/velkyBytKoupelna_11zon.webp",
-      alt: { cz: "Velký byt — Koupelna", en: "Large apartment — bathroom" },
+      alt: { cz: "Koupelna", en: "Bathroom" },
+    },
+    {
+      src: "/velkyBytKuchyne_11zon.webp",
+      alt: { cz: "Kuchyně", en: "Kitchen" },
     },
   ],
 } as const;

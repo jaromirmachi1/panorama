@@ -1,4 +1,9 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { gsap } from "../../lib/gsap";
 import flatsJson from "../../content/flats.json";
@@ -9,6 +14,8 @@ import {
 } from "../../content/apartmentImages";
 import { useLang } from "../../i18n/LanguageContext";
 import { t } from "../../i18n/dictionary";
+import { IoArrowForwardSharp } from "react-icons/io5";
+import { MdArrowOutward } from "react-icons/md";
 
 type Flat = {
   id: string;
@@ -45,24 +52,28 @@ export function ApartmentSection() {
   const floorPlanImgRef = useRef<HTMLImageElement | null>(null);
 
   const [hovered, setHovered] = useState<Hovered>(null);
+  const [selectedFlat, setSelectedFlat] = useState<FlatWithBuilding | null>(
+    null,
+  );
   const { lang } = useLang();
+  const [activeBuilding, setActiveBuilding] = useState<Building["id"]>("A");
 
   // Total apartments per page (across both buildings)
-  const PAGE_SIZE = 12;
+  const PAGE_SIZE = 10;
   const [page, setPage] = useState(1);
 
   const allFlats = useMemo(() => {
     const out: FlatWithBuilding[] = [];
-    flatsData.buildings.forEach((b) => {
-      b.apartments.forEach((apt) => {
-        out.push({
-          ...apt,
-          buildingId: b.id,
-        });
+    const b = flatsData.buildings.find((x) => x.id === activeBuilding);
+    if (!b) return out;
+    b.apartments.forEach((apt) => {
+      out.push({
+        ...apt,
+        buildingId: b.id,
       });
     });
     return out;
-  }, []);
+  }, [activeBuilding]);
 
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil(allFlats.length / PAGE_SIZE));
@@ -212,6 +223,7 @@ export function ApartmentSection() {
       ref={rootRef}
       id="apartments"
       aria-label={t.apartments.title[lang]}
+      data-selected-flat={selectedFlat?.id ?? ''}
     >
       <Inner>
         <Left>
@@ -220,17 +232,43 @@ export function ApartmentSection() {
             <H2>{t.apartments.title[lang]}</H2>
           </Head>
 
+          <BuildingTabs aria-label="Budova">
+            <BuildingTabButton
+              type="button"
+              data-cursor="hover"
+              $active={activeBuilding === "A"}
+              aria-pressed={activeBuilding === "A"}
+              onClick={() => {
+                setHovered(null)
+                setSelectedFlat(null)
+                setActiveBuilding("A")
+              }}
+            >
+              {t.apartments.buildingA[lang]}
+            </BuildingTabButton>
+            <BuildingTabButton
+              type="button"
+              data-cursor="hover"
+              $active={activeBuilding === "B"}
+              aria-pressed={activeBuilding === "B"}
+              onClick={() => {
+                setHovered(null)
+                setSelectedFlat(null)
+                setActiveBuilding("B")
+              }}
+            >
+              {t.apartments.buildingB[lang]}
+            </BuildingTabButton>
+          </BuildingTabs>
+
           <ApartmentList aria-label={t.apartments.listAria[lang]}>
             {flatsData.buildings.map((b) => {
+              if (b.id !== activeBuilding) return null
               const groupLabel =
-                lang === "cz"
-                  ? b.label
-                  : b.id === "A"
-                    ? "Building A"
-                    : "Building B";
-              const visibleApartments = visibleFlats.filter(
-                (f) => f.buildingId === b.id,
-              );
+                b.id === "A"
+                  ? t.apartments.buildingA[lang]
+                  : t.apartments.buildingB[lang]
+              const visibleApartments = visibleFlats
 
               return (
                 <ApartmentGroup
@@ -260,6 +298,12 @@ export function ApartmentSection() {
                               })
                             }
                             onPointerLeave={() => setHovered(null)}
+                            onClick={() =>
+                              setSelectedFlat({
+                                ...apt,
+                                buildingId: b.id,
+                              })
+                            }
                             aria-label={`${apt.id}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`}
                           >
                             <LeftCol>
@@ -267,7 +311,15 @@ export function ApartmentSection() {
                               <FloorTag>{floorLabel}</FloorTag>
                             </LeftCol>
                             <Size>{apt.sizeM2.toFixed(1)} m²</Size>
-                            <Price>{formatKc(apt.priceKc)}</Price>
+                            <Price>
+                              <PriceRow>
+                                {formatKc(apt.priceKc)}
+                                <ArrowSlot aria-hidden="true">
+                                  <StandbyArrow size={16} />
+                                  <HoverArrow size={16} />
+                                </ArrowSlot>
+                              </PriceRow>
+                            </Price>
                           </ApartmentRow>
                         );
                       })}
@@ -322,7 +374,7 @@ export function ApartmentSection() {
               <LayerImg
                 ref={floorPlanImgRef}
                 src={getFloorPlanSrc(1)}
-                alt={getFloorPlanAlt(1, "A", lang)}
+                alt={getFloorPlanAlt(1, activeBuilding, lang)}
                 loading="lazy"
                 decoding="async"
               />
@@ -395,6 +447,51 @@ const H2 = styled.h2`
   letter-spacing: -0.01em;
   font-size: clamp(34px, 4.2vw, 58px);
   line-height: 1;
+`;
+
+const BuildingTabs = styled.div`
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 6px 0 18px;
+`;
+
+const BuildingTabButton = styled.button<{ $active: boolean }>`
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+
+  color: rgba(245, 243, 239, ${({ $active }) => ($active ? 0.98 : 0.7)});
+  opacity: ${({ $active }) => ($active ? 1 : 0.82)};
+
+  position: relative;
+  transition: opacity 450ms ease, color 450ms ease, transform 450ms ease;
+
+  &:hover {
+    opacity: 1;
+    color: rgba(245, 243, 239, 0.95);
+    transform: translateY(-2px);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 1px;
+    background: rgba(232, 215, 176, ${({ $active }) => ($active ? 0.95 : 0.0)});
+    opacity: ${({ $active }) => ($active ? 1 : 0)};
+    transform: scaleX(${({ $active }) => ($active ? 1 : 0.08)});
+    transform-origin: left;
+    transition: opacity 450ms ease, transform 450ms ease, background 450ms ease;
+  }
 `;
 
 const ApartmentList = styled.div`
@@ -567,6 +664,54 @@ const Price = styled.div`
   font-size: 13px;
   letter-spacing: 0.01em;
   opacity: 0.82;
+`;
+
+const PriceRow = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+`;
+
+const ArrowSlot = styled.span`
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+`;
+
+const StandbyArrow = styled(MdArrowOutward)`
+  position: absolute;
+  inset: 0;
+  width: 16px;
+  height: 16px;
+  opacity: 1;
+  transition: opacity 250ms ease;
+  color: rgba(245, 243, 239, 0.92);
+
+  ${ApartmentRow}:hover &,
+  ${ApartmentRow}:focus-visible & {
+    opacity: 0;
+  }
+`;
+
+const HoverArrow = styled(IoArrowForwardSharp)`
+  position: absolute;
+  inset: 0;
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transform: translateX(0) rotate(180deg);
+  transition:
+    opacity 250ms ease,
+    transform 300ms ease;
+  color: rgba(245, 243, 239, 0.92);
+
+  ${ApartmentRow}:hover &,
+  ${ApartmentRow}:focus-visible & {
+    opacity: 1;
+    transform: translateX(3px) rotate(180deg);
+  }
 `;
 
 const Right = styled.div`

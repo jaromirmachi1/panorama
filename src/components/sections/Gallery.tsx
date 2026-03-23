@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { gsap } from '../../lib/gsap'
 import { images } from '../../content/images'
-import { Container, Section } from '../Section'
+import { Section } from '../Section'
 import { Eyebrow, H2 } from '../TextBlock'
 import { useLang } from '../../i18n/LanguageContext'
 import { t } from '../../i18n/dictionary'
@@ -83,12 +83,12 @@ export function Gallery() {
       aria-label={t.gallery.eyebrow[lang]}
       id="realisations"
     >
-      <Container>
+      <HeadOuter>
         <Head>
           <Eyebrow>{t.gallery.eyebrow[lang]}</Eyebrow>
           <H2>{t.gallery.title[lang]}</H2>
         </Head>
-      </Container>
+      </HeadOuter>
 
       <Rail>
         {images.gallery.map((img, idx) => (
@@ -116,6 +116,10 @@ export function Gallery() {
 
 const Head = styled.div`
   margin-bottom: clamp(26px, 4vw, 46px);
+`
+
+const HeadOuter = styled.div`
+  padding: 0 clamp(18px, 4vw, 38px);
 `
 
 const Rail = styled.div`

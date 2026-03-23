@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, type MouseEvent } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import styled from "styled-components";
 import { gsap } from "../lib/gsap";
 import { images } from "../content/images";
@@ -8,7 +8,8 @@ import { t } from "../i18n/dictionary";
 export function Hero() {
   const rootRef = useRef<HTMLElement | null>(null);
   const langBtnRef = useRef<HTMLAnchorElement | null>(null);
-  const { lang, toggleLang } = useLang();
+  const { lang, setLang } = useLang();
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === "undefined") return false;
     return (
@@ -112,35 +113,64 @@ export function Hero() {
             </NavLink>
           </NavGroup>
           <NavGroup>
-            <NavMeta>{t.nav.news[lang]}</NavMeta>
-            <NavMeta>{t.nav['réseaux'][lang]}</NavMeta>
+            <NavMetaLink
+              data-cursor="hover"
+              href="https://lvlreality.cz/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              +&nbsp;{t.nav.lvl[lang]}
+            </NavMetaLink>
+            <NavMetaLink
+              data-cursor="hover"
+              href="https://www.instagram.com/lvlreality.cz/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              +&nbsp;{t.nav.instagram[lang]}
+            </NavMetaLink>
           </NavGroup>
-          <Lang
-            data-cursor="hover"
-            href="#top"
-            ref={langBtnRef}
-            onClick={(e) => {
-              e.preventDefault()
-              toggleLang()
-              const el = langBtnRef.current
-              if (!el) return
-              gsap.fromTo(
-                el,
-                { scale: 1, opacity: 0.85 },
-                {
-                  scale: 1.14,
-                  opacity: 1,
-                  duration: 0.18,
-                  ease: 'power3.out',
-                  yoyo: true,
-                  repeat: 1,
-                  repeatDelay: 0.02,
-                },
-              )
-            }}
-          >
-            {t.nav.lang[lang]}
-          </Lang>
+          <LangCluster>
+            <Lang
+              data-cursor="hover"
+              href="#top"
+              ref={langBtnRef}
+              onClick={(e) => {
+                e.preventDefault()
+                // Slide down the alternative language instead of switching immediately.
+                setLangMenuOpen((v) => !v)
+              }}
+            >
+                <LangSign aria-hidden="true">+</LangSign>
+                <LangText>{t.nav.lang[lang]}</LangText>
+            </Lang>
+
+            <LangMenu $open={langMenuOpen} aria-hidden={!langMenuOpen}>
+              {lang === 'cz' ? (
+                <LangMenuItem
+                  data-cursor="hover"
+                  type="button"
+                  onClick={() => {
+                    setLang('en')
+                    setLangMenuOpen(false)
+                  }}
+                >
+                    {t.nav.lang.en}
+                </LangMenuItem>
+              ) : (
+                <LangMenuItem
+                  data-cursor="hover"
+                  type="button"
+                  onClick={() => {
+                    setLang('cz')
+                    setLangMenuOpen(false)
+                  }}
+                >
+                    {t.nav.lang.cz}
+                </LangMenuItem>
+              )}
+            </LangMenu>
+          </LangCluster>
         </Nav>
       </Top>
     </Wrap>
@@ -194,7 +224,8 @@ const Wordmark = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 14px;
+  width: 100%;
+  gap: 0px;
 `;
 
 const Word = styled.div`
@@ -254,8 +285,14 @@ const NavLink = styled.a`
   }
 `;
 
-const NavMeta = styled.div`
+const NavMetaLink = styled.a`
   opacity: 0.72;
+  transition: opacity 450ms ease;
+  color: rgba(255, 255, 255, 0.76);
+
+  &:hover {
+    opacity: 1;
+  }
 `;
 
 const Lang = styled.a`
@@ -263,6 +300,57 @@ const Lang = styled.a`
   opacity: 0.9;
   transition: opacity 450ms ease;
   color: rgba(255, 255, 255, 0.76);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const LangSign = styled.span`
+  display: inline-block;
+`;
+
+const LangText = styled.span`
+  display: inline-block;
+`;
+
+const LangCluster = styled.div`
+  justify-self: end;
+  display: grid;
+  align-items: start;
+  grid-auto-flow: row;
+  position: relative;
+`;
+
+const LangMenu = styled.div<{ $open: boolean }>`
+  position: absolute;
+  top: calc(100% + 6px);
+  /* Offset so the 2nd option aligns under the language text (not under '+'). */
+  left: 1.1em;
+  overflow: hidden;
+  opacity: ${({ $open }) => ($open ? '1' : '0')};
+  transform: translateY(${({ $open }) => ($open ? '0px' : '-6px')});
+  pointer-events: ${({ $open }) => ($open ? 'auto' : 'none')};
+  transition:
+    opacity 180ms ease,
+    transform 240ms ease;
+`;
+
+const LangMenuItem = styled.button`
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.76);
+  font: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  opacity: 0.72;
+  transition: opacity 450ms ease;
 
   &:hover {
     opacity: 1;

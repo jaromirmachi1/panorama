@@ -6,6 +6,11 @@ export const t = {
     apartments: { cz: 'Byty', en: 'Apartments' },
     benefits: { cz: 'Benefity', en: 'Benefits' },
     contact: { cz: 'Kontakt', en: 'Contact' },
+    // Credits / external links in the hero navbar
+    lvl: { cz: 'Realitka', en: 'Reality' },
+    instagram: { cz: 'Instagram', en: 'Instagram' },
+
+    // (kept for now, but no longer used in the navbar)
     news: { cz: '+ News', en: '+ News' },
     réseaux: { cz: '+ Réseaux', en: '+ Networks' },
     lang: { cz: 'CZ', en: 'EN' },
@@ -47,6 +52,8 @@ export const t = {
     },
     floorLabel: { cz: 'Podlaží', en: 'Floor' },
     pageLabel: { cz: 'Stránkování', en: 'Pagination' },
+    buildingA: { cz: 'Budova A', en: 'Building A' },
+    buildingB: { cz: 'Budova B', en: 'Building B' },
   },
 
   gallery: {
@@ -61,10 +68,12 @@ export const t = {
       cz: 'Vše podstatné. Bez nadbytečných slov — důraz na atmosféru, prostor a klid.',
       en: 'Everything essential. No excess words — focused on atmosphere, space, and calm.',
     },
+    mapLabel: { cz: 'Adresa', en: 'Address' },
+    mapAddress: { cz: 'Kroftova 2191/80, 679 04 Brno', en: 'Kroftova 2191/80, 679 04 Brno' },
     cards: {
       locality: {
         title: { cz: 'Lokalita', en: 'Location' },
-        body: { cz: 'Žabiny: klid v zeleni, město na dosah.', en: 'Žabiny: calm in greenery, the city within reach.' },
+        body: { cz: 'Klid v zeleni, město na dosah.', en: 'Calm in greenery, the city within reach.' },
       },
       architecture: {
         title: { cz: 'Architektura', en: 'Architecture' },
@@ -97,6 +106,23 @@ export const t = {
       cz: 'Luxusní prezentace • statický web',
       en: 'Luxury presentation • static website',
     },
+    madeBy: {
+      cz: 'Made by uitherapy',
+      en: 'Made by uitherapy',
+    },
+    powered: {
+      cz: 'LVL Reality powered by uitherapy',
+      en: 'LVL Reality powered by uitherapy',
+    },
+    columns: {
+      agency: { cz: 'Agency', en: 'Agency' },
+      projects: { cz: 'Projekty', en: 'Projects' },
+      contact: { cz: 'Kontakt', en: 'Contact' },
+      socials: { cz: 'Sociální sítě', en: 'Socials' },
+    },
+    location: { cz: 'Brno • Žabovřesky', en: 'Brno • Žabovřesky' },
+    legal: { cz: 'LEGALS', en: 'LEGALS' },
+    privacy: { cz: 'PRIVACY POLICY', en: 'PRIVACY POLICY' },
   },
 } as const satisfies Record<string, unknown>
 
