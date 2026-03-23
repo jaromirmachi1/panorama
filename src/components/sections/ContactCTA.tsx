@@ -2,9 +2,12 @@ import { useLayoutEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { gsap } from '../../lib/gsap'
 import { Container, Section } from '../Section'
+import { useLang } from '../../i18n/LanguageContext'
+import { t } from '../../i18n/dictionary'
 
 export function ContactCTA() {
   const rootRef = useRef<HTMLElement | null>(null)
+  const { lang } = useLang()
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -34,20 +37,25 @@ export function ContactCTA() {
   }, [])
 
   return (
-    <Section ref={rootRef} tone="dark" aria-label="Kontakt" id="contact">
+    <Section
+      ref={rootRef}
+      tone="dark"
+      aria-label={t.contact.eyebrow[lang]}
+      id="contact"
+    >
       <Container>
         <Center>
-          <Label data-cta>Kontakt</Label>
-          <Title data-cta>Máte zájem o byt?</Title>
+          <Label data-cta>{t.contact.eyebrow[lang]}</Label>
+          <Title data-cta>{t.contact.title[lang]}</Title>
           <Copy data-cta>
-            Napište nám. Pošleme dostupnost, půdorysy a standardy v jednom elegantním balíčku.
+            {t.contact.copy[lang]}
           </Copy>
           <Actions data-cta>
             <Button data-cursor="hover" href="mailto:info@panorama-zabiny.cz">
-              Nezávazně poptat
+              {t.contact.buttonPrimary[lang]}
             </Button>
             <Ghost data-cursor="hover" href="#top">
-              Zpět nahoru
+              {t.contact.buttonGhost[lang]}
             </Ghost>
           </Actions>
         </Center>

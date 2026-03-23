@@ -4,27 +4,12 @@ import { gsap } from '../../lib/gsap'
 import { Container, Section } from '../Section'
 import { Eyebrow, H2, P } from '../TextBlock'
 
-const features = [
-  {
-    title: 'Lokalita',
-    body: 'Žabiny: klid v zeleni, město na dosah.',
-  },
-  {
-    title: 'Architektura',
-    body: 'Čisté proporce, promyšlené průhledy, světlo.',
-  },
-  {
-    title: 'Kvalita',
-    body: 'Prémiové standardy a důraz na detail.',
-  },
-  {
-    title: 'Investice',
-    body: 'Nadčasová hodnota v atraktivní čtvrti.',
-  },
-] as const
+import { useLang } from '../../i18n/LanguageContext'
+import { t } from '../../i18n/dictionary'
 
 export function Features() {
   const rootRef = useRef<HTMLElement | null>(null)
+  const { lang } = useLang()
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -54,21 +39,31 @@ export function Features() {
   }, [])
 
   return (
-    <Section ref={rootRef} tone="light" aria-label="Benefity" id="features">
+    <Section
+      ref={rootRef}
+      tone="light"
+      aria-label={t.features.eyebrow[lang]}
+      id="features"
+    >
       <Container>
         <Head>
-          <Eyebrow>Benefity</Eyebrow>
-          <H2>Minimalistická kvalita</H2>
+          <Eyebrow>{t.features.eyebrow[lang]}</Eyebrow>
+          <H2>{t.features.title[lang]}</H2>
           <Lead>
-            Vše podstatné. Bez nadbytečných slov — důraz na atmosféru, prostor a klid.
+            {t.features.lead[lang]}
           </Lead>
         </Head>
 
         <Grid>
-          {features.map((f) => (
-            <Card key={f.title} data-feature>
-              <CardTitle>{f.title}</CardTitle>
-              <CardBody>{f.body}</CardBody>
+          {[
+            t.features.cards.locality,
+            t.features.cards.architecture,
+            t.features.cards.quality,
+            t.features.cards.investment,
+          ].map((f) => (
+            <Card key={f.title[lang]} data-feature>
+              <CardTitle>{f.title[lang]}</CardTitle>
+              <CardBody>{f.body[lang]}</CardBody>
               <Line aria-hidden="true" />
             </Card>
           ))}

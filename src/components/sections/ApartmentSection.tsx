@@ -1,107 +1,107 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import styled from 'styled-components'
-import { gsap } from '../../lib/gsap'
-import flatsJson from '../../content/flats.json'
-import { apartmentImages } from '../../content/apartmentImages'
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import styled from "styled-components";
+import { gsap } from "../../lib/gsap";
+import flatsJson from "../../content/flats.json";
+import {
+  apartmentImages,
+  getFloorPlanAlt,
+  getFloorPlanSrc,
+} from "../../content/apartmentImages";
+import { useLang } from "../../i18n/LanguageContext";
+import { t } from "../../i18n/dictionary";
 
 type Flat = {
-  id: string
-  floor: number
-  sizeM2: number
-  priceKc: number
-}
+  id: string;
+  floor: number;
+  sizeM2: number;
+  priceKc: number;
+};
 
 type Building = {
-  id: 'A' | 'B'
-  label: string
-  apartments: Flat[]
-}
+  id: "A" | "B";
+  label: string;
+  apartments: Flat[];
+};
 
 type FlatsData = {
-  buildings: Building[]
-}
+  buildings: Building[];
+};
 
-type FlatWithBuilding = Flat & { buildingId: Building['id'] }
-type Hovered = FlatWithBuilding | null
+type FlatWithBuilding = Flat & { buildingId: Building["id"] };
+type Hovered = FlatWithBuilding | null;
 
-const flatsData = flatsJson as unknown as FlatsData
+const flatsData = flatsJson as unknown as FlatsData;
 
 function formatKc(value: number) {
-  return `${new Intl.NumberFormat('cs-CZ').format(value)} Kč`
+  return `${new Intl.NumberFormat("cs-CZ").format(value)} Kč`;
 }
 
 export function ApartmentSection() {
-  const rootRef = useRef<HTMLElement | null>(null)
-  const viewerRef = useRef<HTMLDivElement | null>(null)
+  const rootRef = useRef<HTMLElement | null>(null);
+  const viewerRef = useRef<HTMLDivElement | null>(null);
 
-  const baseImgRef = useRef<HTMLImageElement | null>(null)
-  const aImgRef = useRef<HTMLImageElement | null>(null)
-  const bImgRef = useRef<HTMLImageElement | null>(null)
+  const baseImgRef = useRef<HTMLImageElement | null>(null);
+  /** Jedna vrstva patrového plánu — mění se podle podlaží (a budovy v alt). */
+  const floorPlanImgRef = useRef<HTMLImageElement | null>(null);
 
-  const [hovered, setHovered] = useState<Hovered>(null)
+  const [hovered, setHovered] = useState<Hovered>(null);
+  const { lang } = useLang();
 
   // Total apartments per page (across both buildings)
-  const PAGE_SIZE = 12
-  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 12;
+  const [page, setPage] = useState(1);
 
   const allFlats = useMemo(() => {
-    const out: FlatWithBuilding[] = []
+    const out: FlatWithBuilding[] = [];
     flatsData.buildings.forEach((b) => {
       b.apartments.forEach((apt) => {
         out.push({
           ...apt,
           buildingId: b.id,
-        })
-      })
-    })
-    return out
-  }, [])
+        });
+      });
+    });
+    return out;
+  }, []);
 
   const totalPages = useMemo(() => {
-    return Math.max(1, Math.ceil(allFlats.length / PAGE_SIZE))
-  }, [allFlats.length])
+    return Math.max(1, Math.ceil(allFlats.length / PAGE_SIZE));
+  }, [allFlats.length]);
 
-  useEffect(() => {
-    setPage((p) => Math.min(Math.max(1, p), totalPages))
-  }, [totalPages])
+  const safePage = useMemo(() => {
+    return Math.min(Math.max(1, page), totalPages);
+  }, [page, totalPages]);
 
   const visibleFlats = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE
-    const end = start + PAGE_SIZE
-    return allFlats.slice(start, end)
-  }, [allFlats, page])
-
-  const visibleIds = useMemo(() => new Set(visibleFlats.map((f) => f.id)), [visibleFlats])
-
-  useEffect(() => {
-    if (!hovered) return
-    if (!visibleIds.has(hovered.id)) setHovered(null)
-  }, [hovered, visibleIds])
+    const start = (safePage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    return allFlats.slice(start, end);
+  }, [allFlats, safePage]);
 
   useLayoutEffect(() => {
-    const root = rootRef.current
-    if (!root) return
+    const root = rootRef.current;
+    if (!root) return;
 
     const ctx = gsap.context(() => {
-      const q = gsap.utils.selector(root)
+      const q = gsap.utils.selector(root);
 
       // Scroll in animations
       gsap.fromTo(
-        q('[data-flat-row]'),
+        q("[data-flat-row]"),
         { opacity: 0, x: -8 },
         {
           opacity: 1,
           x: 0,
           duration: 1,
-          ease: 'power3.out',
+          ease: "power3.out",
           stagger: 0.05,
           scrollTrigger: {
             trigger: root,
-            start: 'top 78%',
+            start: "top 78%",
             once: true,
           },
         },
-      )
+      );
 
       gsap.fromTo(
         viewerRef.current,
@@ -110,123 +110,156 @@ export function ApartmentSection() {
           opacity: 1,
           y: 0,
           duration: 1,
-          ease: 'power3.out',
+          ease: "power3.out",
           delay: 0.12,
           scrollTrigger: {
             trigger: root,
-            start: 'top 75%',
+            start: "top 75%",
             once: true,
           },
         },
-      )
+      );
 
       // Subtle parallax
       if (viewerRef.current) {
         gsap.to(viewerRef.current, {
           y: -18,
-          ease: 'none',
+          ease: "none",
           scrollTrigger: {
             trigger: root,
-            start: 'top bottom',
-            end: 'bottom top',
+            start: "top bottom",
+            end: "bottom top",
             scrub: true,
           },
-        })
+        });
       }
 
       // Initial viewer layers
-      gsap.set(baseImgRef.current, { opacity: 1, scale: 1, filter: 'brightness(1) contrast(1)' })
-      gsap.set(aImgRef.current, { opacity: 0, scale: 1, filter: 'brightness(1) contrast(1)' })
-      gsap.set(bImgRef.current, { opacity: 0, scale: 1, filter: 'brightness(1) contrast(1)' })
-    })
+      gsap.set(baseImgRef.current, {
+        opacity: 1,
+        scale: 1,
+        filter: "brightness(1) contrast(1)",
+      });
+      gsap.set(floorPlanImgRef.current, {
+        opacity: 0,
+        scale: 1,
+        filter: "brightness(1) contrast(1)",
+      });
+    });
 
-    return () => ctx.revert()
-  }, [])
+    return () => ctx.revert();
+  }, []);
 
   useLayoutEffect(() => {
+    const base = baseImgRef.current;
+    const floorPlan = floorPlanImgRef.current;
+    if (base || floorPlan) {
+      gsap.killTweensOf([base, floorPlan]);
+    }
+
     if (!hovered) {
       gsap.to(baseImgRef.current, {
         opacity: 1,
         scale: 1,
-        filter: 'brightness(1) contrast(1)',
+        filter: "brightness(1) contrast(1)",
         duration: 0.6,
-        ease: 'power3.out',
-      })
-      gsap.to([aImgRef.current, bImgRef.current], {
+        ease: "power3.out",
+        overwrite: "auto",
+      });
+      gsap.to(floorPlanImgRef.current, {
         opacity: 0,
         scale: 1,
-        filter: 'brightness(1) contrast(1)',
+        filter: "brightness(1) contrast(1)",
         duration: 0.6,
-        ease: 'power3.out',
-      })
-      return
+        ease: "power3.out",
+        overwrite: "auto",
+      });
+      return;
     }
 
-    const isA = hovered.buildingId === 'A'
-    const active = isA ? aImgRef.current : bImgRef.current
-    const inactive = isA ? bImgRef.current : aImgRef.current
+    const nextSrc = getFloorPlanSrc(hovered.floor);
+    const nextAlt = getFloorPlanAlt(
+      hovered.floor,
+      hovered.buildingId,
+      lang,
+    );
+    if (floorPlanImgRef.current) {
+      floorPlanImgRef.current.src = nextSrc;
+      floorPlanImgRef.current.alt = nextAlt;
+    }
 
     gsap.to(baseImgRef.current, {
       opacity: 0,
       scale: 1.01,
-      filter: 'brightness(0.98) contrast(1)',
+      filter: "brightness(0.98) contrast(1)",
       duration: 0.5,
-      ease: 'power3.out',
-    })
+      ease: "power3.out",
+      overwrite: "auto",
+    });
 
-    gsap.to(inactive, {
-      opacity: 0,
-      scale: 1,
-      filter: 'brightness(1) contrast(1)',
-      duration: 0.55,
-      ease: 'power3.out',
-    })
-
-    gsap.to(active, {
+    gsap.to(floorPlanImgRef.current, {
       opacity: 1,
       scale: 1.05,
-      filter: 'brightness(1.06) contrast(1.03)',
+      filter: "brightness(1.06) contrast(1.03)",
       duration: 0.6,
-      ease: 'power3.out',
-    })
-  }, [hovered])
+      ease: "power3.out",
+      overwrite: "auto",
+    });
+  }, [hovered, lang]);
 
   return (
-    <Wrap ref={rootRef} id="apartments" aria-label="Výběr apartmánů">
+    <Wrap
+      ref={rootRef}
+      id="apartments"
+      aria-label={t.apartments.title[lang]}
+    >
       <Inner>
         <Left>
           <Head>
-            <Eyebrow>Byty</Eyebrow>
-            <H2>Aktuální dostupnost</H2>
+            <Eyebrow>{t.apartments.eyebrow[lang]}</Eyebrow>
+            <H2>{t.apartments.title[lang]}</H2>
           </Head>
 
-          <ApartmentList aria-label="Seznam apartmánů">
+          <ApartmentList aria-label={t.apartments.listAria[lang]}>
             {flatsData.buildings.map((b) => {
+              const groupLabel =
+                lang === "cz"
+                  ? b.label
+                  : b.id === "A"
+                    ? "Building A"
+                    : "Building B";
               const visibleApartments = visibleFlats.filter(
                 (f) => f.buildingId === b.id,
-              )
+              );
 
               return (
-                <ApartmentGroup key={b.id} aria-label={b.label} $building={b.id}>
-                  <GroupTitle>{b.label}</GroupTitle>
+                <ApartmentGroup
+                  key={b.id}
+                  aria-label={groupLabel}
+                  $building={b.id}
+                >
+                  <GroupTitle>{groupLabel}</GroupTitle>
                   {visibleApartments.length > 0 && (
                     <GroupRows>
                       {visibleApartments.map((apt) => {
-                        const floorLabel = `Podlaží ${apt.floor}`
+                        const floorLabel = `${t.apartments.floorLabel[lang]} ${apt.floor}`;
                         return (
                           <ApartmentRow
                             key={apt.id}
                             type="button"
                             data-cursor="hover"
                             data-flat-row
-                            $isHovered={hovered?.id === apt.id && hovered?.buildingId === b.id}
-                            onMouseEnter={() =>
+                            $isHovered={
+                              hovered?.id === apt.id &&
+                              hovered?.buildingId === b.id
+                            }
+                            onPointerEnter={() =>
                               setHovered({
                                 ...apt,
                                 buildingId: b.id,
                               })
                             }
-                            onMouseLeave={() => setHovered(null)}
+                            onPointerLeave={() => setHovered(null)}
                             aria-label={`${apt.id}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`}
                           >
                             <LeftCol>
@@ -236,32 +269,38 @@ export function ApartmentSection() {
                             <Size>{apt.sizeM2.toFixed(1)} m²</Size>
                             <Price>{formatKc(apt.priceKc)}</Price>
                           </ApartmentRow>
-                        )
+                        );
                       })}
                     </GroupRows>
                   )}
                 </ApartmentGroup>
-              )
+              );
             })}
           </ApartmentList>
 
-          <Pagination aria-label="Stránkování">
+          <Pagination aria-label={t.apartments.paginationAria[lang]}>
             <PageButton
               type="button"
               data-cursor="hover"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1}
+              onClick={() => {
+                setHovered(null)
+                setPage((p) => Math.max(1, p - 1))
+              }}
+              disabled={safePage <= 1}
             >
               ←
             </PageButton>
             <PageLabel>
-              {page} / {totalPages}
+              {safePage} / {totalPages}
             </PageLabel>
             <PageButton
               type="button"
               data-cursor="hover"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page >= totalPages}
+              onClick={() => {
+                setHovered(null)
+                setPage((p) => Math.min(totalPages, p + 1))
+              }}
+              disabled={safePage >= totalPages}
             >
               →
             </PageButton>
@@ -270,7 +309,7 @@ export function ApartmentSection() {
 
         <Right>
           <ImageViewer ref={viewerRef} aria-hidden="true" data-viewer>
-            <Layer>
+            <Layer $zIndex={1}>
               <LayerImg
                 ref={baseImgRef}
                 src={apartmentImages.base.src}
@@ -279,38 +318,30 @@ export function ApartmentSection() {
                 decoding="async"
               />
             </Layer>
-            <Layer>
+            <Layer $zIndex={2}>
               <LayerImg
-                ref={aImgRef}
-                src={apartmentImages.buildingA.src}
-                alt={apartmentImages.buildingA.alt}
-                loading="lazy"
-                decoding="async"
-              />
-            </Layer>
-            <Layer>
-              <LayerImg
-                ref={bImgRef}
-                src={apartmentImages.buildingB.src}
-                alt={apartmentImages.buildingB.alt}
+                ref={floorPlanImgRef}
+                src={getFloorPlanSrc(1)}
+                alt={getFloorPlanAlt(1, "A", lang)}
                 loading="lazy"
                 decoding="async"
               />
             </Layer>
           </ImageViewer>
           <HoverInfo>
-            <InfoBlock $mode={hovered ? 'active' : 'default'}>
+            <InfoBlock $mode={hovered ? "active" : "default"}>
               {hovered ? (
                 <>
                   <InfoTitle>{hovered.id}</InfoTitle>
                   <InfoLine>
-                    {`Podlaží ${hovered.floor}`} • {hovered.sizeM2.toFixed(1)} m²
+                    {`${t.apartments.floorLabel[lang]} ${hovered.floor}`} •{" "}
+                    {hovered.sizeM2.toFixed(1)} m²
                   </InfoLine>
                 </>
               ) : (
                 <>
-                  <InfoTitle>Vyberte podlaží</InfoTitle>
-                  <InfoLine>Hoverem přepnete zvýrazněné fotografie</InfoLine>
+                  <InfoTitle>{t.apartments.infoDefaultTitle[lang]}</InfoTitle>
+                  <InfoLine>{t.apartments.infoDefaultLine[lang]}</InfoLine>
                 </>
               )}
             </InfoBlock>
@@ -318,7 +349,7 @@ export function ApartmentSection() {
         </Right>
       </Inner>
     </Wrap>
-  )
+  );
 }
 
 const Wrap = styled.section`
@@ -327,7 +358,7 @@ const Wrap = styled.section`
   color: #f5f3ef;
   padding: clamp(72px, 7vw, 120px) 0;
   overflow: hidden;
-`
+`;
 
 const Inner = styled.div`
   width: min(1320px, calc(100% - 2 * clamp(18px, 4vw, 38px)));
@@ -339,15 +370,15 @@ const Inner = styled.div`
   @media (max-width: 980px) {
     grid-template-columns: 1fr;
   }
-`
+`;
 
 const Left = styled.div`
   padding-top: 4px;
-`
+`;
 
 const Head = styled.div`
   margin-bottom: 26px;
-`
+`;
 
 const Eyebrow = styled.div`
   font-size: 12px;
@@ -355,7 +386,7 @@ const Eyebrow = styled.div`
   text-transform: uppercase;
   opacity: 0.64;
   margin-bottom: 14px;
-`
+`;
 
 const H2 = styled.h2`
   margin: 0;
@@ -363,18 +394,18 @@ const H2 = styled.h2`
   font-weight: 500;
   letter-spacing: -0.01em;
   font-size: clamp(34px, 4.2vw, 58px);
-  line-height: 1.0;
-`
+  line-height: 1;
+`;
 
 const ApartmentList = styled.div`
   display: grid;
   gap: 18px;
-`
+`;
 
 const ApartmentGroup = styled.div<{ $building: string }>`
   display: grid;
   gap: 10px;
-`
+`;
 
 const GroupTitle = styled.div`
   font-family: ${({ theme }) => theme.fonts.serif};
@@ -382,11 +413,11 @@ const GroupTitle = styled.div`
   letter-spacing: 0.02em;
   font-size: 18px;
   color: rgba(245, 243, 239, 0.92);
-`
+`;
 
 const GroupRows = styled.div`
   border-top: 1px solid rgba(221, 221, 221, 0.55);
-`
+`;
 
 const Pagination = styled.div`
   display: flex;
@@ -395,7 +426,7 @@ const Pagination = styled.div`
   gap: 12px;
   padding-top: 12px;
   margin-top: 0;
-`
+`;
 
 const PageButton = styled.button`
   appearance: none;
@@ -417,14 +448,14 @@ const PageButton = styled.button`
   &:not(:disabled):hover {
     opacity: 1;
   }
-`
+`;
 
 const PageLabel = styled.div`
   font-size: 12px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   opacity: 0.9;
-`
+`;
 
 const ApartmentRow = styled.button<{ $isHovered: boolean }>`
   appearance: none;
@@ -446,7 +477,7 @@ const ApartmentRow = styled.button<{ $isHovered: boolean }>`
 
   /* Background fill animation */
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: #f5f3ef;
@@ -491,14 +522,14 @@ const ApartmentRow = styled.button<{ $isHovered: boolean }>`
     color: rgba(10, 10, 10, 0.92);
     border-bottom-color: rgba(10, 10, 10, 0.16);
   }
-`
+`;
 
 const LeftCol = styled.div`
   display: grid;
   gap: 8px;
   justify-items: center;
   text-align: center;
-`
+`;
 
 const AptId = styled.div`
   font-family: ${({ theme }) => theme.fonts.serif};
@@ -506,7 +537,7 @@ const AptId = styled.div`
   letter-spacing: 0.02em;
   font-size: 14px;
   line-height: 1.1;
-`
+`;
 
 const FloorTag = styled.div`
   font-size: 10px;
@@ -522,46 +553,49 @@ const FloorTag = styled.div`
     opacity: 0.62;
     transform: translateY(0);
   }
-`
+`;
 
 const Size = styled.div`
   font-size: 13px;
   letter-spacing: 0.01em;
   opacity: 0.78;
   text-align: center;
-`
+`;
 
 const Price = styled.div`
   text-align: center;
   font-size: 13px;
   letter-spacing: 0.01em;
   opacity: 0.82;
-  align-self: flex-start;
-  margin-top: -6px;
-`
+`;
 
 const Right = styled.div`
   position: relative;
   min-height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   @media (max-width: 980px) {
     min-height: 420px;
   }
-`
+`;
 
 const ImageViewer = styled.div`
-  position: sticky;
-  top: 18px;
-  height: 100%;
-  width: 100%;
+  position: relative;
+  width: min(660px, 100%);
+  height: clamp(320px, 46vh, 560px);
+  margin-top: 0px;
   overflow: hidden;
-`
+`;
 
-const Layer = styled.div`
+const Layer = styled.div<{ $zIndex?: number }>`
   position: absolute;
   inset: 0;
-  opacity: 0;
-`
+  opacity: 1;
+  z-index: ${({ $zIndex }) => $zIndex ?? 1};
+`;
 
 const LayerImg = styled.img`
   width: 100%;
@@ -571,30 +605,32 @@ const LayerImg = styled.img`
   transform: scale(1.02);
   will-change: transform, opacity, filter;
   filter: brightness(1) contrast(1);
-`
+`;
 
 const HoverInfo = styled.div`
   position: absolute;
-  z-index: 3;
-  left: 0;
-  right: 0;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  width: min(660px, 100%);
   bottom: 0;
   padding: 18px clamp(0px, 1vw, 22px);
   pointer-events: none;
   color: rgba(245, 243, 239, 0.92);
-`
+  z-index: 3;
+`;
 
-const InfoBlock = styled.div<{ $mode: 'default' | 'active' }>`
-  opacity: ${({ $mode }) => ($mode === 'active' ? 1 : 1)};
+const InfoBlock = styled.div<{ $mode: "default" | "active" }>`
+  opacity: ${({ $mode }) => ($mode === "active" ? 1 : 1)};
   transition: opacity 450ms ease;
-`
+`;
 
 const InfoTitle = styled.div`
   font-family: ${({ theme }) => theme.fonts.serif};
   font-weight: 500;
   letter-spacing: 0.02em;
   font-size: 18px;
-`
+`;
 
 const InfoLine = styled.div`
   margin-top: 8px;
@@ -602,5 +638,4 @@ const InfoLine = styled.div`
   letter-spacing: 0.22em;
   text-transform: uppercase;
   opacity: 0.72;
-`
-
+`;

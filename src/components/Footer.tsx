@@ -1,7 +1,10 @@
 import styled from 'styled-components'
 import { Container } from './Section'
+import { useLang } from '../i18n/LanguageContext'
+import { t } from '../i18n/dictionary'
 
 export function Footer() {
+  const { lang } = useLang()
   return (
     <Wrap>
       <Container>
@@ -22,7 +25,7 @@ export function Footer() {
         </Row>
         <Bottom>
           <Small>© {new Date().getFullYear()} Panorama Žabiny</Small>
-          <Small>Luxusní prezentace • statický web</Small>
+          <Small>{t.footer.small1[lang]}</Small>
         </Bottom>
       </Container>
     </Wrap>

@@ -4,9 +4,12 @@ import { gsap } from '../../lib/gsap'
 import { images } from '../../content/images'
 import { Container, Section } from '../Section'
 import { Eyebrow, H2 } from '../TextBlock'
+import { useLang } from '../../i18n/LanguageContext'
+import { t } from '../../i18n/dictionary'
 
 export function Gallery() {
   const rootRef = useRef<HTMLElement | null>(null)
+  const { lang } = useLang()
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -16,14 +19,15 @@ export function Gallery() {
       const items = gsap.utils.toArray<HTMLElement>('[data-gallery-item]', root)
       items.forEach((item) => {
         const img = item.querySelector('img')
+        const caption = item.querySelector<HTMLElement>('[data-gallery-caption]')
         if (!img) return
 
         gsap.fromTo(
           img,
-          { yPercent: -6, scale: 1.08 },
+          { yPercent: -4, scale: 1.06 },
           {
-            yPercent: 6,
-            scale: 1.02,
+            yPercent: 4,
+            scale: 1.01,
             ease: 'none',
             scrollTrigger: {
               trigger: item,
@@ -48,6 +52,24 @@ export function Gallery() {
             },
           },
         )
+
+        if (caption) {
+          gsap.fromTo(
+            caption,
+            { opacity: 0, y: 10 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.85,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: item,
+                start: 'top 82%',
+                once: true,
+              },
+            },
+          )
+        }
       })
     }, rootRef)
 
@@ -55,19 +77,36 @@ export function Gallery() {
   }, [])
 
   return (
-    <Section ref={rootRef} tone="dark" aria-label="Galerie" id="realisations">
+    <Section
+      ref={rootRef}
+      tone="dark"
+      aria-label={t.gallery.eyebrow[lang]}
+      id="realisations"
+    >
       <Container>
         <Head>
-          <Eyebrow>Galerie</Eyebrow>
-          <H2>Světlo v pohybu</H2>
+          <Eyebrow>{t.gallery.eyebrow[lang]}</Eyebrow>
+          <H2>{t.gallery.title[lang]}</H2>
         </Head>
       </Container>
 
       <Rail>
-        {images.gallery.map((img) => (
-          <Item key={img.src} data-gallery-item>
-            <Img src={img.src} alt={img.alt} loading="lazy" decoding="async" />
+        {images.gallery.map((img, idx) => (
+          <Item key={img.src} data-gallery-item tabIndex={0}>
+            <Img
+              src={img.src}
+              alt={img.alt[lang]}
+              loading="lazy"
+              decoding="async"
+            />
             <Shade aria-hidden="true" />
+            <Caption data-gallery-caption>
+              <CapLeft>
+                <CapKicker>0{idx + 1}</CapKicker>
+                <CapTitle>{img.alt[lang]}</CapTitle>
+              </CapLeft>
+              <CapRule aria-hidden="true" />
+            </Caption>
           </Item>
         ))}
       </Rail>
@@ -81,19 +120,69 @@ const Head = styled.div`
 
 const Rail = styled.div`
   display: grid;
-  gap: clamp(18px, 2.6vw, 28px);
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(16px, 2.6vw, 28px);
+  padding: 0 clamp(18px, 4vw, 38px);
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+  }
 `
 
 const Item = styled.figure`
   margin: 0;
   position: relative;
-  height: clamp(520px, 78vh, 820px);
   overflow: hidden;
-  border-radius: 22px;
-  width: min(1400px, calc(100% - 2 * 28px));
-  margin-left: auto;
-  margin-right: auto;
-  background: rgba(255, 255, 255, 0.05);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.04);
+  outline: none;
+
+  /* Architecture mosaic layout (asymmetric but consistent). */
+  grid-column: span 6;
+  height: clamp(520px, 78vh, 820px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  &:nth-child(1) {
+    grid-column: span 7;
+  }
+  &:nth-child(2) {
+    grid-column: span 5;
+  }
+  &:nth-child(3) {
+    grid-column: span 6;
+  }
+
+  @media (max-width: 900px) {
+    &:nth-child(1) {
+      grid-column: span 6;
+    }
+    &:nth-child(2) {
+      grid-column: span 6;
+    }
+    &:nth-child(3) {
+      grid-column: span 6;
+    }
+  }
+
+  @media (max-width: 620px) {
+    grid-column: auto;
+    height: clamp(360px, 50vh, 620px);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 18px;
+    pointer-events: none;
+    opacity: 0.9;
+    z-index: 2;
+  }
 `
 
 const Img = styled.img`
@@ -101,13 +190,91 @@ const Img = styled.img`
   height: 100%;
   object-fit: cover;
   will-change: transform;
-  filter: saturate(0.96) contrast(1.02);
+  filter: grayscale(0.22) saturate(0.9) contrast(1.06) brightness(0.98);
 `
 
 const Shade = styled.div`
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.62));
+  background:
+    radial-gradient(120% 120% at 20% 10%, rgba(255, 255, 255, 0.09), transparent 55%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.26), rgba(0, 0, 0, 0.68)),
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 1px,
+      transparent 1px,
+      transparent 96px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.06) 0px,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px,
+      transparent 74px
+    );
+  opacity: 0.75;
   pointer-events: none;
+  z-index: 1;
+
+  transition: opacity 450ms ease;
+
+  ${Item}:hover & {
+    opacity: 0.9;
+  }
+`
+
+const Caption = styled.figcaption`
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 20px;
+  z-index: 3;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 450ms ease,
+    transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  pointer-events: none;
+
+  ${Item}:hover &,
+  ${Item}:focus-visible & {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+
+const CapLeft = styled.div`
+  display: grid;
+  gap: 6px;
+`
+
+const CapKicker = styled.div`
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.72;
+`
+
+const CapTitle = styled.div`
+  font-family: ${({ theme }) => theme.fonts.serif};
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-size: 16px;
+  line-height: 1.1;
+  opacity: 0.95;
+`
+
+const CapRule = styled.div`
+  width: 64px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
 `
 

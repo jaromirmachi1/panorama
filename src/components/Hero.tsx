@@ -1,10 +1,38 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, type MouseEvent } from "react";
 import styled from "styled-components";
 import { gsap } from "../lib/gsap";
 import { images } from "../content/images";
+import { useLang } from "../i18n/LanguageContext";
+import { t } from "../i18n/dictionary";
 
 export function Hero() {
   const rootRef = useRef<HTMLElement | null>(null);
+  const langBtnRef = useRef<HTMLAnchorElement | null>(null);
+  const { lang, toggleLang } = useLang();
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return (
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false
+    );
+  }, []);
+
+  function scrollToSection(id: string, e?: MouseEvent<HTMLAnchorElement>) {
+    // Stop the browser's native hash-jump so the scroll feels consistent.
+    e?.preventDefault();
+
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // Use native smooth scrolling (plays nicer with ScrollTrigger).
+    el.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
+
+    // Update the hash without causing a second scroll.
+    // (ReplaceState doesn't trigger scrolling, but keeps URL consistent.)
+    window.history.replaceState({}, "", `#${id}`);
+  }
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -43,7 +71,11 @@ export function Hero() {
 
   return (
     <Wrap ref={rootRef} id="top">
-      <Bg data-hero="bg" role="img" aria-label={images.hero.alt} />
+      <Bg
+        data-hero="bg"
+        role="img"
+        aria-label={t.hero.wordmarkAria[lang]}
+      />
       <Overlay aria-hidden="true" />
 
       <Top>
@@ -55,24 +87,59 @@ export function Hero() {
         <Nav data-hero="nav" aria-label="Hlavní navigace">
           <NavGroup>
             <NavLink data-cursor="hover" href="#agency">
-              +&nbsp;Projekt
+              +&nbsp;{t.nav.project[lang]}
             </NavLink>
-            <NavLink data-cursor="hover" href="#realisations">
-              +&nbsp;Galerie
+            <NavLink
+              data-cursor="hover"
+              href="#apartments"
+              onClick={(e) => scrollToSection("apartments", e)}
+            >
+              +&nbsp;{t.nav.apartments[lang]}
             </NavLink>
-            <NavLink data-cursor="hover" href="#features">
-              +&nbsp;Benefity
+            <NavLink
+              data-cursor="hover"
+              href="#features"
+              onClick={(e) => scrollToSection("features", e)}
+            >
+              +&nbsp;{t.nav.benefits[lang]}
             </NavLink>
-            <NavLink data-cursor="hover" href="#contact">
-              +&nbsp;Kontakt
+            <NavLink
+              data-cursor="hover"
+              href="#contact"
+              onClick={(e) => scrollToSection("contact", e)}
+            >
+              +&nbsp;{t.nav.contact[lang]}
             </NavLink>
           </NavGroup>
           <NavGroup>
-            <NavMeta>+&nbsp;News</NavMeta>
-            <NavMeta>+&nbsp;Réseaux</NavMeta>
+            <NavMeta>{t.nav.news[lang]}</NavMeta>
+            <NavMeta>{t.nav['réseaux'][lang]}</NavMeta>
           </NavGroup>
-          <Lang data-cursor="hover" href="#top">
-            CZ
+          <Lang
+            data-cursor="hover"
+            href="#top"
+            ref={langBtnRef}
+            onClick={(e) => {
+              e.preventDefault()
+              toggleLang()
+              const el = langBtnRef.current
+              if (!el) return
+              gsap.fromTo(
+                el,
+                { scale: 1, opacity: 0.85 },
+                {
+                  scale: 1.14,
+                  opacity: 1,
+                  duration: 0.18,
+                  ease: 'power3.out',
+                  yoyo: true,
+                  repeat: 1,
+                  repeatDelay: 0.02,
+                },
+              )
+            }}
+          >
+            {t.nav.lang[lang]}
           </Lang>
         </Nav>
       </Top>
