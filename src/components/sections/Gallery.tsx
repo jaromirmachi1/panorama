@@ -173,9 +173,18 @@ const Item = styled.figure`
     }
   }
 
+  /* Single-column rail: nth-child(1–3) still had span 6 from the 900px rules
+     (higher specificity than plain grid-column: auto), so only the 4th card
+     was true full-width. Reset every item to one full track on phones. */
   @media (max-width: 620px) {
-    grid-column: auto;
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
     height: clamp(360px, 50vh, 620px);
+
+    &:nth-child(n) {
+      grid-column: 1 / -1;
+    }
   }
 
   &::before {

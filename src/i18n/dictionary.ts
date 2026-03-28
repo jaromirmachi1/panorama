@@ -14,6 +14,11 @@ export const t = {
     news: { cz: '+ News', en: '+ News' },
     réseaux: { cz: '+ Réseaux', en: '+ Networks' },
     lang: { cz: 'CZ', en: 'EN' },
+    menu: { cz: 'Menu', en: 'Menu' },
+    closeMenuAria: { cz: 'Zavřít nabídku', en: 'Close menu' },
+    mobileNavAria: { cz: 'Hlavní menu', en: 'Main menu' },
+    langCz: { cz: 'Čeština', en: 'Czech' },
+    langEn: { cz: 'Angličtina', en: 'English' },
   },
 
   hero: {

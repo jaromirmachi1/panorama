@@ -68,15 +68,17 @@ export function ProjectIntro() {
         </ProjectStack>
 
         <ArchitectAside data-pi>
-          <Eyebrow>{arch.eyebrow[lang]}</Eyebrow>
-          <ArchitectTitle>
-            <TitleName>{arch.title[lang]}</TitleName>
-            <TitleStudio>
-              <StudioName>{arch.studio[lang]}</StudioName>
-              <StudioSep aria-hidden="true">·</StudioSep>
-              <StudioRole>{arch.studioRole[lang]}</StudioRole>
-            </TitleStudio>
-          </ArchitectTitle>
+          <ArchHead>
+            <Eyebrow>{arch.eyebrow[lang]}</Eyebrow>
+            <ArchitectTitle>
+              <TitleName>{arch.title[lang]}</TitleName>
+              <TitleStudio>
+                <StudioName>{arch.studio[lang]}</StudioName>
+                <StudioSep aria-hidden="true">·</StudioSep>
+                <StudioRole>{arch.studioRole[lang]}</StudioRole>
+              </TitleStudio>
+            </ArchitectTitle>
+          </ArchHead>
           <ArchitectIntro>{arch.intro[lang]}</ArchitectIntro>
           <ArchitectVisual>
             <ImageBlock
@@ -214,6 +216,17 @@ const ArchitectAside = styled.aside`
   }
 `;
 
+const ArchHead = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.5vw, 14px);
+
+  @media (max-width: 900px) {
+    order: 3;
+    margin-top: clamp(6px, 2vw, 14px);
+  }
+`;
+
 const ArchitectTitle = styled.div`
   margin: 0;
 `;
@@ -266,7 +279,9 @@ const ArchitectIntro = styled.p`
   color: rgba(10, 10, 10, 0.72);
 
   @media (max-width: 900px) {
+    order: 2;
     max-width: 52ch;
+    text-align: left;
   }
 `;
 
@@ -282,6 +297,8 @@ const ArchitectVisual = styled.div`
   }
 
   @media (max-width: 900px) {
+    order: 1;
+    margin-top: 0;
     max-width: 200px;
     height: clamp(125px, 32vw, 190px);
   }
