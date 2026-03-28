@@ -7,6 +7,13 @@ export const images = {
     src: "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1800&q=80",
     alt: "Architectural interior detail",
   },
+  architect: {
+    src: "/Smedek.webp",
+    alt: {
+      cz: "Architekt František Šmédek, kancelář SMEDEK",
+      en: "Architect František Šmédek, SMEDEK studio",
+    },
+  },
   gallery: [
     {
       src: "/velkyBytObyvak_11zon.webp",

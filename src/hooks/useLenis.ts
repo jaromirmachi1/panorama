@@ -19,22 +19,25 @@ export function useLenis({ enabled = true }: UseLenisOptions = {}) {
     if (prefersReducedMotion) return
 
     const lenis = new Lenis({
-      lerp: 0.12,
+      // Lower lerp = smoother, more “weighted” scroll (slower catch-up to target).
+      lerp: 0.055,
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1,
+      // Slightly softer wheel steps so motion feels less jumpy.
+      wheelMultiplier: 0.88,
+      touchMultiplier: 0.95,
       syncTouch: false,
       autoResize: true,
     })
     lenisRef.current = lenis
 
-    lenis.on('scroll', ScrollTrigger.update)
-
+    // One ScrollTrigger pass per frame, after Lenis advances — avoids running
+    // ScrollTrigger.update on every Lenis scroll emit (extra work + micro-hitches).
     const onTick = (time: number) => {
       lenis.raf(time * 1000)
+      ScrollTrigger.update()
     }
     gsap.ticker.add(onTick)
-    gsap.ticker.lagSmoothing(0)
+    // Default lag smoothing helps when frames slip; lagSmoothing(0) can amplify stutter.
 
     const onResize = () => ScrollTrigger.refresh()
     window.addEventListener('resize', onResize)

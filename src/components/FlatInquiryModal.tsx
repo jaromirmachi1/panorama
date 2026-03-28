@@ -1,0 +1,464 @@
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FormEvent,
+} from 'react'
+import { createPortal } from 'react-dom'
+import styled from 'styled-components'
+import type { Lang } from '../i18n/LanguageContext'
+import { t } from '../i18n/dictionary'
+
+export type InquiryFlat = {
+  id: string
+  floor: number
+  sizeM2: number
+  priceKc: number
+  buildingId: 'A' | 'B'
+}
+
+type Props = {
+  flat: InquiryFlat
+  buildingLabel: string
+  lang: Lang
+  onClose: () => void
+}
+
+function formatKc(value: number) {
+  return `${new Intl.NumberFormat('cs-CZ').format(value)} Kč`
+}
+
+export function FlatInquiryModal({
+  flat,
+  buildingLabel,
+  lang,
+  onClose,
+}: Props) {
+  const titleId = useId()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const firstFieldRef = useRef<HTMLInputElement>(null)
+
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [sent, setSent] = useState(false)
+
+  const iq = t.apartments.inquiry
+
+  const handleEscape = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    },
+    [onClose],
+  )
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleEscape)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const tId = window.setTimeout(() => firstFieldRef.current?.focus(), 80)
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = prev
+      window.clearTimeout(tId)
+    }
+  }, [handleEscape])
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    const payload = {
+      flatId: flat.id,
+      building: flat.buildingId,
+      buildingLabel,
+      floor: flat.floor,
+      sizeM2: flat.sizeM2,
+      priceKc: flat.priceKc,
+      firstName,
+      lastName,
+      email,
+      phone,
+    }
+    // TODO: EmailJS — e.g. emailjs.send(serviceId, templateId, payload, publicKey)
+    console.info('[FlatInquiryModal] submit (stub)', payload)
+    setSent(true)
+  }
+
+  const node = (
+    <Root role="presentation">
+      <Backdrop
+        type="button"
+        aria-label={iq.backdropAria[lang]}
+        onClick={onClose}
+      />
+      <Panel
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <PanelHeader>
+          <div>
+            <PanelEyebrow>{iq.flatLabel[lang]}</PanelEyebrow>
+            <PanelTitle id={titleId}>{iq.title[lang]}</PanelTitle>
+            <FlatSummary>
+              <FlatId>{flat.id}</FlatId>
+              <FlatMeta>
+                {buildingLabel} · {t.apartments.floorLabel[lang]} {flat.floor}{' '}
+                · {flat.sizeM2.toFixed(1)} m² · {formatKc(flat.priceKc)}
+              </FlatMeta>
+            </FlatSummary>
+            <PanelSubtitle>{iq.subtitle[lang]}</PanelSubtitle>
+          </div>
+          <CloseBtn
+            type="button"
+            data-cursor="hover"
+            aria-label={iq.closeAria[lang]}
+            onClick={onClose}
+          >
+            ×
+          </CloseBtn>
+        </PanelHeader>
+
+        {sent ? (
+          <ThanksWrap>
+            <Thanks>{iq.thanks[lang]}</Thanks>
+            <GhostBtn type="button" data-cursor="hover" onClick={onClose}>
+              {iq.close[lang]}
+            </GhostBtn>
+          </ThanksWrap>
+        ) : (
+          <Form onSubmit={handleSubmit}>
+            <FieldGrid>
+              <Field>
+                <Label htmlFor="inquiry-first">{iq.firstName[lang]}</Label>
+                <Input
+                  id="inquiry-first"
+                  ref={firstFieldRef}
+                  name="firstName"
+                  autoComplete="given-name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+              </Field>
+              <Field>
+                <Label htmlFor="inquiry-last">{iq.lastName[lang]}</Label>
+                <Input
+                  id="inquiry-last"
+                  name="lastName"
+                  autoComplete="family-name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+              </Field>
+              <Field $wide>
+                <Label htmlFor="inquiry-email">{iq.email[lang]}</Label>
+                <Input
+                  id="inquiry-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </Field>
+              <Field $wide>
+                <Label htmlFor="inquiry-phone">{iq.phone[lang]}</Label>
+                <Input
+                  id="inquiry-phone"
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+              </Field>
+            </FieldGrid>
+            <StubNote>{iq.stubNote[lang]}</StubNote>
+            <Actions>
+              <SubmitBtn type="submit" data-cursor="hover">
+                {iq.submit[lang]}
+              </SubmitBtn>
+              <GhostBtn type="button" data-cursor="hover" onClick={onClose}>
+                {iq.close[lang]}
+              </GhostBtn>
+            </Actions>
+          </Form>
+        )}
+      </Panel>
+    </Root>
+  )
+
+  return createPortal(node, document.body)
+}
+
+const Root = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 32px);
+  pointer-events: none;
+
+  & > * {
+    pointer-events: auto;
+  }
+`
+
+const Backdrop = styled.button`
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  background: rgba(6, 6, 6, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+`
+
+const Panel = styled.div`
+  position: relative;
+  z-index: 1;
+  width: min(100%, 440px);
+  max-height: min(92vh, 720px);
+  overflow: auto;
+  padding: clamp(26px, 4vw, 34px);
+  border-radius: 2px;
+  background: linear-gradient(
+    165deg,
+    rgba(22, 22, 22, 0.98) 0%,
+    rgba(12, 12, 12, 0.99) 100%
+  );
+  border: 1px solid rgba(245, 243, 239, 0.1);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 32px 80px rgba(0, 0, 0, 0.55);
+  color: #f5f3ef;
+`
+
+const PanelHeader = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(22px, 3vw, 28px);
+`
+
+const PanelEyebrow = styled.div`
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(245, 243, 239, 0.48);
+  margin-bottom: 10px;
+`
+
+const PanelTitle = styled.h2`
+  margin: 0 0 14px;
+  font-family: ${({ theme }) => theme.fonts.serif};
+  font-weight: 500;
+  font-size: clamp(26px, 3.2vw, 32px);
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  color: rgba(245, 243, 239, 0.98);
+`
+
+const FlatSummary = styled.div`
+  margin-bottom: 12px;
+`
+
+const FlatId = styled.div`
+  font-family: ${({ theme }) => theme.fonts.heading};
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(232, 215, 176, 0.92);
+  margin-bottom: 4px;
+`
+
+const FlatMeta = styled.div`
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  color: rgba(245, 243, 239, 0.58);
+`
+
+const PanelSubtitle = styled.p`
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.65;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  color: rgba(245, 243, 239, 0.62);
+  max-width: 36ch;
+`
+
+const CloseBtn = styled.button`
+  flex: 0 0 auto;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: rgba(245, 243, 239, 0.55);
+  font-size: 28px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  margin: -8px -8px 0 0;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color 0.35s ease, transform 0.35s ease;
+
+  &:hover {
+    color: rgba(245, 243, 239, 0.95);
+    transform: scale(1.06);
+  }
+`
+
+const Form = styled.form`
+  display: grid;
+  gap: 20px;
+`
+
+const FieldGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 14px;
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
+  }
+`
+
+const Field = styled.div<{ $wide?: boolean }>`
+  display: grid;
+  gap: 8px;
+  grid-column: ${({ $wide }) => ($wide ? '1 / -1' : 'auto')};
+`
+
+const Label = styled.label`
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(245, 243, 239, 0.45);
+`
+
+const Input = styled.input`
+  appearance: none;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: rgba(245, 243, 239, 0.95);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(245, 243, 239, 0.12);
+  border-radius: 2px;
+  outline: none;
+  transition:
+    border-color 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+
+  &::placeholder {
+    color: rgba(245, 243, 239, 0.28);
+  }
+
+  &:hover {
+    border-color: rgba(245, 243, 239, 0.2);
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  &:focus-visible {
+    border-color: rgba(232, 215, 176, 0.55);
+    box-shadow: 0 0 0 1px rgba(232, 215, 176, 0.2);
+  }
+`
+
+const StubNote = styled.p`
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: rgba(245, 243, 239, 0.38);
+`
+
+const Actions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 4px;
+`
+
+const SubmitBtn = styled.button`
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 14px 22px;
+  font-family: ${({ theme }) => theme.fonts.heading};
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(12, 12, 12, 0.95);
+  background: rgba(232, 215, 176, 0.92);
+  border-radius: 2px;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.35s ease,
+    opacity 0.35s ease;
+
+  &:hover {
+    background: rgba(240, 225, 190, 0.98);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`
+
+const GhostBtn = styled.button`
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 14px 8px;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245, 243, 239, 0.5);
+  transition: color 0.35s ease;
+
+  &:hover {
+    color: rgba(245, 243, 239, 0.88);
+  }
+`
+
+const ThanksWrap = styled.div`
+  display: grid;
+  gap: 20px;
+  padding: 8px 0 4px;
+`
+
+const Thanks = styled.p`
+  margin: 0;
+  font-family: ${({ theme }) => theme.fonts.serif};
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0.02em;
+  color: rgba(245, 243, 239, 0.9);
+`

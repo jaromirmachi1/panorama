@@ -38,10 +38,15 @@ export function Footer() {
   return (
     <Wrap>
       <Container>
-        <WordmarkBg aria-hidden="true">
-          <WordmarkLineTop>PANORAMA</WordmarkLineTop>
-          <WordmarkLineBottom>ŽABINY</WordmarkLineBottom>
-        </WordmarkBg>
+        <FooterInner>
+          <WordmarkStack>
+            <WordmarkLogo
+              src="/[LOGO]panoramaBezBgBile.png"
+              alt={t.hero.wordmarkAria[lang]}
+              loading="lazy"
+              decoding="async"
+            />
+          </WordmarkStack>
 
         <FooterTop>
           <BrandBlock>
@@ -122,64 +127,70 @@ export function Footer() {
           </Cols>
         </FooterTop>
 
-        <Bottom>
-          <BottomLeft>
-            <Small>© {year}</Small>
-          </BottomLeft>
+          <Bottom>
+            <BottomLeft>
+              <Small>© {year}</Small>
+            </BottomLeft>
 
-          <BottomCenter>
-            <SocialLink
-              data-cursor="hover"
-              aria-label={t.nav.instagram[lang]}
-              href="https://www.instagram.com/lvlreality.cz/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FaInstagram size={18} />
-            </SocialLink>
-            <SocialLink
-              data-cursor="hover"
-              aria-label="TikTok"
-              href="https://www.tiktok.com/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FaTiktok size={18} />
-            </SocialLink>
-          </BottomCenter>
+            <BottomCenter>
+              <SocialLink
+                data-cursor="hover"
+                aria-label={t.nav.instagram[lang]}
+                href="https://www.instagram.com/lvlreality.cz/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FaInstagram size={18} />
+              </SocialLink>
+              <SocialLink
+                data-cursor="hover"
+                aria-label="TikTok"
+                href="https://www.tiktok.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <FaTiktok size={18} />
+              </SocialLink>
+            </BottomCenter>
 
-          <BottomRight>
-            <Small>
-              {madeByParts.length > 1 ? (
-                <>
-                  {madeByParts[0]}
-                  <PoweredEm>uitherapy</PoweredEm>
-                  {madeByParts.slice(1).join('')}
-                </>
-              ) : (
-                t.footer.madeBy[lang]
-              )}
-            </Small>
-          </BottomRight>
-        </Bottom>
+            <BottomRight>
+              <Small>
+                {madeByParts.length > 1 ? (
+                  <>
+                    {madeByParts[0]}
+                    <PoweredEm>uitherapy</PoweredEm>
+                    {madeByParts.slice(1).join('')}
+                  </>
+                ) : (
+                  t.footer.madeBy[lang]
+                )}
+              </Small>
+            </BottomRight>
+          </Bottom>
+        </FooterInner>
       </Container>
     </Wrap>
   )
 }
 
 const Wrap = styled.footer`
-  padding: 320px 0 220px;
-  background: #b9a596;
-  border-top: none;
   position: relative;
+  background: #000000;
+  color: #ffffff;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: clamp(40px, 6vw, 72px) 0 clamp(28px, 4vw, 48px);
+  min-height: clamp(320px, 42vh, 560px);
 
   &::before {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(120% 120% at 10% 0%, rgba(255, 255, 255, 0.08), transparent 55%);
-    opacity: 1;
+    background: radial-gradient(
+      120% 80% at 50% 0%,
+      rgba(255, 255, 255, 0.06),
+      transparent 55%
+    );
   }
 
   &::after {
@@ -187,36 +198,30 @@ const Wrap = styled.footer`
   }
 `
 
-const WordmarkBg = styled.div`
-  position: absolute;
-  top: 41%;
-  left: clamp(18px, 4vw, 38px);
-  right: clamp(18px, 4vw, 38px);
-  text-align: center;
-  font-family: ${({ theme }) => theme.fonts.heading};
-  text-transform: uppercase;
-  letter-spacing: 0.28em;
-  font-size: clamp(44px, 6.2vw, 88px);
-  opacity: 0.95;
-  pointer-events: none;
-  z-index: 0;
-  transform: translateY(-50%);
+const FooterInner = styled.div`
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(28px, 4vw, 48px);
+  min-height: min(42vh, 520px);
+`
 
+const WordmarkStack = styled.div`
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  line-height: 0.86;
+  justify-content: center;
+  padding: clamp(12px, 2.5vw, 32px) 0;
 `
 
-const WordmarkLineTop = styled.span`
+const WordmarkLogo = styled.img`
   display: block;
-`
-
-const WordmarkLineBottom = styled.span`
-  display: block;
-  margin-top: 2px;
-  letter-spacing: 0.31em;
-  font-size: clamp(32px, 4.8vw, 70px);
+  width: min(100%, clamp(160px, 40vw, 360px));
+  height: auto;
+  object-fit: contain;
 `
 
 const FooterTop = styled.div`
@@ -291,7 +296,7 @@ const ColLink = styled.a`
     right: 0;
     bottom: 0;
     height: 1px;
-    background: rgba(232, 215, 176, 0.72);
+    background: rgba(255, 255, 255, 0.35);
     transform: scaleX(0.08);
     transform-origin: left;
     transition: transform 520ms ease, opacity 520ms ease;
@@ -317,7 +322,7 @@ const Powered = styled.div`
   letter-spacing: 0.22em;
   text-transform: uppercase;
   line-height: 1.6;
-  color: rgba(232, 215, 176, 0.78);
+  color: rgba(255, 255, 255, 0.55);
   max-width: 44ch;
 `
 
@@ -330,7 +335,7 @@ const Bottom = styled.div`
   position: relative;
   z-index: 1;
   margin-top: 0;
-  padding-top: 120px;
+  padding-top: clamp(18px, 2.5vw, 28px);
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   display: grid;
   grid-template-columns: 1fr auto 1fr;

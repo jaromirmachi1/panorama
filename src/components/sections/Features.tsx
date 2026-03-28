@@ -99,8 +99,8 @@ export function Features() {
               src={mapSrc}
             />
             <MapMeta>
-              <MapLabel>{t.features.mapLabel[lang]}</MapLabel>
-              <MapAddress>{t.features.mapAddress[lang]}</MapAddress>
+              <MapAddressPrimary>{t.features.mapAddress[lang]}</MapAddressPrimary>
+              <MapLabelSecondary>{t.features.mapLabel[lang]}</MapLabelSecondary>
             </MapMeta>
           </MapWrap>
         </Main>
@@ -255,23 +255,34 @@ const MapFrame = styled.iframe`
 `
 
 const MapMeta = styled.div`
-  padding: 16px 18px 18px;
-  display: grid;
-  gap: 8px;
-  border-top: 1px solid rgba(10, 10, 10, 0.12);
+  padding: clamp(18px, 2.2vw, 22px) clamp(20px, 2.4vw, 24px)
+    clamp(20px, 2.4vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid rgba(10, 10, 10, 0.1);
+  background: rgba(255, 255, 255, 1);
 `
 
-const MapLabel = styled.div`
-  font-size: 12px;
-  letter-spacing: 0.22em;
+/* Serif primary (like “Vyberte podlaží”) — address on light section */
+const MapAddressPrimary = styled.div`
+  margin: 0;
+  font-family: ${({ theme }) => theme.fonts.serif};
+  font-weight: 400;
+  font-size: clamp(17px, 1.45vw, 22px);
+  line-height: 1.38;
+  letter-spacing: 0.02em;
+  color: rgba(22, 22, 20, 0.94);
+`
+
+/* Sans secondary, all caps + wide tracking (like “HOVEREM…”) */
+const MapLabelSecondary = styled.div`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: rgba(165, 135, 70, 0.92);
-`
-
-const MapAddress = styled.div`
-  font-size: 13px;
-  opacity: 0.86;
-  line-height: 1.4;
-  color: rgba(10, 10, 10, 0.86);
+  line-height: 1.5;
+  color: rgba(110, 108, 102, 0.92);
 `
 

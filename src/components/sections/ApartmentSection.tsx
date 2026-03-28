@@ -14,6 +14,7 @@ import {
 } from "../../content/apartmentImages";
 import { useLang } from "../../i18n/LanguageContext";
 import { t } from "../../i18n/dictionary";
+import { FlatInquiryModal } from "../FlatInquiryModal";
 import { IoArrowForwardSharp } from "react-icons/io5";
 import { MdArrowOutward } from "react-icons/md";
 
@@ -55,6 +56,7 @@ export function ApartmentSection() {
   const [selectedFlat, setSelectedFlat] = useState<FlatWithBuilding | null>(
     null,
   );
+  const [inquiryOpen, setInquiryOpen] = useState(false);
   const { lang } = useLang();
   const [activeBuilding, setActiveBuilding] = useState<Building["id"]>("A");
 
@@ -136,11 +138,12 @@ export function ApartmentSection() {
         gsap.to(viewerRef.current, {
           y: -18,
           ease: "none",
+          force3D: true,
           scrollTrigger: {
             trigger: root,
             start: "top bottom",
             end: "bottom top",
-            scrub: true,
+            scrub: 1,
           },
         });
       }
@@ -241,6 +244,7 @@ export function ApartmentSection() {
               onClick={() => {
                 setHovered(null)
                 setSelectedFlat(null)
+                setInquiryOpen(false)
                 setActiveBuilding("A")
               }}
             >
@@ -254,6 +258,7 @@ export function ApartmentSection() {
               onClick={() => {
                 setHovered(null)
                 setSelectedFlat(null)
+                setInquiryOpen(false)
                 setActiveBuilding("B")
               }}
             >
@@ -298,12 +303,13 @@ export function ApartmentSection() {
                               })
                             }
                             onPointerLeave={() => setHovered(null)}
-                            onClick={() =>
+                            onClick={() => {
                               setSelectedFlat({
                                 ...apt,
                                 buildingId: b.id,
                               })
-                            }
+                              setInquiryOpen(true)
+                            }}
                             aria-label={`${apt.id}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`}
                           >
                             <LeftCol>
@@ -336,6 +342,7 @@ export function ApartmentSection() {
               data-cursor="hover"
               onClick={() => {
                 setHovered(null)
+                setInquiryOpen(false)
                 setPage((p) => Math.max(1, p - 1))
               }}
               disabled={safePage <= 1}
@@ -350,6 +357,7 @@ export function ApartmentSection() {
               data-cursor="hover"
               onClick={() => {
                 setHovered(null)
+                setInquiryOpen(false)
                 setPage((p) => Math.min(totalPages, p + 1))
               }}
               disabled={safePage >= totalPages}
@@ -400,6 +408,22 @@ export function ApartmentSection() {
           </HoverInfo>
         </Right>
       </Inner>
+
+      {inquiryOpen && selectedFlat ? (
+        <FlatInquiryModal
+          flat={selectedFlat}
+          buildingLabel={
+            selectedFlat.buildingId === "A"
+              ? t.apartments.buildingA[lang]
+              : t.apartments.buildingB[lang]
+          }
+          lang={lang}
+          onClose={() => {
+            setInquiryOpen(false)
+            setSelectedFlat(null)
+          }}
+        />
+      ) : null}
     </Wrap>
   );
 }

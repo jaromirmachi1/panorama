@@ -54,6 +54,30 @@ export const t = {
     pageLabel: { cz: 'Stránkování', en: 'Pagination' },
     buildingA: { cz: 'Budova A', en: 'Building A' },
     buildingB: { cz: 'Budova B', en: 'Building B' },
+    inquiry: {
+      title: { cz: 'Poptávka bytu', en: 'Apartment inquiry' },
+      subtitle: {
+        cz: 'Vyplňte údaje a ozveme se s podrobnostmi k vybrané jednotce.',
+        en: 'Leave your details and we will follow up about this unit.',
+      },
+      flatLabel: { cz: 'Vybraný byt', en: 'Selected apartment' },
+      firstName: { cz: 'Jméno', en: 'First name' },
+      lastName: { cz: 'Příjmení', en: 'Last name' },
+      email: { cz: 'E-mail', en: 'Email' },
+      phone: { cz: 'Telefon', en: 'Phone' },
+      submit: { cz: 'Odeslat poptávku', en: 'Send inquiry' },
+      close: { cz: 'Zavřít', en: 'Close' },
+      closeAria: { cz: 'Zavřít formulář', en: 'Close form' },
+      backdropAria: { cz: 'Zavřít', en: 'Close' },
+      stubNote: {
+        cz: 'Odeslání e-mailu bude napojeno přes EmailJS.',
+        en: 'Email delivery will be wired via EmailJS.',
+      },
+      thanks: {
+        cz: 'Děkujeme. Brzy se vám ozveme.',
+        en: 'Thank you. We will be in touch shortly.',
+      },
+    },
   },
 
   gallery: {
@@ -87,6 +111,20 @@ export const t = {
         title: { cz: 'Investice', en: 'Investment' },
         body: { cz: 'Nadčasová hodnota v atraktivní čtvrti.', en: 'Timeless value in an attractive district.' },
       },
+    },
+  },
+
+  aboutArch: {
+    eyebrow: { cz: 'Architekt', en: 'Architect' },
+    title: { cz: 'František Šmédek', en: 'František Šmédek' },
+    studio: { cz: 'SMEDEK', en: 'SMEDEK' },
+    studioRole: {
+      cz: 'Architektonická kancelář',
+      en: 'Architectural practice',
+    },
+    intro: {
+      cz: 'Náš bytový dům navrhl renomovaný brněnský architekt František Šmédek a jeho architektonická kancelář SMEDEK, která je známá svým inovativním a futuristickým přístupem k tvorbě.',
+      en: 'Our residential building was designed by renowned Brno architect František Šmédek and his practice SMEDEK — known for an innovative, forward-looking approach to architecture.',
     },
   },
 

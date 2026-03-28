@@ -32,7 +32,7 @@ export function About() {
         },
       )
 
-      const img = q('img')[0] as HTMLImageElement | undefined
+      const img = q('[data-about-parallax] img')[0] as HTMLImageElement | undefined
       if (img) {
         gsap.fromTo(
           img,
@@ -40,11 +40,12 @@ export function About() {
           {
             scale: 1.02,
             ease: 'none',
+            force3D: true,
             scrollTrigger: {
               trigger: root,
               start: 'top bottom',
               end: 'bottom top',
-              scrub: true,
+              scrub: 1,
             },
           },
         )
@@ -57,7 +58,7 @@ export function About() {
   }, [])
 
   return (
-    <Section ref={rootRef} tone="light" id="agency">
+    <Section ref={rootRef} tone="light" id="about">
       <Container>
         <Grid>
           <Left>
@@ -78,7 +79,7 @@ export function About() {
               </MetaItem>
             </Meta>
           </Left>
-          <Right data-reveal>
+          <Right data-reveal data-about-parallax>
             <ImageBlock src={images.about.src} alt={images.about.alt} sizes="(max-width: 900px) 100vw, 46vw" />
           </Right>
         </Grid>
@@ -138,4 +139,3 @@ const MetaValue = styled.div`
   letter-spacing: 0.02em;
   opacity: 0.92;
 `
-
