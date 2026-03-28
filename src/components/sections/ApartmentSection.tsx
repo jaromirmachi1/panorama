@@ -143,7 +143,7 @@ export function ApartmentSection() {
             trigger: root,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1,
+            scrub: 0.45,
           },
         });
       }

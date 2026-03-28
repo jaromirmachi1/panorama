@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import Lenis from 'lenis'
 import { gsap, ScrollTrigger } from '../lib/gsap'
+import { isDesktopSafariNativeScroll, isWebKitWithoutBlink } from '../lib/webkit'
 
 /** Lenis off at this width and below (mobile + tablet); aligns with App.css / index.css. */
 const LENIS_DISABLED_MAX_WIDTH_PX = 1024
@@ -19,7 +20,13 @@ export function useLenis({ enabled = true }: UseLenisOptions = {}) {
 
   useEffect(() => {
     if (!enabled) return
-    if (prefersReducedMotion) return
+
+    const webKit = isWebKitWithoutBlink(navigator.userAgent)
+    document.documentElement.toggleAttribute('data-webkit', webKit)
+
+    if (prefersReducedMotion) {
+      return () => document.documentElement.removeAttribute('data-webkit')
+    }
 
     const narrowMq = window.matchMedia(
       `(max-width: ${LENIS_DISABLED_MAX_WIDTH_PX}px)`,
@@ -42,11 +49,10 @@ export function useLenis({ enabled = true }: UseLenisOptions = {}) {
 
     const startLenis = () => {
       lenis = new Lenis({
-        // Lower lerp = smoother, more “weighted” scroll (slower catch-up to target).
-        lerp: 0.055,
+        // ~0.075–0.09: smooth frame-to-frame blend (too-low lerp feels sticky, not silky).
+        lerp: 0.082,
         smoothWheel: true,
-        // Slightly softer wheel steps so motion feels less jumpy.
-        wheelMultiplier: 0.88,
+        wheelMultiplier: 0.72,
         touchMultiplier: 0.95,
         syncTouch: false,
         autoResize: true,
@@ -73,8 +79,11 @@ export function useLenis({ enabled = true }: UseLenisOptions = {}) {
       ScrollTrigger.refresh()
     }
 
+    const shouldUseLenis = () =>
+      !narrowMq.matches && !isDesktopSafariNativeScroll()
+
     const syncLenisToViewport = () => {
-      const useLenisHere = !narrowMq.matches
+      const useLenisHere = shouldUseLenis()
       if (useLenisHere && !lenis) {
         startLenis()
       } else if (!useLenisHere && lenis) {
@@ -93,9 +102,9 @@ export function useLenis({ enabled = true }: UseLenisOptions = {}) {
       window.removeEventListener('resize', onWindowResize)
       narrowMq.removeEventListener('change', syncLenisToViewport)
       stopLenis()
+      document.documentElement.removeAttribute('data-webkit')
     }
   }, [enabled, prefersReducedMotion])
 
   return lenisRef
 }
-

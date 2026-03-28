@@ -13,7 +13,7 @@ export function Layout({ children, ariaHidden }: LayoutProps) {
 
   return (
     <Shell aria-hidden={ariaHidden}>
-      <Grain aria-hidden="true" />
+      <Grain data-site-grain aria-hidden="true" />
       <LuxuryCursor />
       {children}
     </Shell>
@@ -44,6 +44,12 @@ const Grain = styled.div`
   }
 
   @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
+  /* Fixed + mix-blend + moving transform recomposites with the whole page while scrolling.
+     Desktop wheel/Lenis is sensitive; keep static grain, still animate on coarse pointers. */
+  @media (min-width: 1025px) and (pointer: fine) {
     animation: none;
   }
 `
