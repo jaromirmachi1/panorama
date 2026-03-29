@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Container } from './Section'
 import { useLang } from '../i18n/LanguageContext'
 import { t } from '../i18n/dictionary'
-import { FaInstagram, FaTiktok } from 'react-icons/fa'
+import { FaGlobe, FaInstagram } from 'react-icons/fa'
 import { useMemo, type MouseEvent } from 'react'
 
 export function Footer() {
@@ -10,9 +10,6 @@ export function Footer() {
   const year = new Date().getFullYear()
   const poweredText = String(t.footer.powered[lang])
   const poweredParts = poweredText.split('uitherapy')
-  const madeByText = String(t.footer.madeBy[lang])
-  const madeByParts = madeByText.split('uitherapy')
-
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false
     return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
@@ -87,10 +84,10 @@ export function Footer() {
               </ColLink>
               <ColLink
                 data-cursor="hover"
-                href="#features"
+                href="#realisations"
                 onClick={scrollToSection}
               >
-                {t.nav.benefits[lang]}
+                {t.nav.gallery[lang]}
               </ColLink>
             </Col>
 
@@ -144,26 +141,19 @@ export function Footer() {
               </SocialLink>
               <SocialLink
                 data-cursor="hover"
-                aria-label="TikTok"
-                href="https://www.tiktok.com/"
+                aria-label={t.footer.lvlWebAria[lang]}
+                href="https://lvlreality.cz/"
                 target="_blank"
                 rel="noreferrer"
               >
-                <FaTiktok size={18} />
+                <FaGlobe size={18} />
               </SocialLink>
             </BottomCenter>
 
             <BottomRight>
               <Small>
-                {madeByParts.length > 1 ? (
-                  <>
-                    {madeByParts[0]}
-                    <PoweredEm>uitherapy</PoweredEm>
-                    {madeByParts.slice(1).join('')}
-                  </>
-                ) : (
-                  t.footer.madeBy[lang]
-                )}
+                {t.footer.creditLineLead[lang]}{' '}
+                <PoweredEm>uitherapy</PoweredEm>
               </Small>
             </BottomRight>
           </Bottom>
@@ -175,27 +165,9 @@ export function Footer() {
 
 const Wrap = styled.footer`
   position: relative;
-  background: #000000;
   color: #ffffff;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: clamp(40px, 6vw, 72px) 0 clamp(28px, 4vw, 48px);
+  padding: clamp(20px, 3.5vw, 40px) 0 clamp(28px, 4vw, 48px);
   min-height: clamp(320px, 42vh, 560px);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(
-      120% 80% at 50% 0%,
-      rgba(255, 255, 255, 0.06),
-      transparent 55%
-    );
-  }
-
-  &::after {
-    content: none;
-  }
 `
 
 const FooterInner = styled.div`
@@ -368,6 +340,17 @@ const BottomRight = styled.div`
   align-items: center;
   gap: 10px;
   justify-self: end;
+
+  @media (max-width: 720px) {
+    justify-self: center;
+    justify-content: center;
+    width: 100%;
+    grid-column: 1 / -1;
+
+    & > * {
+      text-align: center;
+    }
+  }
 `
 
 const Small = styled.div`

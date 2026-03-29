@@ -426,6 +426,7 @@ const Inner = styled.div`
   display: grid;
   grid-template-columns: 0.4fr 0.6fr;
   gap: clamp(22px, 5vw, 72px);
+  min-width: 0;
 
   @media (max-width: 980px) {
     grid-template-columns: 1fr;
@@ -434,6 +435,8 @@ const Inner = styled.div`
 
 const Left = styled.div`
   padding-top: 4px;
+  min-width: 0;
+  width: 100%;
 `;
 
 const Head = styled.div`
@@ -505,6 +508,8 @@ const BuildingTabButton = styled.button<{ $active: boolean }>`
 const ApartmentList = styled.div`
   display: grid;
   gap: 18px;
+  min-width: 0;
+  width: 100%;
 `;
 
 const ApartmentGroup = styled.div<{ $building: string }>`
@@ -522,6 +527,7 @@ const GroupTitle = styled.div`
 
 const GroupRows = styled.div`
   border-top: 1px solid rgba(221, 221, 221, 0.55);
+  min-width: 0;
 `;
 
 const Pagination = styled.div`
@@ -531,6 +537,9 @@ const Pagination = styled.div`
   gap: 12px;
   padding-top: 12px;
   margin-top: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 `;
 
 const PageButton = styled.button`
@@ -569,6 +578,9 @@ const ApartmentRow = styled.button<{ $isHovered: boolean }>`
   position: relative;
   overflow: hidden;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding: 14px 0 12px;
   display: grid;
   grid-template-columns: 120px 1fr 260px;
@@ -579,6 +591,13 @@ const ApartmentRow = styled.button<{ $isHovered: boolean }>`
 
   cursor: pointer;
   color: rgba(245, 243, 239, 0.92);
+
+  @media (max-width: 980px) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 8px;
+    justify-items: start;
+    padding-right: 2px;
+  }
 
   /* Background fill animation */
   &::before {
@@ -634,6 +653,12 @@ const LeftCol = styled.div`
   gap: 8px;
   justify-items: center;
   text-align: center;
+  min-width: 0;
+
+  @media (max-width: 980px) {
+    justify-items: start;
+    text-align: left;
+  }
 `;
 
 const AptId = styled.div`
@@ -665,6 +690,7 @@ const Size = styled.div`
   letter-spacing: 0.01em;
   opacity: 0.78;
   text-align: center;
+  min-width: 0;
 `;
 
 const Price = styled.div`
@@ -672,6 +698,15 @@ const Price = styled.div`
   font-size: 13px;
   letter-spacing: 0.01em;
   opacity: 0.82;
+  min-width: 0;
+
+  @media (max-width: 980px) {
+    text-align: right;
+    font-size: 12px;
+    letter-spacing: 0;
+    width: 100%;
+    justify-self: end;
+  }
 `;
 
 const PriceRow = styled.div`
@@ -679,6 +714,13 @@ const PriceRow = styled.div`
   align-items: center;
   justify-content: center;
   gap: 18px;
+  min-width: 0;
+  max-width: 100%;
+
+  @media (max-width: 980px) {
+    justify-content: flex-end;
+    gap: 8px;
+  }
 `;
 
 const ArrowSlot = styled.span`
@@ -731,7 +773,10 @@ const Right = styled.div`
   justify-content: center;
 
   @media (max-width: 980px) {
-    min-height: 420px;
+    min-height: 0;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 100%;
   }
 `;
 
@@ -741,6 +786,11 @@ const ImageViewer = styled.div`
   height: clamp(320px, 46vh, 560px);
   margin-top: 0px;
   overflow: hidden;
+
+  @media (max-width: 980px) {
+    align-self: center;
+    width: 100%;
+  }
 `;
 
 const Layer = styled.div<{ $zIndex?: number }>`
@@ -769,6 +819,18 @@ const HoverInfo = styled.div`
   pointer-events: none;
   color: rgba(245, 243, 239, 0.92);
   z-index: 3;
+
+  @media (max-width: 980px) {
+    position: static;
+    left: auto;
+    transform: none;
+    bottom: auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 18px 0 0;
+    z-index: auto;
+    text-align: left;
+  }
 `;
 
 const InfoBlock = styled.div<{ $mode: "default" | "active" }>`

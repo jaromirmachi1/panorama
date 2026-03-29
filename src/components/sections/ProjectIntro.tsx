@@ -19,7 +19,12 @@ export function ProjectIntro() {
       const q = gsap.utils.selector(root);
 
       gsap.set(q("[data-pi]"), { opacity: 0, y: 16, force3D: true });
-      gsap.set(q("[data-pi-img]"), { opacity: 0, y: 14, scale: 1.01, force3D: true });
+      gsap.set(q("[data-pi-img]"), {
+        opacity: 0,
+        y: 14,
+        scale: 1.01,
+        force3D: true,
+      });
 
       gsap.to(q("[data-pi]"), {
         opacity: 1,
@@ -46,11 +51,7 @@ export function ProjectIntro() {
   }, []);
 
   return (
-    <Wrap
-      ref={rootRef}
-      id="agency"
-      aria-label={t.projectIntro.title[lang]}
-    >
+    <Wrap ref={rootRef} id="agency" aria-label={t.projectIntro.title[lang]}>
       <Ornament aria-hidden="true" />
       <Top>
         <ProjectStack>
@@ -216,8 +217,8 @@ const ArchHead = styled.div`
   gap: clamp(8px, 1.5vw, 14px);
 
   @media (max-width: 900px) {
-    order: 3;
-    margin-top: clamp(6px, 2vw, 14px);
+    order: 1;
+    margin-top: 0;
   }
 `;
 
@@ -273,7 +274,7 @@ const ArchitectIntro = styled.p`
   color: rgba(10, 10, 10, 0.72);
 
   @media (max-width: 900px) {
-    order: 2;
+    order: 3;
     max-width: 52ch;
     text-align: left;
   }
@@ -291,8 +292,8 @@ const ArchitectVisual = styled.div`
   }
 
   @media (max-width: 900px) {
-    order: 1;
-    margin-top: 0;
+    order: 2;
+    margin-top: clamp(10px, 2.5vw, 18px);
     max-width: 200px;
     height: clamp(125px, 32vw, 190px);
   }

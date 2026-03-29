@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { GlobalStyle } from './styles/GlobalStyle'
 import { theme } from './styles/theme'
@@ -11,10 +11,27 @@ import { Gallery } from './components/sections/Gallery'
 import { Features } from './components/sections/Features'
 import { ContactCTA } from './components/sections/ContactCTA'
 import { Footer } from './components/Footer'
+import { SiteClosing } from './components/SiteClosing'
 import { LanguageProvider } from './i18n/LanguageContext'
+
+function isReloadNavigation(): boolean {
+  const nav = performance.getEntriesByType?.(
+    'navigation',
+  )?.[0] as PerformanceNavigationTiming | undefined
+  return nav?.type === 'reload'
+}
 
 export default function App() {
   const [ready, setReady] = useState(false)
+
+  useLayoutEffect(() => {
+    if (!isReloadNavigation()) return
+    const { pathname, search, hash } = window.location
+    if (hash) {
+      window.history.replaceState(null, '', pathname + search)
+    }
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <LanguageProvider>
@@ -27,8 +44,10 @@ export default function App() {
           <ApartmentSection />
           <Gallery />
           <Features />
-          <ContactCTA />
-          <Footer />
+          <SiteClosing>
+            <ContactCTA />
+            <Footer />
+          </SiteClosing>
         </Layout>
       </ThemeProvider>
     </LanguageProvider>

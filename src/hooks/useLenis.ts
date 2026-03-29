@@ -97,6 +97,13 @@ export function useLenis({ enabled = true }: UseLenisOptions = {}) {
       });
       lenisRef.current = lenis;
 
+      const nav = performance.getEntriesByType?.(
+        "navigation",
+      )?.[0] as PerformanceNavigationTiming | undefined;
+      if (nav?.type === "reload") {
+        lenis.scrollTo(0, { immediate: true });
+      }
+
       lenis.on("scroll", onLenisScroll);
 
       const loop = (time: DOMHighResTimeStamp) => {

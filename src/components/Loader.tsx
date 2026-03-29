@@ -1,6 +1,8 @@
 import { useLayoutEffect, useMemo, useRef } from "react";
 import styled from "styled-components";
 import { gsap } from "../lib/gsap";
+import { t } from "../i18n/dictionary";
+import { useLang } from "../i18n/LanguageContext";
 
 type LoaderProps = {
   onComplete: () => void;
@@ -8,6 +10,7 @@ type LoaderProps = {
 
 export function Loader({ onComplete }: LoaderProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const { lang } = useLang();
 
   const letters = useMemo(() => Array.from("Panorama Žabiny"), []);
   const prefersReducedMotion = useMemo(() => {
@@ -74,7 +77,14 @@ export function Loader({ onComplete }: LoaderProps) {
           </span>
         ))}
       </Title>
-      <Sub>LVL Reality</Sub>
+      <Sub>
+        <LvlLogo
+          src="/lvlogo.webp"
+          alt={t.loader.lvlLogoAlt[lang]}
+          loading="eager"
+          decoding="async"
+        />
+      </Sub>
     </Wrap>
   );
 }
@@ -107,10 +117,16 @@ const Sub = styled.div`
   bottom: 48px;
   left: 0;
   right: 0;
-  text-align: center;
-  font-family: ${({ theme }) => theme.fonts.body};
-  font-size: 12px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LvlLogo = styled.img`
+  display: block;
+  height: clamp(28px, 4.5vw, 42px);
+  width: auto;
+  max-width: min(260px, 88vw);
+  object-fit: contain;
+  object-position: center;
 `;

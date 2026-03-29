@@ -323,15 +323,15 @@ export function Hero() {
             </NavLink>
             <NavLink
               data-cursor="hover"
-              href="#features"
-              onClick={(e) => scrollToSection("features", e)}
+              href="#realisations"
+              onClick={(e) => scrollToSection("realisations", e)}
             >
-              +&nbsp;{t.nav.benefits[lang]}
+              +&nbsp;{t.nav.gallery[lang]}
             </NavLink>
             <NavLink
               data-cursor="hover"
-              href="#contact"
-              onClick={(e) => scrollToSection("contact", e)}
+              href="#features"
+              onClick={(e) => scrollToSection("features", e)}
             >
               +&nbsp;{t.nav.contact[lang]}
             </NavLink>
@@ -449,10 +449,10 @@ export function Hero() {
                     <MobileNavLink
                       data-mnav="item"
                       data-cursor="hover"
-                      href="#features"
-                      onClick={(e) => scrollFromMobileNav("features", e)}
+                      href="#realisations"
+                      onClick={(e) => scrollFromMobileNav("realisations", e)}
                     >
-                      +&nbsp;{t.nav.benefits[lang]}
+                      +&nbsp;{t.nav.gallery[lang]}
                     </MobileNavLink>
                   </MobileNavItemTrack>
                 </MobileNavItem>
@@ -461,8 +461,8 @@ export function Hero() {
                     <MobileNavLink
                       data-mnav="item"
                       data-cursor="hover"
-                      href="#contact"
-                      onClick={(e) => scrollFromMobileNav("contact", e)}
+                      href="#features"
+                      onClick={(e) => scrollFromMobileNav("features", e)}
                     >
                       +&nbsp;{t.nav.contact[lang]}
                     </MobileNavLink>

@@ -4,7 +4,7 @@ export const t = {
   nav: {
     project: { cz: "Projekt", en: "Project" },
     apartments: { cz: "Byty", en: "Apartments" },
-    benefits: { cz: "Benefity", en: "Benefits" },
+    gallery: { cz: "Galerie", en: "Gallery" },
     contact: { cz: "Kontakt", en: "Contact" },
     // Credits / external links in the hero navbar
     lvl: { cz: "Realitka", en: "Reality" },
@@ -25,6 +25,10 @@ export const t = {
     wordmarkAria: { cz: "Panorama Žabiny", en: "Panorama Žabiny" },
   },
 
+  loader: {
+    lvlLogoAlt: { cz: "LVL Reality", en: "LVL Reality" },
+  },
+
   projectIntro: {
     title: { cz: "O projektu", en: "About the project" },
     body1: {
@@ -40,8 +44,8 @@ export const t = {
       en: `A developers project in Žabiny, designed for calm urban living.`,
     },
     small: {
-      cz: `Brno • 2026 • 48 jednotek • energetický standard A`,
-      en: `Brno • 2026 • 48 units • Energy standard A`,
+      cz: `Brno • 2026 • 48 jednotek`,
+      en: `Brno • 2026 • 48 units`,
     },
   },
 
@@ -105,47 +109,22 @@ export const t = {
   },
 
   features: {
-    eyebrow: { cz: "Benefity", en: "Benefits" },
-    title: { cz: "Minimalistická kvalita", en: "Minimalist quality" },
+    eyebrow: { cz: "Prodej projektu", en: "Project sales" },
+    title: {
+      cz: "Realitní zástupci LVL Reality",
+      en: "LVL Reality representatives",
+    },
     lead: {
-      cz: "Vše podstatné. Bez nadbytečných slov — důraz na atmosféru, prostor a klid.",
-      en: "Everything essential. No excess words — focused on atmosphere, space, and calm.",
+      cz: "Kontaktujte naše makléře ohledně prodeje a prohlídek v Panorama Žabiny.",
+      en: "Contact our agents for sales and viewings at Panorama Žabiny.",
     },
     mapLabel: { cz: "Adresa", en: "Address" },
     mapAddress: {
       cz: "Kroftova 2191/80, 679 04 Brno",
       en: "Kroftova 2191/80, 679 04 Brno",
     },
-    cards: {
-      locality: {
-        title: { cz: "Lokalita", en: "Location" },
-        body: {
-          cz: "Klid v zeleni, město na dosah.",
-          en: "Calm in greenery, the city within reach.",
-        },
-      },
-      architecture: {
-        title: { cz: "Architektura", en: "Architecture" },
-        body: {
-          cz: "Čisté proporce, promyšlené průhledy, světlo.",
-          en: "Clean proportions, thoughtful sightlines, light.",
-        },
-      },
-      quality: {
-        title: { cz: "Kvalita", en: "Quality" },
-        body: {
-          cz: "Prémiové standardy a důraz na detail.",
-          en: "Premium standards and a focus on detail.",
-        },
-      },
-      investment: {
-        title: { cz: "Investice", en: "Investment" },
-        body: {
-          cz: "Nadčasová hodnota v atraktivní čtvrti.",
-          en: "Timeless value in an attractive district.",
-        },
-      },
-    },
+    realtorMobile: { cz: "Mobil", en: "Mobile" },
+    realtorEmail: { cz: "E-mail", en: "Email" },
   },
 
   aboutArch: {
@@ -178,10 +157,8 @@ export const t = {
       cz: "Luxusní prezentace • statický web",
       en: "Luxury presentation • static website",
     },
-    madeBy: {
-      cz: "Made by uitherapy",
-      en: "Made by uitherapy",
-    },
+    /** Bottom bar: one line before emphasized uitherapy */
+    creditLineLead: { cz: "Made & powered by", en: "Made & powered by" },
     powered: {
       cz: "LVL Reality powered by uitherapy",
       en: "LVL Reality powered by uitherapy",
@@ -193,6 +170,8 @@ export const t = {
       socials: { cz: "Sociální sítě", en: "Socials" },
     },
     location: { cz: "Brno • Žabovřesky", en: "Brno • Žabovřesky" },
+    /** Footer social: globe link to LVL Reality */
+    lvlWebAria: { cz: "Web LVL Reality — lvlreality.cz", en: "LVL Reality website — lvlreality.cz" },
     legal: { cz: "LEGALS", en: "LEGALS" },
     privacy: { cz: "PRIVACY POLICY", en: "PRIVACY POLICY" },
   },
