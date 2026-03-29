@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { gsap } from '../../lib/gsap'
+import { gsap, stOnce } from '../../lib/gsap'
 import { images } from '../../content/images'
 import { Section } from '../Section'
 import { Eyebrow, H2 } from '../TextBlock'
@@ -22,20 +22,17 @@ export function Gallery() {
         const caption = item.querySelector<HTMLElement>('[data-gallery-caption]')
         if (!img) return
 
+        /* One-shot rise + settle (no scrub): same section feel, far less scroll-linked work. */
         gsap.fromTo(
           img,
-          { yPercent: -4, scale: 1.06 },
+          { y: 28, scale: 1.045 },
           {
-            yPercent: 4,
-            scale: 1.01,
-            ease: 'none',
+            y: 0,
+            scale: 1,
+            duration: 1.15,
+            ease: 'power2.out',
             force3D: true,
-            scrollTrigger: {
-              trigger: item,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 0.45,
-            },
+            scrollTrigger: stOnce(item, 'top 86%'),
           },
         )
 
@@ -46,11 +43,7 @@ export function Gallery() {
             opacity: 1,
             duration: 1.0,
             ease: 'power3.out',
-            scrollTrigger: {
-              trigger: item,
-              start: 'top 80%',
-              once: true,
-            },
+            scrollTrigger: stOnce(item, 'top 80%'),
           },
         )
 
@@ -63,11 +56,8 @@ export function Gallery() {
               y: 0,
               duration: 0.85,
               ease: 'power3.out',
-              scrollTrigger: {
-                trigger: item,
-                start: 'top 82%',
-                once: true,
-              },
+              force3D: true,
+              scrollTrigger: stOnce(item, 'top 82%'),
             },
           )
         }
@@ -203,8 +193,7 @@ const Img = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  will-change: transform;
-  filter: grayscale(0.22) saturate(0.9) contrast(1.06) brightness(0.98);
+  transform: translate3d(0, 0, 0);
 `
 
 const Shade = styled.div`

@@ -28,8 +28,7 @@ const Img = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.02);
-  will-change: transform;
+  transform: translate3d(0, 0, 0) scale(1.02);
 `
 
 const Sheen = styled.div`

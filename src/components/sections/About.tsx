@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { gsap, ScrollTrigger } from '../../lib/gsap'
+import { gsap, stOnce } from '../../lib/gsap'
 import { images } from '../../content/images'
 import { Container, Section } from '../Section'
 import { Eyebrow, H2, P } from '../TextBlock'
@@ -24,11 +24,8 @@ export function About() {
           duration: 1.05,
           ease: 'power3.out',
           stagger: 0.12,
-          scrollTrigger: {
-            trigger: root,
-            start: 'top 75%',
-            once: true,
-          },
+          force3D: true,
+          scrollTrigger: stOnce(root, 'top 75%'),
         },
       )
 
@@ -36,22 +33,17 @@ export function About() {
       if (img) {
         gsap.fromTo(
           img,
-          { scale: 1.08 },
+          { scale: 1.06, opacity: 0.94 },
           {
-            scale: 1.02,
-            ease: 'none',
+            scale: 1,
+            opacity: 1,
+            duration: 1.2,
+            ease: 'power2.out',
             force3D: true,
-            scrollTrigger: {
-              trigger: root,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 0.45,
-            },
+            scrollTrigger: stOnce(root, 'top 72%'),
           },
         )
       }
-
-      ScrollTrigger.refresh()
     }, rootRef)
 
     return () => ctx.revert()

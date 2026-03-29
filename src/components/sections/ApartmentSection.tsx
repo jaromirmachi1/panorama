@@ -108,6 +108,7 @@ export function ApartmentSection() {
           duration: 1,
           ease: "power3.out",
           stagger: 0.05,
+          force3D: true,
           scrollTrigger: {
             trigger: root,
             start: "top 78%",
@@ -125,6 +126,7 @@ export function ApartmentSection() {
           duration: 1,
           ease: "power3.out",
           delay: 0.12,
+          force3D: true,
           scrollTrigger: {
             trigger: root,
             start: "top 75%",
@@ -133,31 +135,13 @@ export function ApartmentSection() {
         },
       );
 
-      // Subtle parallax
-      if (viewerRef.current) {
-        gsap.to(viewerRef.current, {
-          y: -18,
-          ease: "none",
-          force3D: true,
-          scrollTrigger: {
-            trigger: root,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 0.45,
-          },
-        });
-      }
-
-      // Initial viewer layers
       gsap.set(baseImgRef.current, {
         opacity: 1,
         scale: 1,
-        filter: "brightness(1) contrast(1)",
       });
       gsap.set(floorPlanImgRef.current, {
         opacity: 0,
         scale: 1,
-        filter: "brightness(1) contrast(1)",
       });
     });
 
@@ -175,17 +159,17 @@ export function ApartmentSection() {
       gsap.to(baseImgRef.current, {
         opacity: 1,
         scale: 1,
-        filter: "brightness(1) contrast(1)",
         duration: 0.6,
         ease: "power3.out",
+        force3D: true,
         overwrite: "auto",
       });
       gsap.to(floorPlanImgRef.current, {
         opacity: 0,
         scale: 1,
-        filter: "brightness(1) contrast(1)",
         duration: 0.6,
         ease: "power3.out",
+        force3D: true,
         overwrite: "auto",
       });
       return;
@@ -204,19 +188,19 @@ export function ApartmentSection() {
 
     gsap.to(baseImgRef.current, {
       opacity: 0,
-      scale: 1.01,
-      filter: "brightness(0.98) contrast(1)",
+      scale: 1.02,
       duration: 0.5,
       ease: "power3.out",
+      force3D: true,
       overwrite: "auto",
     });
 
     gsap.to(floorPlanImgRef.current, {
       opacity: 1,
       scale: 1.05,
-      filter: "brightness(1.06) contrast(1.03)",
       duration: 0.6,
       ease: "power3.out",
+      force3D: true,
       overwrite: "auto",
     });
   }, [hovered, lang]);
@@ -771,9 +755,7 @@ const LayerImg = styled.img`
   height: 100%;
   object-fit: cover;
   display: block;
-  transform: scale(1.02);
-  will-change: transform, opacity, filter;
-  filter: brightness(1) contrast(1);
+  transform: translate3d(0, 0, 0) scale(1.02);
 `;
 
 const HoverInfo = styled.div`

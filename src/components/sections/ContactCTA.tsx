@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { gsap } from '../../lib/gsap'
+import { gsap, stOnce } from '../../lib/gsap'
 import { Container, Section } from '../Section'
 import { useLang } from '../../i18n/LanguageContext'
 import { t } from '../../i18n/dictionary'
@@ -24,11 +24,8 @@ export function ContactCTA() {
           duration: 1.0,
           ease: 'expo.out',
           stagger: 0.12,
-          scrollTrigger: {
-            trigger: root,
-            start: 'top 78%',
-            once: true,
-          },
+          force3D: true,
+          scrollTrigger: stOnce(root, 'top 78%'),
         },
       )
     }, rootRef)

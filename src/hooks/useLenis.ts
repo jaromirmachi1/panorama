@@ -15,9 +15,12 @@ type UseLenisOptions = {
  * Desktop-only Lenis (&gt; {@link LENIS_MOBILE_MAX_WIDTH_PX}px). WebKit: lower `lerp` via
  * {@link getDesktopLenisOptions}; `html[data-webkit]` + GlobalStyle lighten heavy CSS.
  *
- * Performance: native `requestAnimationFrame` drives `lenis.raf` (no GSAP ticker skew).
- * `ScrollTrigger.update` is coalesced to at most once per frame. Breakpoint transitions
- * use a single deferred `refresh()` to avoid redundant layout passes.
+ * Lenis owns scroll interpolation; ScrollTrigger only observes via coalesced `update()` on
+ * Lenis `scroll`. Prefer one-shot triggers over `scrub` in sections so Safari does less work
+ * per scroll frame.
+ *
+ * Native `requestAnimationFrame` drives `lenis.raf`. Breakpoint changes use one deferred
+ * `ScrollTrigger.refresh()`.
  */
 export function useLenis({ enabled = true }: UseLenisOptions = {}) {
   const lenisRef = useRef<Lenis | null>(null);

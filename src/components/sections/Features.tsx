@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, type SVGProps } from 'react'
 import styled from 'styled-components'
-import { gsap } from '../../lib/gsap'
+import { gsap, stOnce } from '../../lib/gsap'
 import { Container, Section } from '../Section'
 import { Eyebrow, H2, P } from '../TextBlock'
 
@@ -34,11 +34,8 @@ export function Features() {
           duration: 1.0,
           ease: 'power3.out',
           stagger: 0.12,
-          scrollTrigger: {
-            trigger: root,
-            start: 'top 75%',
-            once: true,
-          },
+          force3D: true,
+          scrollTrigger: stOnce(root, 'top 75%'),
         },
       )
     }, rootRef)

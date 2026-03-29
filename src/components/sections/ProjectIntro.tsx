@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import styled from "styled-components";
-import { gsap } from "../../lib/gsap";
+import { gsap, stOnce } from "../../lib/gsap";
 import { images } from "../../content/images";
 import { useLang } from "../../i18n/LanguageContext";
 import { t } from "../../i18n/dictionary";
@@ -18,8 +18,8 @@ export function ProjectIntro() {
       if (!root) return;
       const q = gsap.utils.selector(root);
 
-      gsap.set(q("[data-pi]"), { opacity: 0, y: 16 });
-      gsap.set(q("[data-pi-img]"), { opacity: 0, y: 14, scale: 1.01 });
+      gsap.set(q("[data-pi]"), { opacity: 0, y: 16, force3D: true });
+      gsap.set(q("[data-pi-img]"), { opacity: 0, y: 14, scale: 1.01, force3D: true });
 
       gsap.to(q("[data-pi]"), {
         opacity: 1,
@@ -27,11 +27,8 @@ export function ProjectIntro() {
         duration: 1.05,
         ease: "power3.out",
         stagger: 0.08,
-        scrollTrigger: {
-          trigger: root,
-          start: "top 78%",
-          once: true,
-        },
+        force3D: true,
+        scrollTrigger: stOnce(root, "top 78%"),
       });
 
       gsap.to(q("[data-pi-img]"), {
@@ -40,11 +37,8 @@ export function ProjectIntro() {
         scale: 1,
         duration: 1.15,
         ease: "expo.out",
-        scrollTrigger: {
-          trigger: root,
-          start: "top 75%",
-          once: true,
-        },
+        force3D: true,
+        scrollTrigger: stOnce(root, "top 75%"),
       });
     }, rootRef);
 
@@ -317,8 +311,7 @@ const Image = styled.img`
   display: block;
   width: 100%;
   height: auto;
-  transform: scale(1.01);
-  will-change: transform;
+  transform: translate3d(0, 0, 0) scale(1.01);
 `;
 
 const Bottom = styled.div`

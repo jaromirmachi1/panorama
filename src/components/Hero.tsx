@@ -272,7 +272,7 @@ export function Hero() {
       gsap.fromTo(
         q('[data-hero="bg"]'),
         { scale: 1.08 },
-        { scale: 1.02, duration: 2.2, ease: "power3.out" },
+        { scale: 1.02, duration: 2.2, ease: "power3.out", force3D: true },
       );
     }, rootRef);
 
