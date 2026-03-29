@@ -44,8 +44,8 @@ export const t = {
       en: `A developers project in Žabiny, designed for calm urban living.`,
     },
     small: {
-      cz: `Brno • 2026 • 48 jednotek`,
-      en: `Brno • 2026 • 48 units`,
+      cz: `Brno • 2026 • 25 jednotek`,
+      en: `Brno • 2026 • 25 units`,
     },
   },
 
@@ -171,7 +171,10 @@ export const t = {
     },
     location: { cz: "Brno • Žabovřesky", en: "Brno • Žabovřesky" },
     /** Footer social: globe link to LVL Reality */
-    lvlWebAria: { cz: "Web LVL Reality — lvlreality.cz", en: "LVL Reality website — lvlreality.cz" },
+    lvlWebAria: {
+      cz: "Web LVL Reality — lvlreality.cz",
+      en: "LVL Reality website — lvlreality.cz",
+    },
     legal: { cz: "LEGALS", en: "LEGALS" },
     privacy: { cz: "PRIVACY POLICY", en: "PRIVACY POLICY" },
   },
