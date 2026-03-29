@@ -45,6 +45,7 @@ export function FlatInquiryModal({
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [note, setNote] = useState('')
   const [sent, setSent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [sendError, setSendError] = useState<string | null>(null)
@@ -85,6 +86,7 @@ export function FlatInquiryModal({
       last_name: lastName.trim(),
       user_email: email.trim(),
       user_phone: phone.trim(),
+      note: note.trim(),
     }
 
     setSubmitting(true)
@@ -211,6 +213,19 @@ export function FlatInquiryModal({
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
+                />
+              </Field>
+              <Field $wide>
+                <Label htmlFor="inquiry-note">{iq.note[lang]}</Label>
+                <Textarea
+                  id="inquiry-note"
+                  name="note"
+                  rows={4}
+                  maxLength={2000}
+                  autoComplete="off"
+                  placeholder={iq.notePlaceholder[lang]}
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
                 />
               </Field>
             </FieldGrid>
@@ -432,6 +447,43 @@ const Input = styled.input`
   border: 1px solid rgba(245, 243, 239, 0.12);
   border-radius: 2px;
   outline: none;
+  transition:
+    border-color 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+
+  &::placeholder {
+    color: rgba(245, 243, 239, 0.28);
+  }
+
+  &:hover {
+    border-color: rgba(245, 243, 239, 0.2);
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  &:focus-visible {
+    border-color: rgba(232, 215, 176, 0.55);
+    box-shadow: 0 0 0 1px rgba(232, 215, 176, 0.2);
+  }
+`
+
+const Textarea = styled.textarea`
+  appearance: none;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 96px;
+  padding: 12px 14px;
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: rgba(245, 243, 239, 0.95);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(245, 243, 239, 0.12);
+  border-radius: 2px;
+  outline: none;
+  resize: vertical;
   transition:
     border-color 0.35s ease,
     background 0.35s ease,

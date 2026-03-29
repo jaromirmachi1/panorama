@@ -9,6 +9,8 @@ export type InquiryRequestBody = {
   last_name: string;
   user_email: string;
   user_phone: string;
+  /** Optional message from the visitor */
+  note: string;
 };
 
 function inquiryUrl(): string {

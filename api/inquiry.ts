@@ -11,6 +11,7 @@ type InquiryPayload = {
   last_name: string;
   user_email: string;
   user_phone: string;
+  note: string;
 };
 
 type VercelApiResponse = {
@@ -30,6 +31,9 @@ function parsePayload(body: unknown): InquiryPayload | null {
   const last_name = String(body.last_name ?? "").trim();
   const user_email = String(body.user_email ?? "").trim();
   const user_phone = String(body.user_phone ?? "").trim();
+  const note = String(body.note ?? "")
+    .trim()
+    .slice(0, 2000);
   const floor = Number(body.floor);
   const size_m2 = Number(body.size_m2);
   const price_kc = Number(body.price_kc);
@@ -53,6 +57,7 @@ function parsePayload(body: unknown): InquiryPayload | null {
     last_name,
     user_email,
     user_phone,
+    note,
   };
 }
 
@@ -132,6 +137,7 @@ export default async function handler(
     <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>Jméno</strong></td><td>${escapeHtml(`${payload.first_name} ${payload.last_name}`)}</td></tr>
     <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>E-mail</strong></td><td>${escapeHtml(payload.user_email)}</td></tr>
     <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>Telefon</strong></td><td>${escapeHtml(payload.user_phone)}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>Poznámka</strong></td><td style="white-space:pre-wrap;">${payload.note ? escapeHtml(payload.note) : "—"}</td></tr>
   </table>
   `;
 

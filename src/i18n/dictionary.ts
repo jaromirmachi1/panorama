@@ -70,6 +70,11 @@ export const t = {
       lastName: { cz: "Příjmení", en: "Last name" },
       email: { cz: "E-mail", en: "Email" },
       phone: { cz: "Telefon", en: "Phone" },
+      note: { cz: "Poznámka", en: "Note" },
+      notePlaceholder: {
+        cz: "Dotaz nebo doplňující informace (nepovinné)",
+        en: "Question or extra details (optional)",
+      },
       submit: { cz: "Odeslat poptávku", en: "Send inquiry" },
       close: { cz: "Zavřít", en: "Close" },
       closeAria: { cz: "Zavřít formulář", en: "Close form" },
