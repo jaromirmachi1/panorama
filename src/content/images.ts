@@ -1,11 +1,7 @@
 export const images = {
   hero: {
-    src: "/2buildings-2.webp",
+    src: "/panorama.webp",
     alt: "Panorama Žabiny — vizualizace projektu",
-  },
-  about: {
-    src: "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1800&q=80",
-    alt: "Architectural interior detail",
   },
   architect: {
     src: "/Smedek.webp",

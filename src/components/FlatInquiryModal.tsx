@@ -10,6 +10,7 @@ import { createPortal } from 'react-dom'
 import styled from 'styled-components'
 import type { Lang } from '../i18n/LanguageContext'
 import { t } from '../i18n/dictionary'
+import { submitApartmentInquiry } from '../lib/inquiryApi'
 
 export type InquiryFlat = {
   id: string
@@ -45,6 +46,8 @@ export function FlatInquiryModal({
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [sent, setSent] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [sendError, setSendError] = useState<string | null>(null)
 
   const iq = t.apartments.inquiry
 
@@ -67,23 +70,39 @@ export function FlatInquiryModal({
     }
   }, [handleEscape])
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    const payload = {
-      flatId: flat.id,
+    setSendError(null)
+
+    const body = {
+      flat_id: flat.id,
       building: flat.buildingId,
-      buildingLabel,
+      building_label: buildingLabel,
       floor: flat.floor,
-      sizeM2: flat.sizeM2,
-      priceKc: flat.priceKc,
-      firstName,
-      lastName,
-      email,
-      phone,
+      size_m2: flat.sizeM2,
+      price_kc: flat.priceKc,
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      user_email: email.trim(),
+      user_phone: phone.trim(),
     }
-    // TODO: EmailJS — e.g. emailjs.send(serviceId, templateId, payload, publicKey)
-    console.info('[FlatInquiryModal] submit (stub)', payload)
-    setSent(true)
+
+    setSubmitting(true)
+    try {
+      const result = await submitApartmentInquiry(body)
+      if (result.ok) {
+        setSent(true)
+      } else if (result.reason === 'not_configured') {
+        setSendError(iq.sendErrorConfig[lang])
+      } else {
+        setSendError(iq.sendError[lang])
+      }
+    } catch (err) {
+      console.error('[FlatInquiryModal] inquiry API', err)
+      setSendError(iq.sendError[lang])
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const node = (
@@ -132,6 +151,7 @@ export function FlatInquiryModal({
           </ThanksWrap>
         ) : (
           <Form onSubmit={handleSubmit}>
+            {sendError ? <FormError role="alert">{sendError}</FormError> : null}
             <FieldGrid>
               <Field>
                 <Label htmlFor="inquiry-first">{iq.firstName[lang]}</Label>
@@ -185,8 +205,12 @@ export function FlatInquiryModal({
             </FieldGrid>
             <StubNote>{iq.stubNote[lang]}</StubNote>
             <Actions>
-              <SubmitBtn type="submit" data-cursor="hover">
-                {iq.submit[lang]}
+              <SubmitBtn
+                type="submit"
+                data-cursor="hover"
+                disabled={submitting}
+              >
+                {submitting ? iq.sending[lang] : iq.submit[lang]}
               </SubmitBtn>
               <GhostBtn type="button" data-cursor="hover" onClick={onClose}>
                 {iq.close[lang]}
@@ -330,6 +354,18 @@ const Form = styled.form`
   gap: 20px;
 `
 
+const FormError = styled.div`
+  margin: 0;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 1.45;
+  letter-spacing: 0.03em;
+  color: rgba(255, 220, 200, 0.95);
+  background: rgba(180, 60, 50, 0.35);
+  border: 1px solid rgba(255, 160, 140, 0.35);
+  border-radius: 2px;
+`
+
 const FieldGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -427,6 +463,12 @@ const SubmitBtn = styled.button`
 
   &:active {
     transform: translateY(0);
+  }
+
+  &:disabled {
+    cursor: wait;
+    opacity: 0.72;
+    transform: none;
   }
 `
 
