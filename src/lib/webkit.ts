@@ -14,11 +14,3 @@ export function isWebKitWithoutBlink(ua: string): boolean {
   return /AppleWebKit/i.test(ua)
 }
 
-/**
- * Desktop viewport where Lenis runs for Chromium; native scroll is smoother on Safari.
- */
-export function isDesktopSafariNativeScroll(): boolean {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
-  if (!isWebKitWithoutBlink(navigator.userAgent)) return false
-  return window.matchMedia('(min-width: 1025px)').matches
-}

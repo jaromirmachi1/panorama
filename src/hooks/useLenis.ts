@@ -1,110 +1,144 @@
-import { useEffect, useMemo, useRef } from 'react'
-import Lenis from 'lenis'
-import { gsap, ScrollTrigger } from '../lib/gsap'
-import { isDesktopSafariNativeScroll, isWebKitWithoutBlink } from '../lib/webkit'
-
-/** Lenis off at this width and below (mobile + tablet); aligns with App.css / index.css. */
-const LENIS_DISABLED_MAX_WIDTH_PX = 1024
+import { useEffect, useMemo, useRef } from "react";
+import Lenis from "lenis";
+import { ScrollTrigger } from "../lib/gsap";
+import {
+  getDesktopLenisOptions,
+  LENIS_MOBILE_MAX_WIDTH_PX,
+} from "../lib/lenisConfig";
+import { isWebKitWithoutBlink } from "../lib/webkit";
 
 type UseLenisOptions = {
-  enabled?: boolean
-}
+  enabled?: boolean;
+};
 
+/**
+ * Desktop-only Lenis (&gt; {@link LENIS_MOBILE_MAX_WIDTH_PX}px). WebKit: lower `lerp` via
+ * {@link getDesktopLenisOptions}; `html[data-webkit]` + GlobalStyle lighten heavy CSS.
+ *
+ * Performance: native `requestAnimationFrame` drives `lenis.raf` (no GSAP ticker skew).
+ * `ScrollTrigger.update` is coalesced to at most once per frame. Breakpoint transitions
+ * use a single deferred `refresh()` to avoid redundant layout passes.
+ */
 export function useLenis({ enabled = true }: UseLenisOptions = {}) {
-  const lenisRef = useRef<Lenis | null>(null)
+  const lenisRef = useRef<Lenis | null>(null);
 
   const prefersReducedMotion = useMemo(() => {
-    if (typeof window === 'undefined') return false
-    return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-  }, [])
+    if (typeof window === "undefined") return false;
+    return (
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false
+    );
+  }, []);
 
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled) return;
 
-    const webKit = isWebKitWithoutBlink(navigator.userAgent)
-    document.documentElement.toggleAttribute('data-webkit', webKit)
+    const webKit = isWebKitWithoutBlink(navigator.userAgent);
+    document.documentElement.toggleAttribute("data-webkit", webKit);
 
     if (prefersReducedMotion) {
-      return () => document.documentElement.removeAttribute('data-webkit')
+      return () => document.documentElement.removeAttribute("data-webkit");
     }
 
     const narrowMq = window.matchMedia(
-      `(max-width: ${LENIS_DISABLED_MAX_WIDTH_PX}px)`,
-    )
+      `(max-width: ${LENIS_MOBILE_MAX_WIDTH_PX}px)`,
+    );
 
-    let lenis: Lenis | null = null
-    let onTick: ((time: number) => void) | null = null
+    let lenis: Lenis | null = null;
+    let rafId: number | null = null;
+    let scrollTriggerUpdateRaf: number | null = null;
+    let scrollTriggerUpdatePending = false;
+
+    const scheduleScrollTriggerUpdate = () => {
+      if (scrollTriggerUpdatePending) return;
+      scrollTriggerUpdatePending = true;
+      scrollTriggerUpdateRaf = requestAnimationFrame(() => {
+        scrollTriggerUpdatePending = false;
+        scrollTriggerUpdateRaf = null;
+        ScrollTrigger.update();
+      });
+    };
+
+    const cancelScheduledScrollTriggerUpdate = () => {
+      if (scrollTriggerUpdateRaf !== null) {
+        cancelAnimationFrame(scrollTriggerUpdateRaf);
+        scrollTriggerUpdateRaf = null;
+      }
+      scrollTriggerUpdatePending = false;
+    };
+
+    const onLenisScroll = () => {
+      scheduleScrollTriggerUpdate();
+    };
+
+    const stopRafLoop = () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    };
 
     const stopLenis = () => {
-      if (onTick) {
-        gsap.ticker.remove(onTick)
-        onTick = null
-      }
+      stopRafLoop();
+      cancelScheduledScrollTriggerUpdate();
       if (lenis) {
-        lenis.destroy()
-        lenis = null
+        lenis.off("scroll", onLenisScroll);
+        lenis.destroy();
+        lenis = null;
       }
-      lenisRef.current = null
-    }
+      lenisRef.current = null;
+    };
 
     const startLenis = () => {
       lenis = new Lenis({
-        // ~0.075–0.09: smooth frame-to-frame blend (too-low lerp feels sticky, not silky).
-        lerp: 0.082,
-        smoothWheel: true,
-        wheelMultiplier: 0.72,
-        touchMultiplier: 0.95,
-        syncTouch: false,
-        autoResize: true,
-      })
-      lenisRef.current = lenis
+        ...getDesktopLenisOptions(webKit),
+      });
+      lenisRef.current = lenis;
 
-      // One ScrollTrigger pass per frame, after Lenis advances — avoids running
-      // ScrollTrigger.update on every Lenis scroll emit (extra work + micro-hitches).
-      onTick = (time: number) => {
-        lenis!.raf(time * 1000)
-        ScrollTrigger.update()
-      }
-      gsap.ticker.add(onTick)
-    }
+      lenis.on("scroll", onLenisScroll);
 
-    let lastInnerWidth = window.innerWidth
+      const loop = (time: DOMHighResTimeStamp) => {
+        if (!lenis) return;
+        lenis.raf(time);
+        rafId = requestAnimationFrame(loop);
+      };
+      rafId = requestAnimationFrame(loop);
+
+      scheduleScrollTriggerUpdate();
+    };
+
+    let lastInnerWidth = window.innerWidth;
 
     const onWindowResize = () => {
-      const w = window.innerWidth
-      // Height-only changes (iOS Safari chrome, Android toolbar) must not run refresh —
-      // ScrollTrigger.refresh() is expensive and causes visible scroll jank.
-      if (w === lastInnerWidth) return
-      lastInnerWidth = w
-      ScrollTrigger.refresh()
-    }
+      const w = window.innerWidth;
+      if (w === lastInnerWidth) return;
+      lastInnerWidth = w;
+      ScrollTrigger.refresh();
+    };
 
-    const shouldUseLenis = () =>
-      !narrowMq.matches && !isDesktopSafariNativeScroll()
+    const shouldUseLenis = () => !narrowMq.matches;
 
     const syncLenisToViewport = () => {
-      const useLenisHere = shouldUseLenis()
+      const useLenisHere = shouldUseLenis();
       if (useLenisHere && !lenis) {
-        startLenis()
+        startLenis();
       } else if (!useLenisHere && lenis) {
-        stopLenis()
+        stopLenis();
       }
-      lastInnerWidth = window.innerWidth
-      ScrollTrigger.refresh()
-      requestAnimationFrame(() => ScrollTrigger.refresh())
-    }
+      lastInnerWidth = window.innerWidth;
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    };
 
-    syncLenisToViewport()
-    window.addEventListener('resize', onWindowResize)
-    narrowMq.addEventListener('change', syncLenisToViewport)
+    syncLenisToViewport();
+    window.addEventListener("resize", onWindowResize);
+    narrowMq.addEventListener("change", syncLenisToViewport);
 
     return () => {
-      window.removeEventListener('resize', onWindowResize)
-      narrowMq.removeEventListener('change', syncLenisToViewport)
-      stopLenis()
-      document.documentElement.removeAttribute('data-webkit')
-    }
-  }, [enabled, prefersReducedMotion])
+      window.removeEventListener("resize", onWindowResize);
+      narrowMq.removeEventListener("change", syncLenisToViewport);
+      stopLenis();
+      document.documentElement.removeAttribute("data-webkit");
+    };
+  }, [enabled, prefersReducedMotion]);
 
-  return lenisRef
+  return lenisRef;
 }

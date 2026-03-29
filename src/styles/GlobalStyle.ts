@@ -31,13 +31,14 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   /*
-   * WebKit (Safari): fixed layers + mix-blend + CSS filters force full compositor
-   * work each scroll; tone them down when html[data-webkit] is set from useLenis.
+   * WebKit (Safari): fixed + mix-blend + filters are expensive while scrolling with Lenis.
+   * Keep one Lenis profile for all desktops; these rules lighten compositing on Safari.
    */
   html[data-webkit] [data-site-grain] {
     mix-blend-mode: normal;
     opacity: 0.055;
     animation: none !important;
+    transform: translate3d(0, 0, 0);
   }
 
   html[data-webkit] [data-hero='bg'] {
@@ -50,6 +51,10 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html[data-webkit] #agency img {
+    will-change: auto;
+  }
+
+  html[data-webkit] #apartments img {
     will-change: auto;
   }
 
