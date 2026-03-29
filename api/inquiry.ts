@@ -64,6 +64,31 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+function parseRequestJson(req: { body?: unknown }):
+  | { ok: true; parsed: unknown }
+  | { ok: false; error: string; detail: string } {
+  const raw = req.body;
+  if (raw === undefined || raw === null) {
+    return {
+      ok: false,
+      error: "empty_body",
+      detail:
+        "Request body was empty. On Vercel, ensure POST /api/inquiry is handled by the serverless function (see docs/RESEND.md).",
+    };
+  }
+  if (typeof raw === "string") {
+    try {
+      return { ok: true, parsed: JSON.parse(raw) };
+    } catch {
+      return { ok: false, error: "invalid_json", detail: "Body is not valid JSON." };
+    }
+  }
+  if (typeof raw === "object") {
+    return { ok: true, parsed: raw };
+  }
+  return { ok: false, error: "invalid_body", detail: "Unexpected body type." };
+}
+
 export default async function handler(
   req: { method?: string; body?: unknown },
   res: VercelApiResponse,
@@ -80,17 +105,17 @@ export default async function handler(
     return res.status(503).json({ error: "not_configured" });
   }
 
-  let parsed: unknown;
-  try {
-    const raw = req.body;
-    parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
-  } catch {
-    return res.status(400).json({ error: "invalid_json" });
+  const json = parseRequestJson(req);
+  if (!json.ok) {
+    return res.status(400).json({ error: json.error, detail: json.detail });
   }
 
-  const payload = parsePayload(parsed);
+  const payload = parsePayload(json.parsed);
   if (!payload) {
-    return res.status(400).json({ error: "invalid_payload" });
+    return res.status(400).json({
+      error: "invalid_payload",
+      detail: "Missing or invalid fields (or invalid email format).",
+    });
   }
 
   const resend = new Resend(apiKey);
@@ -111,7 +136,7 @@ export default async function handler(
   `;
 
   try {
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from,
       to: [to],
       replyTo: payload.user_email,
@@ -119,12 +144,18 @@ export default async function handler(
       html,
     });
     if (error) {
+      const detail = `${error.name}: ${error.message}`;
       console.error("[api/inquiry] Resend", error);
-      return res.status(502).json({ error: "send_failed" });
+      return res.status(502).json({
+        error: "send_failed",
+        detail,
+        code: error.name,
+      });
     }
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({ ok: true, id: data?.id });
   } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e);
     console.error("[api/inquiry]", e);
-    return res.status(502).json({ error: "send_failed" });
+    return res.status(502).json({ error: "send_failed", detail });
   }
 }

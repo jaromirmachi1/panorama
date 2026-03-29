@@ -16,25 +16,49 @@ function inquiryUrl(): string {
   return `${base}/api/inquiry`;
 }
 
+export type InquirySubmitResult =
+  | { ok: true }
+  | {
+      ok: false;
+      reason: "not_configured" | "failed";
+      detail?: string;
+    };
+
 export async function submitApartmentInquiry(
   body: InquiryRequestBody,
-): Promise<{ ok: true } | { ok: false; reason: "not_configured" | "failed" }> {
-  const res = await fetch(inquiryUrl(), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+): Promise<InquirySubmitResult> {
+  let res: Response;
+  try {
+    res = await fetch(inquiryUrl(), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (e) {
+    const detail =
+      e instanceof Error ? e.message : "Network error (offline or blocked request).";
+    return { ok: false, reason: "failed", detail };
+  }
 
-  if (res.status === 503) {
-    const data = (await res.json().catch(() => ({}))) as { error?: string };
-    if (data.error === "not_configured") {
-      return { ok: false, reason: "not_configured" };
-    }
-    return { ok: false, reason: "failed" };
+  const data = (await res.json().catch(() => ({}))) as {
+    error?: string;
+    detail?: string;
+  };
+
+  if (res.status === 503 && data.error === "not_configured") {
+    return { ok: false, reason: "not_configured" };
   }
 
   if (!res.ok) {
-    return { ok: false, reason: "failed" };
+    const hint =
+      res.status === 404
+        ? "POST /api/inquiry returned 404 — serverless API may be missing on this deploy (check Vercel Functions tab)."
+        : data.detail;
+    return {
+      ok: false,
+      reason: "failed",
+      detail: hint ?? data.error ?? `HTTP ${res.status}`,
+    };
   }
 
   return { ok: true };

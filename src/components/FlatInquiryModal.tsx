@@ -95,7 +95,10 @@ export function FlatInquiryModal({
       } else if (result.reason === 'not_configured') {
         setSendError(iq.sendErrorConfig[lang])
       } else {
-        setSendError(iq.sendError[lang])
+        const base = iq.sendError[lang]
+        setSendError(
+          result.detail ? `${base}\n\n${result.detail}` : base,
+        )
       }
     } catch (err) {
       console.error('[FlatInquiryModal] inquiry API', err)
@@ -151,7 +154,15 @@ export function FlatInquiryModal({
           </ThanksWrap>
         ) : (
           <Form onSubmit={handleSubmit}>
-            {sendError ? <FormError role="alert">{sendError}</FormError> : null}
+            {sendError ? (
+              <FormError role="alert">
+                {sendError.split('\n\n').map((chunk, i) => (
+                  <FormErrorLine key={i} $muted={i > 0}>
+                    {chunk}
+                  </FormErrorLine>
+                ))}
+              </FormError>
+            ) : null}
             <FieldGrid>
               <Field>
                 <Label htmlFor="inquiry-first">{iq.firstName[lang]}</Label>
@@ -364,6 +375,24 @@ const FormError = styled.div`
   background: rgba(180, 60, 50, 0.35);
   border: 1px solid rgba(255, 160, 140, 0.35);
   border-radius: 2px;
+`
+
+const FormErrorLine = styled.p<{ $muted?: boolean }>`
+  margin: 0;
+  font-size: ${({ $muted }) => ($muted ? '11px' : '12px')};
+  line-height: 1.5;
+  letter-spacing: ${({ $muted }) => ($muted ? '0.02em' : '0.03em')};
+  color: ${({ $muted }) =>
+    $muted ? 'rgba(255, 230, 220, 0.88)' : 'inherit'};
+  opacity: ${({ $muted }) => ($muted ? 0.95 : 1)};
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  & + & {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 160, 140, 0.22);
+  }
 `
 
 const FieldGrid = styled.div`

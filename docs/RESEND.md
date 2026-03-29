@@ -109,6 +109,17 @@ Follow this order once; after that, new deploys from `main` keep working as long
 - **Resend error / bounced** → `RESEND_FROM_EMAIL` must use a domain **verified** in Resend; check Resend **Logs**.
 - **Works on `*.vercel.app` but not custom domain** → DNS/SSL not finished; wait or fix records in Vercel **Domains**.
 
+After a failed submit, the form now shows a **second line** with a technical message from the API (e.g. `invalid_from_address: …`). Use that to fix Resend/Vercel settings. Common cases:
+
+| Message contains | What to do |
+|------------------|------------|
+| `invalid_from_address` | `RESEND_FROM_EMAIL` must use your **verified** domain (e.g. `…@panoramazabiny.cz`). |
+| `missing_api_key` / `invalid_api_key` | Fix `RESEND_API_KEY` in Vercel; redeploy. |
+| `empty_body` | Request never reached the function body (rare); check Vercel → **Functions** → `/api/inquiry` exists after deploy. |
+| `404` / “serverless API may be missing” | Latest deploy didn’t include `api/inquiry.ts` or project **Root Directory** in Vercel is wrong. |
+
+Vercel → **Deployments** → **Functions** tab: confirm `api/inquiry` is listed. **Logs** show server `console.error` from Resend.
+
 ## 6. Troubleshooting
 
 | Symptom | What to check |
