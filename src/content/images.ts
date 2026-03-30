@@ -14,22 +14,33 @@ export const images = {
     {
       src: "/velkyBytObyvak_11zon.webp",
       alt: {
-        cz: "Obývací pokoj",
-        en: "Living room",
+        cz: "Velký byt — Obývací pokoj",
+        en: "Large apartment — Living room",
       },
     },
     {
       src: "/loznice.webp",
-      alt: { cz: "Ložnice", en: "Bedroom" },
+      alt: { cz: "Velký byt — Ložnice", en: "Large apartment — Bedroom" },
     },
 
     {
       src: "/velkyBytKoupelna_11zon.webp",
-      alt: { cz: "Koupelna", en: "Bathroom" },
+      alt: { cz: "Velký byt — Koupelna", en: "Large apartment — Bathroom" },
     },
     {
       src: "/velkyBytKuchyne_11zon.webp",
-      alt: { cz: "Kuchyně", en: "Kitchen" },
+      alt: { cz: "Velký byt — Kuchyně", en: "Large apartment — Kitchen" },
+    },
+    {
+      src: "/garsonkaObyvak.webp",
+      alt: {
+        cz: "Garsonka — obývací část",
+        en: "Studio apartment — living area",
+      },
+    },
+    {
+      src: "/vyhled.webp",
+      alt: { cz: "Výhled", en: "View" },
     },
   ],
 } as const;

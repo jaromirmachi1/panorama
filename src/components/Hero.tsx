@@ -339,14 +339,6 @@ export function Hero() {
           <NavGroup>
             <NavMetaLink
               data-cursor="hover"
-              href="https://lvlreality.cz/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              +&nbsp;{t.nav.lvl[lang]}
-            </NavMetaLink>
-            <NavMetaLink
-              data-cursor="hover"
               href="https://www.instagram.com/lvlreality.cz/"
               target="_blank"
               rel="noreferrer"
@@ -466,20 +458,6 @@ export function Hero() {
                     >
                       +&nbsp;{t.nav.contact[lang]}
                     </MobileNavLink>
-                  </MobileNavItemTrack>
-                </MobileNavItem>
-                <MobileNavItem>
-                  <MobileNavItemTrack>
-                    <MobileNavExternal
-                      data-mnav="item"
-                      data-cursor="hover"
-                      href="https://lvlreality.cz/"
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={requestCloseMobileNav}
-                    >
-                      +&nbsp;{t.nav.lvl[lang]}
-                    </MobileNavExternal>
                   </MobileNavItemTrack>
                 </MobileNavItem>
                 <MobileNavItem>

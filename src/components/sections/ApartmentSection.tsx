@@ -58,24 +58,18 @@ export function ApartmentSection() {
   );
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const { lang } = useLang();
-  const [activeBuilding, setActiveBuilding] = useState<Building["id"]>("A");
-
-  // Total apartments per page (across both buildings)
+  // Total apartments per page
   const PAGE_SIZE = 10;
   const [page, setPage] = useState(1);
 
   const allFlats = useMemo(() => {
-    const out: FlatWithBuilding[] = [];
-    const b = flatsData.buildings.find((x) => x.id === activeBuilding);
-    if (!b) return out;
-    b.apartments.forEach((apt) => {
-      out.push({
+    return flatsData.buildings.flatMap((b) =>
+      b.apartments.map((apt) => ({
         ...apt,
         buildingId: b.id,
-      });
-    });
-    return out;
-  }, [activeBuilding]);
+      })),
+    );
+  }, []);
 
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil(allFlats.length / PAGE_SIZE));
@@ -90,6 +84,8 @@ export function ApartmentSection() {
     const end = start + PAGE_SIZE;
     return allFlats.slice(start, end);
   }, [allFlats, safePage]);
+
+  const defaultBuildingId = allFlats[0]?.buildingId ?? "A";
 
   useLayoutEffect(() => {
     const root = rootRef.current;
@@ -219,105 +215,46 @@ export function ApartmentSection() {
             <H2>{t.apartments.title[lang]}</H2>
           </Head>
 
-          <BuildingTabs aria-label="Budova">
-            <BuildingTabButton
-              type="button"
-              data-cursor="hover"
-              $active={activeBuilding === "A"}
-              aria-pressed={activeBuilding === "A"}
-              onClick={() => {
-                setHovered(null)
-                setSelectedFlat(null)
-                setInquiryOpen(false)
-                setActiveBuilding("A")
-              }}
-            >
-              {t.apartments.buildingA[lang]}
-            </BuildingTabButton>
-            <BuildingTabButton
-              type="button"
-              data-cursor="hover"
-              $active={activeBuilding === "B"}
-              aria-pressed={activeBuilding === "B"}
-              onClick={() => {
-                setHovered(null)
-                setSelectedFlat(null)
-                setInquiryOpen(false)
-                setActiveBuilding("B")
-              }}
-            >
-              {t.apartments.buildingB[lang]}
-            </BuildingTabButton>
-          </BuildingTabs>
-
           <ApartmentList aria-label={t.apartments.listAria[lang]}>
-            {flatsData.buildings.map((b) => {
-              if (b.id !== activeBuilding) return null
-              const groupLabel =
-                b.id === "A"
-                  ? t.apartments.buildingA[lang]
-                  : t.apartments.buildingB[lang]
-              const visibleApartments = visibleFlats
-
-              return (
-                <ApartmentGroup
-                  key={b.id}
-                  aria-label={groupLabel}
-                  $building={b.id}
-                >
-                  <GroupTitle>{groupLabel}</GroupTitle>
-                  {visibleApartments.length > 0 && (
-                    <GroupRows>
-                      {visibleApartments.map((apt) => {
-                        const floorLabel = `${t.apartments.floorLabel[lang]} ${apt.floor}`;
-                        return (
-                          <ApartmentRow
-                            key={apt.id}
-                            type="button"
-                            data-cursor="hover"
-                            data-flat-row
-                            $isHovered={
-                              hovered?.id === apt.id &&
-                              hovered?.buildingId === b.id
-                            }
-                            onPointerEnter={() =>
-                              setHovered({
-                                ...apt,
-                                buildingId: b.id,
-                              })
-                            }
-                            onPointerLeave={() => setHovered(null)}
-                            onClick={() => {
-                              setSelectedFlat({
-                                ...apt,
-                                buildingId: b.id,
-                              })
-                              setInquiryOpen(true)
-                            }}
-                            aria-label={`${apt.id}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`}
-                          >
-                            <LeftCol>
-                              <AptId>{apt.id}</AptId>
-                              <FloorTag>{floorLabel}</FloorTag>
-                            </LeftCol>
-                            <Size>{apt.sizeM2.toFixed(1)} m²</Size>
-                            <Price>
-                              <PriceRow>
-                                {formatKc(apt.priceKc)}
-                                <ArrowSlot aria-hidden="true">
-                                  <StandbyArrow size={16} />
-                                  <HoverArrow size={16} />
-                                </ArrowSlot>
-                              </PriceRow>
-                            </Price>
-                          </ApartmentRow>
-                        );
-                      })}
-                    </GroupRows>
-                  )}
-                </ApartmentGroup>
-              );
-            })}
+            <GroupRows>
+              {visibleFlats.map((apt) => {
+                const floorLabel = `${t.apartments.floorLabel[lang]} ${apt.floor}`;
+                return (
+                  <ApartmentRow
+                    key={`${apt.buildingId}-${apt.id}`}
+                    type="button"
+                    data-cursor="hover"
+                    data-flat-row
+                    $isHovered={
+                      hovered?.id === apt.id &&
+                      hovered?.buildingId === apt.buildingId
+                    }
+                    onPointerEnter={() => setHovered(apt)}
+                    onPointerLeave={() => setHovered(null)}
+                    onClick={() => {
+                      setSelectedFlat(apt)
+                      setInquiryOpen(true)
+                    }}
+                    aria-label={`${apt.id}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`}
+                  >
+                    <LeftCol>
+                      <AptId>{apt.id}</AptId>
+                      <FloorTag>{floorLabel}</FloorTag>
+                    </LeftCol>
+                    <Size>{apt.sizeM2.toFixed(1)} m²</Size>
+                    <Price>
+                      <PriceRow>
+                        {formatKc(apt.priceKc)}
+                        <ArrowSlot aria-hidden="true">
+                          <StandbyArrow size={16} />
+                          <HoverArrow size={16} />
+                        </ArrowSlot>
+                      </PriceRow>
+                    </Price>
+                  </ApartmentRow>
+                );
+              })}
+            </GroupRows>
           </ApartmentList>
 
           <Pagination aria-label={t.apartments.paginationAria[lang]}>
@@ -366,7 +303,7 @@ export function ApartmentSection() {
               <LayerImg
                 ref={floorPlanImgRef}
                 src={getFloorPlanSrc(1)}
-                alt={getFloorPlanAlt(1, activeBuilding, lang)}
+                alt={getFloorPlanAlt(1, defaultBuildingId, lang)}
                 loading="lazy"
                 decoding="async"
               />
@@ -460,50 +397,6 @@ const H2 = styled.h2`
   line-height: 1;
 `;
 
-const BuildingTabs = styled.div`
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  padding: 6px 0 18px;
-`;
-
-const BuildingTabButton = styled.button<{ $active: boolean }>`
-  appearance: none;
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-
-  font-size: 12px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-
-  color: rgba(245, 243, 239, ${({ $active }) => ($active ? 0.98 : 0.7)});
-  opacity: ${({ $active }) => ($active ? 1 : 0.82)};
-
-  position: relative;
-  transition: opacity 450ms ease, color 450ms ease, transform 450ms ease;
-
-  &:hover {
-    opacity: 1;
-    color: rgba(245, 243, 239, 0.95);
-    transform: translateY(-2px);
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -6px;
-    height: 1px;
-    background: rgba(232, 215, 176, ${({ $active }) => ($active ? 0.95 : 0.0)});
-    opacity: ${({ $active }) => ($active ? 1 : 0)};
-    transform: scaleX(${({ $active }) => ($active ? 1 : 0.08)});
-    transform-origin: left;
-    transition: opacity 450ms ease, transform 450ms ease, background 450ms ease;
-  }
-`;
 
 const ApartmentList = styled.div`
   display: grid;
@@ -512,18 +405,6 @@ const ApartmentList = styled.div`
   width: 100%;
 `;
 
-const ApartmentGroup = styled.div<{ $building: string }>`
-  display: grid;
-  gap: 10px;
-`;
-
-const GroupTitle = styled.div`
-  font-family: ${({ theme }) => theme.fonts.serif};
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  font-size: 18px;
-  color: rgba(245, 243, 239, 0.92);
-`;
 
 const GroupRows = styled.div`
   border-top: 1px solid rgba(221, 221, 221, 0.55);
