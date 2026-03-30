@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import styled, { css } from "styled-components";
 import { gsap } from "../../lib/gsap";
 import flatsJson from "../../content/flats.json";
@@ -102,7 +96,7 @@ export function ApartmentSection() {
 
   const safeActiveFloor = floorNumbers.includes(activeFloor)
     ? activeFloor
-    : floorNumbers[0] ?? 1;
+    : (floorNumbers[0] ?? 1);
 
   useEffect(() => {
     if (!floorNumbers.includes(activeFloor)) {
@@ -275,11 +269,7 @@ export function ApartmentSection() {
     }
 
     const nextSrc = getFloorPlanSrc(hovered.floor);
-    const nextAlt = getFloorPlanAlt(
-      hovered.floor,
-      hovered.buildingId,
-      lang,
-    );
+    const nextAlt = getFloorPlanAlt(hovered.floor, hovered.buildingId, lang);
     if (floorPlanImgRef.current) {
       floorPlanImgRef.current.src = nextSrc;
       floorPlanImgRef.current.alt = nextAlt;
@@ -309,7 +299,7 @@ export function ApartmentSection() {
       ref={rootRef}
       id="apartments"
       aria-label={t.apartments.title[lang]}
-      data-selected-flat={selectedFlat?.id ?? ''}
+      data-selected-flat={selectedFlat?.id ?? ""}
     >
       <Inner>
         <Left>
@@ -387,10 +377,10 @@ export function ApartmentSection() {
               type="button"
               data-cursor="hover"
               onClick={() => {
-                setHovered(null)
-                setInquiryOpen(false)
-                pageNavDirectionRef.current = "prev"
-                setPage((p) => Math.max(1, p - 1))
+                setHovered(null);
+                setInquiryOpen(false);
+                pageNavDirectionRef.current = "prev";
+                setPage((p) => Math.max(1, p - 1));
               }}
               disabled={safePage <= 1}
             >
@@ -403,10 +393,10 @@ export function ApartmentSection() {
               type="button"
               data-cursor="hover"
               onClick={() => {
-                setHovered(null)
-                setInquiryOpen(false)
-                pageNavDirectionRef.current = "next"
-                setPage((p) => Math.min(totalPages, p + 1))
+                setHovered(null);
+                setInquiryOpen(false);
+                pageNavDirectionRef.current = "next";
+                setPage((p) => Math.min(totalPages, p + 1));
               }}
               disabled={safePage >= totalPages}
             >
@@ -464,8 +454,8 @@ export function ApartmentSection() {
           }
           lang={lang}
           onClose={() => {
-            setInquiryOpen(false)
-            setSelectedFlat(null)
+            setInquiryOpen(false);
+            setSelectedFlat(null);
           }}
         />
       ) : null}
@@ -581,7 +571,6 @@ const ApartmentList = styled.div`
   overflow: hidden;
 `;
 
-
 const GroupRows = styled.div`
   border-top: 1px solid rgba(221, 221, 221, 0.55);
   min-width: 0;
@@ -654,8 +643,7 @@ const ApartmentRow = styled.button<{ $isHovered: boolean; $sold?: boolean }>`
   box-sizing: border-box;
   padding: 14px 0 12px;
   display: grid;
-  grid-template-columns:
-    minmax(0, 1.85fr) minmax(104px, 1fr) minmax(0, 1.2fr);
+  grid-template-columns: minmax(0, 1.85fr) minmax(104px, 1fr) minmax(0, 1.2fr);
   align-items: center;
   justify-items: center;
   gap: 10px;
@@ -857,8 +845,13 @@ const AptId = styled.div`
   font-family: ${({ theme }) => theme.fonts.serif};
   font-weight: 500;
   letter-spacing: 0.02em;
-  font-size: 14px;
-  line-height: 1.1;
+  font-size: 16px;
+  line-height: 1.15;
+
+  @media (max-width: 980px) {
+    font-size: 14px;
+    letter-spacing: 0;
+  }
 `;
 
 const Size = styled.div`

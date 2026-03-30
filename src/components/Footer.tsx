@@ -1,35 +1,37 @@
-import styled from 'styled-components'
-import { Container } from './Section'
-import { useLang } from '../i18n/LanguageContext'
-import { t } from '../i18n/dictionary'
-import { FaGlobe, FaInstagram } from 'react-icons/fa'
-import { useMemo, type MouseEvent } from 'react'
+import styled from "styled-components";
+import { Container } from "./Section";
+import { useLang } from "../i18n/LanguageContext";
+import { t } from "../i18n/dictionary";
+import { FaGlobe, FaInstagram } from "react-icons/fa";
+import { useMemo, type MouseEvent } from "react";
 
 export function Footer() {
-  const { lang } = useLang()
-  const year = new Date().getFullYear()
-  const poweredText = String(t.footer.powered[lang])
-  const poweredParts = poweredText.split('uitherapy')
+  const { lang } = useLang();
+  const year = new Date().getFullYear();
+  const poweredText = String(t.footer.powered[lang]);
+  const poweredParts = poweredText.split("uitherapy");
   const prefersReducedMotion = useMemo(() => {
-    if (typeof window === 'undefined') return false
-    return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-  }, [])
+    if (typeof window === "undefined") return false;
+    return (
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false
+    );
+  }, []);
 
   function scrollToSection(e: MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault()
-    const href = e.currentTarget.getAttribute('href') || ''
-    const id = href.startsWith('#') ? href.slice(1) : ''
-    if (!id) return
+    e.preventDefault();
+    const href = e.currentTarget.getAttribute("href") || "";
+    const id = href.startsWith("#") ? href.slice(1) : "";
+    if (!id) return;
 
-    const el = document.getElementById(id)
-    if (!el) return
+    const el = document.getElementById(id);
+    if (!el) return;
 
     el.scrollIntoView({
-      behavior: prefersReducedMotion ? 'auto' : 'smooth',
-      block: 'start',
-    })
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "start",
+    });
 
-    window.history.replaceState({}, '', `#${id}`)
+    window.history.replaceState({}, "", `#${id}`);
   }
 
   return (
@@ -45,84 +47,88 @@ export function Footer() {
             />
           </WordmarkStack>
 
-        <FooterTop>
-          <BrandBlock>
-            <Brand>
-              <LogoImg
-                src="/[LOGO]panoramaBezBgBile.png"
-                alt="Panorama Žabiny logo"
-                loading="lazy"
-                decoding="async"
-              />
-              Panorama Žabiny
-            </Brand>
-            <Powered>
-              {poweredParts.length > 1 ? (
-                <>
-                  {poweredParts[0]}
-                  <PoweredEm>uitherapy</PoweredEm>
-                  {poweredParts.slice(1).join('')}
-                </>
-              ) : (
-                t.footer.powered[lang]
-              )}
-            </Powered>
-          </BrandBlock>
+          <FooterTop>
+            <BrandBlock>
+              <Brand>
+                <LogoImg
+                  src="/[LOGO]panoramaBezBgBile.png"
+                  alt="Panorama Žabiny logo"
+                  loading="lazy"
+                  decoding="async"
+                />
+                Panorama Žabiny
+              </Brand>
+              <Powered>
+                {poweredParts.length > 1 ? (
+                  <>
+                    {poweredParts[0]}
+                    <PoweredEm>uitherapy</PoweredEm>
+                    {poweredParts.slice(1).join("")}
+                  </>
+                ) : (
+                  t.footer.powered[lang]
+                )}
+              </Powered>
+            </BrandBlock>
 
-          <Cols>
-            <Col>
-              <ColTitle>{t.footer.columns.projects[lang]}</ColTitle>
-              <ColLink data-cursor="hover" href="#agency" onClick={scrollToSection}>
-                {t.nav.project[lang]}
-              </ColLink>
-              <ColLink
-                data-cursor="hover"
-                href="#apartments"
-                onClick={scrollToSection}
-              >
-                {t.nav.apartments[lang]}
-              </ColLink>
-              <ColLink
-                data-cursor="hover"
-                href="#realisations"
-                onClick={scrollToSection}
-              >
-                {t.nav.gallery[lang]}
-              </ColLink>
-            </Col>
+            <Cols>
+              <Col>
+                <ColTitle>{t.footer.columns.projects[lang]}</ColTitle>
+                <ColLink
+                  data-cursor="hover"
+                  href="#agency"
+                  onClick={scrollToSection}
+                >
+                  {t.nav.project[lang]}
+                </ColLink>
+                <ColLink
+                  data-cursor="hover"
+                  href="#apartments"
+                  onClick={scrollToSection}
+                >
+                  {t.nav.apartments[lang]}
+                </ColLink>
+                <ColLink
+                  data-cursor="hover"
+                  href="#realisations"
+                  onClick={scrollToSection}
+                >
+                  {t.nav.gallery[lang]}
+                </ColLink>
+              </Col>
 
-            <Col>
-              <ColTitle>{t.footer.columns.contact[lang]}</ColTitle>
-              <ColLink
-                data-cursor="hover"
-                href="mailto:info@panorama-zabiny.cz"
-                onClick={(e) => {
-                  // keep default mailto behavior
-                  e.stopPropagation()
-                }}
-              >
-                info@panorama-zabiny.cz
-              </ColLink>
-              <ColLink
-                data-cursor="hover"
-                href="tel:+420000000000"
-                onClick={(e) => {
-                  // keep default tel behavior
-                  e.stopPropagation()
-                }}
-              >
-                +420 000 000 000
-              </ColLink>
-            </Col>
+              <Col>
+                <ColTitle>{t.footer.columns.contact[lang]}</ColTitle>
+                <ColLink
+                  data-cursor="hover"
+                  href="mailto:info@panorama-zabiny.cz"
+                  onClick={(e) => {
+                    // keep default mailto behavior
+                    e.stopPropagation();
+                  }}
+                >
+                  info@panorama-zabiny.cz
+                </ColLink>
+                <ColLink
+                  data-cursor="hover"
+                  href="tel:+420000000000"
+                  onClick={(e) => {
+                    // keep default tel behavior
+                    e.stopPropagation();
+                  }}
+                >
+                  +420 000 000 000
+                </ColLink>
+              </Col>
 
-            <Col>
-              <ColTitle>{t.footer.columns.socials[lang]}</ColTitle>
-              <ColMeta>{t.nav.news[lang]}</ColMeta>
-              <ColMeta>{t.nav['réseaux'][lang]}</ColMeta>
-              <ColMeta>{t.footer.location[lang]}</ColMeta>
-            </Col>
-          </Cols>
-        </FooterTop>
+              <Col>
+                <ColTitle>{t.footer.columns.socials[lang]}</ColTitle>
+                <ColMeta>{t.nav.news[lang]}</ColMeta>
+                <ColMeta>{t.nav["réseaux"][lang]}</ColMeta>
+                <ColMeta>{t.footer.location[lang]}</ColMeta>
+              </Col>
+            </Cols>
+          </FooterTop>
 
           <Bottom>
             <BottomLeft>
@@ -152,15 +158,14 @@ export function Footer() {
 
             <BottomRight>
               <Small>
-                {t.footer.creditLineLead[lang]}{' '}
-                <PoweredEm>uitherapy</PoweredEm>
+                {t.footer.creditLineLead[lang]} <PoweredEm>uitherapy</PoweredEm>
               </Small>
             </BottomRight>
           </Bottom>
         </FooterInner>
       </Container>
     </Wrap>
-  )
+  );
 }
 
 const Wrap = styled.footer`
@@ -168,7 +173,7 @@ const Wrap = styled.footer`
   color: #ffffff;
   padding: clamp(20px, 3.5vw, 40px) 0 clamp(28px, 4vw, 48px);
   min-height: clamp(320px, 42vh, 560px);
-`
+`;
 
 const FooterInner = styled.div`
   position: relative;
@@ -178,7 +183,7 @@ const FooterInner = styled.div`
   justify-content: space-between;
   gap: clamp(28px, 4vw, 48px);
   min-height: min(42vh, 520px);
-`
+`;
 
 const WordmarkStack = styled.div`
   flex: 1 1 auto;
@@ -187,20 +192,20 @@ const WordmarkStack = styled.div`
   align-items: center;
   justify-content: center;
   padding: clamp(12px, 2.5vw, 32px) 0;
-`
+`;
 
 const WordmarkLogo = styled.img`
   display: block;
   width: min(100%, clamp(160px, 40vw, 360px));
   height: auto;
   object-fit: contain;
-`
+`;
 
 const FooterTop = styled.div`
   position: relative;
   z-index: 1;
   display: none;
-`
+`;
 
 const Brand = styled.div`
   display: inline-flex;
@@ -211,19 +216,19 @@ const Brand = styled.div`
   letter-spacing: 0.16em;
   font-size: 15px;
   color: rgba(255, 255, 255, 0.8);
-`
+`;
 
 const LogoImg = styled.img`
   display: block;
   width: 26px;
   height: auto;
-`
+`;
 
 const BrandBlock = styled.div`
   display: grid;
   gap: 12px;
   align-content: start;
-`
+`;
 
 const Cols = styled.div`
   display: grid;
@@ -234,19 +239,19 @@ const Cols = styled.div`
     grid-template-columns: 1fr;
     gap: 14px;
   }
-`
+`;
 
 const Col = styled.div`
   display: grid;
   gap: 10px;
-`
+`;
 
 const ColTitle = styled.div`
   font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   opacity: 0.72;
-`
+`;
 
 const ColLink = styled.a`
   font-size: 12px;
@@ -262,7 +267,7 @@ const ColLink = styled.a`
   }
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     right: 0;
@@ -271,7 +276,9 @@ const ColLink = styled.a`
     background: rgba(255, 255, 255, 0.35);
     transform: scaleX(0.08);
     transform-origin: left;
-    transition: transform 520ms ease, opacity 520ms ease;
+    transition:
+      transform 520ms ease,
+      opacity 520ms ease;
     opacity: 0.7;
   }
 
@@ -279,7 +286,7 @@ const ColLink = styled.a`
     transform: scaleX(1);
     opacity: 1;
   }
-`
+`;
 
 const ColMeta = styled.div`
   font-size: 12px;
@@ -287,7 +294,7 @@ const ColMeta = styled.div`
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.64);
   line-height: 1.6;
-`
+`;
 
 const Powered = styled.div`
   font-size: 11px;
@@ -296,12 +303,12 @@ const Powered = styled.div`
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.55);
   max-width: 44ch;
-`
+`;
 
 const PoweredEm = styled.span`
   color: rgba(255, 255, 255, 0.98);
   font-weight: 600;
-`
+`;
 
 const Bottom = styled.div`
   position: relative;
@@ -317,23 +324,23 @@ const Bottom = styled.div`
   @media (max-width: 720px) {
     grid-template-columns: 1fr auto;
     grid-template-areas:
-      'left center'
-      'right right';
+      "left center"
+      "right right";
   }
-`
+`;
 
 const BottomLeft = styled.div`
   display: grid;
   gap: 10px;
   justify-self: start;
-`
+`;
 
 const BottomCenter = styled.div`
   display: inline-flex;
   align-items: center;
   justify-self: center;
   gap: 18px;
-`
+`;
 
 const BottomRight = styled.div`
   display: inline-flex;
@@ -351,14 +358,14 @@ const BottomRight = styled.div`
       text-align: center;
     }
   }
-`
+`;
 
 const Small = styled.div`
   font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.84);
-`
+`;
 
 const SocialLink = styled.a`
   display: inline-flex;
@@ -367,11 +374,12 @@ const SocialLink = styled.a`
   width: 28px;
   height: 28px;
   color: rgba(255, 255, 255, 0.92);
-  transition: transform 220ms ease, opacity 220ms ease;
+  transition:
+    transform 220ms ease,
+    opacity 220ms ease;
 
   &:hover {
     transform: translateY(-1px);
     opacity: 0.96;
   }
-`
-
+`;
