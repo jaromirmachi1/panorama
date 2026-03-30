@@ -1,10 +1,11 @@
 import {
+  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { gsap } from "../../lib/gsap";
 import flatsJson from "../../content/flats.json";
 import {
@@ -12,17 +13,20 @@ import {
   getFloorPlanAlt,
   getFloorPlanSrc,
 } from "../../content/apartmentImages";
-import { useLang } from "../../i18n/LanguageContext";
+import { useLang, type Lang } from "../../i18n/LanguageContext";
 import { t } from "../../i18n/dictionary";
 import { FlatInquiryModal } from "../FlatInquiryModal";
 import { IoArrowForwardSharp } from "react-icons/io5";
 import { MdArrowOutward } from "react-icons/md";
+
+type FlatStatus = "available" | "reserved" | "sold";
 
 type Flat = {
   id: string;
   floor: number;
   sizeM2: number;
   priceKc: number;
+  status: FlatStatus;
 };
 
 type Building = {
@@ -44,6 +48,19 @@ function formatKc(value: number) {
   return `${new Intl.NumberFormat("cs-CZ").format(value)} Kč`;
 }
 
+function flatStatusLabel(status: FlatStatus, lang: Lang): string {
+  switch (status) {
+    case "available":
+      return t.apartments.statusAvailable[lang];
+    case "reserved":
+      return t.apartments.statusReserved[lang];
+    case "sold":
+      return t.apartments.statusSold[lang];
+    default:
+      return t.apartments.statusAvailable[lang];
+  }
+}
+
 export function ApartmentSection() {
   const rootRef = useRef<HTMLElement | null>(null);
   const viewerRef = useRef<HTMLDivElement | null>(null);
@@ -51,6 +68,10 @@ export function ApartmentSection() {
   const baseImgRef = useRef<HTMLImageElement | null>(null);
   /** Jedna vrstva patrového plánu — mění se podle podlaží (a budovy v alt). */
   const floorPlanImgRef = useRef<HTMLImageElement | null>(null);
+  const listGroupRef = useRef<HTMLDivElement | null>(null);
+  /** Set only from pagination arrows so list motion matches next/prev. */
+  const pageNavDirectionRef = useRef<"next" | "prev" | null>(null);
+  const skipListIntroRef = useRef(true);
 
   const [hovered, setHovered] = useState<Hovered>(null);
   const [selectedFlat, setSelectedFlat] = useState<FlatWithBuilding | null>(
@@ -71,9 +92,38 @@ export function ApartmentSection() {
     );
   }, []);
 
+  const floorNumbers = useMemo(() => {
+    const s = new Set<number>();
+    allFlats.forEach((f) => s.add(f.floor));
+    return Array.from(s).sort((a, b) => a - b);
+  }, [allFlats]);
+
+  const [activeFloor, setActiveFloor] = useState<number>(1);
+
+  const safeActiveFloor = floorNumbers.includes(activeFloor)
+    ? activeFloor
+    : floorNumbers[0] ?? 1;
+
+  useEffect(() => {
+    if (!floorNumbers.includes(activeFloor)) {
+      setActiveFloor(floorNumbers[0] ?? 1);
+    }
+  }, [floorNumbers, activeFloor]);
+
+  useEffect(() => {
+    setPage(1);
+    setHovered(null);
+    setInquiryOpen(false);
+  }, [activeFloor]);
+
+  const flatsOnFloor = useMemo(
+    () => allFlats.filter((f) => f.floor === safeActiveFloor),
+    [allFlats, safeActiveFloor],
+  );
+
   const totalPages = useMemo(() => {
-    return Math.max(1, Math.ceil(allFlats.length / PAGE_SIZE));
-  }, [allFlats.length]);
+    return Math.max(1, Math.ceil(flatsOnFloor.length / PAGE_SIZE));
+  }, [flatsOnFloor.length]);
 
   const safePage = useMemo(() => {
     return Math.min(Math.max(1, page), totalPages);
@@ -82,8 +132,8 @@ export function ApartmentSection() {
   const visibleFlats = useMemo(() => {
     const start = (safePage - 1) * PAGE_SIZE;
     const end = start + PAGE_SIZE;
-    return allFlats.slice(start, end);
-  }, [allFlats, safePage]);
+    return flatsOnFloor.slice(start, end);
+  }, [flatsOnFloor, safePage]);
 
   const defaultBuildingId = allFlats[0]?.buildingId ?? "A";
 
@@ -143,6 +193,59 @@ export function ApartmentSection() {
 
     return () => ctx.revert();
   }, []);
+
+  useLayoutEffect(() => {
+    const el = listGroupRef.current;
+    if (!el) return;
+
+    if (skipListIntroRef.current) {
+      skipListIntroRef.current = false;
+      return;
+    }
+
+    const dir = pageNavDirectionRef.current;
+    pageNavDirectionRef.current = null;
+
+    gsap.killTweensOf(el);
+
+    if (dir === "next") {
+      gsap.fromTo(
+        el,
+        { opacity: 0.78, x: 12 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.78,
+          ease: "power3.out",
+          overwrite: true,
+        },
+      );
+    } else if (dir === "prev") {
+      gsap.fromTo(
+        el,
+        { opacity: 0.78, x: -12 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.78,
+          ease: "power3.out",
+          overwrite: true,
+        },
+      );
+    } else {
+      gsap.fromTo(
+        el,
+        { opacity: 0.88, y: 4 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.52,
+          ease: "power3.out",
+          overwrite: true,
+        },
+      );
+    }
+  }, [safePage, safeActiveFloor]);
 
   useLayoutEffect(() => {
     const base = baseImgRef.current;
@@ -215,16 +318,33 @@ export function ApartmentSection() {
             <H2>{t.apartments.title[lang]}</H2>
           </Head>
 
+          <FloorTabs aria-label={t.apartments.floorPickerAria[lang]}>
+            {floorNumbers.map((f) => (
+              <FloorTabButton
+                key={f}
+                type="button"
+                data-cursor="hover"
+                $active={safeActiveFloor === f}
+                aria-pressed={safeActiveFloor === f}
+                onClick={() => setActiveFloor(f)}
+              >
+                {t.apartments.floorTabWord[lang]} {f}
+              </FloorTabButton>
+            ))}
+          </FloorTabs>
+
           <ApartmentList aria-label={t.apartments.listAria[lang]}>
-            <GroupRows>
+            <GroupRows ref={listGroupRef}>
               {visibleFlats.map((apt) => {
-                const floorLabel = `${t.apartments.floorLabel[lang]} ${apt.floor}`;
+                const sold = apt.status === "sold";
                 return (
                   <ApartmentRow
                     key={`${apt.buildingId}-${apt.id}`}
                     type="button"
                     data-cursor="hover"
                     data-flat-row
+                    disabled={sold}
+                    $sold={sold}
                     $isHovered={
                       hovered?.id === apt.id &&
                       hovered?.buildingId === apt.buildingId
@@ -232,16 +352,21 @@ export function ApartmentSection() {
                     onPointerEnter={() => setHovered(apt)}
                     onPointerLeave={() => setHovered(null)}
                     onClick={() => {
-                      setSelectedFlat(apt)
-                      setInquiryOpen(true)
+                      if (sold) return;
+                      setSelectedFlat(apt);
+                      setInquiryOpen(true);
                     }}
-                    aria-label={`${apt.id}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`}
+                    aria-label={`${apt.id}, ${flatStatusLabel(apt.status, lang)}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`}
                   >
-                    <LeftCol>
-                      <AptId>{apt.id}</AptId>
-                      <FloorTag>{floorLabel}</FloorTag>
-                    </LeftCol>
-                    <Size>{apt.sizeM2.toFixed(1)} m²</Size>
+                    <AptMeta>
+                      <LeftCol>
+                        <AptId>{apt.id}</AptId>
+                      </LeftCol>
+                      <Size>{apt.sizeM2.toFixed(1)} m²</Size>
+                    </AptMeta>
+                    <StatusBadge $status={apt.status} aria-hidden="true">
+                      {flatStatusLabel(apt.status, lang)}
+                    </StatusBadge>
                     <Price>
                       <PriceRow>
                         {formatKc(apt.priceKc)}
@@ -264,6 +389,7 @@ export function ApartmentSection() {
               onClick={() => {
                 setHovered(null)
                 setInquiryOpen(false)
+                pageNavDirectionRef.current = "prev"
                 setPage((p) => Math.max(1, p - 1))
               }}
               disabled={safePage <= 1}
@@ -279,6 +405,7 @@ export function ApartmentSection() {
               onClick={() => {
                 setHovered(null)
                 setInquiryOpen(false)
+                pageNavDirectionRef.current = "next"
                 setPage((p) => Math.min(totalPages, p + 1))
               }}
               disabled={safePage >= totalPages}
@@ -302,8 +429,8 @@ export function ApartmentSection() {
             <Layer $zIndex={2}>
               <LayerImg
                 ref={floorPlanImgRef}
-                src={getFloorPlanSrc(1)}
-                alt={getFloorPlanAlt(1, defaultBuildingId, lang)}
+                src={getFloorPlanSrc(safeActiveFloor)}
+                alt={getFloorPlanAlt(safeActiveFloor, defaultBuildingId, lang)}
                 loading="lazy"
                 decoding="async"
               />
@@ -314,10 +441,7 @@ export function ApartmentSection() {
               {hovered ? (
                 <>
                   <InfoTitle>{hovered.id}</InfoTitle>
-                  <InfoLine>
-                    {`${t.apartments.floorLabel[lang]} ${hovered.floor}`} •{" "}
-                    {hovered.sizeM2.toFixed(1)} m²
-                  </InfoLine>
+                  <InfoLine>{hovered.sizeM2.toFixed(1)} m²</InfoLine>
                 </>
               ) : (
                 <>
@@ -397,12 +521,64 @@ const H2 = styled.h2`
   line-height: 1;
 `;
 
+const FloorTabs = styled.div`
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 6px 0 18px;
+`;
+
+const FloorTabButton = styled.button<{ $active: boolean }>`
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+
+  color: rgba(245, 243, 239, ${({ $active }) => ($active ? 0.98 : 0.7)});
+  opacity: ${({ $active }) => ($active ? 1 : 0.82)};
+
+  position: relative;
+  transition:
+    opacity 450ms ease,
+    color 450ms ease,
+    transform 450ms ease;
+
+  &:hover {
+    opacity: 1;
+    color: rgba(245, 243, 239, 0.95);
+    transform: translateY(-2px);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 1px;
+    background: rgba(232, 215, 176, ${({ $active }) => ($active ? 0.95 : 0.0)});
+    opacity: ${({ $active }) => ($active ? 1 : 0)};
+    transform: scaleX(${({ $active }) => ($active ? 1 : 0.08)});
+    transform-origin: left;
+    transition:
+      opacity 450ms ease,
+      transform 450ms ease,
+      background 450ms ease;
+  }
+`;
 
 const ApartmentList = styled.div`
   display: grid;
   gap: 18px;
   min-width: 0;
   width: 100%;
+  overflow: hidden;
 `;
 
 
@@ -433,7 +609,14 @@ const PageButton = styled.button`
   text-transform: uppercase;
   cursor: pointer;
   opacity: 0.78;
-  transition: opacity 450ms ease;
+  padding: 6px 10px;
+  margin: -6px -10px;
+  border-radius: 4px;
+  transition:
+    opacity 450ms ease,
+    transform 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
 
   &:disabled {
     cursor: default;
@@ -442,6 +625,13 @@ const PageButton = styled.button`
 
   &:not(:disabled):hover {
     opacity: 1;
+  }
+
+  &:not(:disabled):active {
+    transform: scale(0.94);
+    opacity: 1;
+    background: rgba(232, 215, 176, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(232, 215, 176, 0.35);
   }
 `;
 
@@ -452,7 +642,7 @@ const PageLabel = styled.div`
   opacity: 0.9;
 `;
 
-const ApartmentRow = styled.button<{ $isHovered: boolean }>`
+const ApartmentRow = styled.button<{ $isHovered: boolean; $sold?: boolean }>`
   appearance: none;
   border: none;
   background: transparent;
@@ -464,21 +654,42 @@ const ApartmentRow = styled.button<{ $isHovered: boolean }>`
   box-sizing: border-box;
   padding: 14px 0 12px;
   display: grid;
-  grid-template-columns: 120px 1fr 260px;
+  grid-template-columns:
+    minmax(0, 1.85fr) minmax(104px, 1fr) minmax(0, 1.2fr);
   align-items: center;
   justify-items: center;
-  gap: 12px;
+  gap: 10px;
   border-bottom: 1px solid rgba(221, 221, 221, 0.55);
 
   cursor: pointer;
   color: rgba(245, 243, 239, 0.92);
 
   @media (max-width: 980px) {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: 8px;
-    justify-items: start;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+    grid-template-rows: auto auto;
+    justify-items: center;
+    align-items: center;
+    row-gap: 8px;
+    column-gap: 12px;
     padding-right: 2px;
   }
+
+  ${({ $sold }) =>
+    $sold &&
+    css`
+      cursor: not-allowed;
+      opacity: 0.78;
+
+      &:hover {
+        transform: none;
+        color: rgba(245, 243, 239, 0.88);
+      }
+
+      &:hover::before,
+      &:focus-visible::before {
+        transform: scaleY(0);
+      }
+    `}
 
   /* Background fill animation */
   &::before {
@@ -508,24 +719,118 @@ const ApartmentRow = styled.button<{ $isHovered: boolean }>`
     transform 600ms ease,
     border-bottom-color 750ms cubic-bezier(0.22, 1, 0.36, 1);
 
-  &:hover {
+  &:hover:not(:disabled) {
     opacity: 1;
     transform: translateX(5px);
     color: rgba(10, 10, 10, 0.92);
     border-bottom-color: rgba(10, 10, 10, 0.16);
   }
 
-  &:hover::before,
-  &:focus-visible::before {
+  &:hover:not(:disabled)::before,
+  &:focus-visible:not(:disabled)::before {
     transform: scaleY(1);
   }
 
-  &:focus-visible {
+  &:focus-visible:not(:disabled) {
     outline: none;
     opacity: 1;
     transform: translateX(5px);
     color: rgba(10, 10, 10, 0.92);
     border-bottom-color: rgba(10, 10, 10, 0.16);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+`;
+
+const StatusBadge = styled.span<{ $status: FlatStatus }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
+  line-height: 1.2;
+
+  @media (max-width: 980px) {
+    grid-row: 1;
+    grid-column: 3;
+    justify-self: center;
+    align-self: center;
+    font-size: 8px;
+    padding: 0 8px;
+    min-height: 26px;
+  }
+
+  ${({ $status }) =>
+    $status === "available" &&
+    css`
+      background: #f5f3ef;
+      color: rgba(10, 10, 10, 0.9);
+    `}
+
+  ${({ $status }) =>
+    $status === "reserved" &&
+    css`
+      background: rgba(232, 215, 176, 0.95);
+      color: rgba(10, 10, 10, 0.92);
+    `}
+
+  ${({ $status }) =>
+    $status === "sold" &&
+    css`
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.48);
+      color: rgba(245, 243, 239, 0.95);
+    `}
+
+  ${ApartmentRow}:hover:not(:disabled) & {
+    ${({ $status }) =>
+      $status === "available" &&
+      css`
+        background: #f5f3ef;
+        color: rgba(10, 10, 10, 0.94);
+        box-shadow: 0 0 0 1px rgba(10, 10, 10, 0.08);
+      `}
+
+    ${({ $status }) =>
+      $status === "reserved" &&
+      css`
+        background: rgba(232, 215, 176, 1);
+        color: rgba(10, 10, 10, 0.94);
+      `}
+
+    ${({ $status }) =>
+      $status === "sold" &&
+      css`
+        border-color: rgba(10, 10, 10, 0.35);
+        color: rgba(10, 10, 10, 0.9);
+      `}
+  }
+`;
+
+const AptMeta = styled.div`
+  display: grid;
+  grid-template-columns: minmax(100px, 1.1fr) minmax(0, 0.75fr);
+  align-items: center;
+  justify-items: center;
+  justify-self: stretch;
+  gap: 10px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 980px) {
+    display: contents;
   }
 `;
 
@@ -537,8 +842,14 @@ const LeftCol = styled.div`
   min-width: 0;
 
   @media (max-width: 980px) {
-    justify-items: start;
-    text-align: left;
+    grid-row: 1 / span 2;
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    min-width: 0;
   }
 `;
 
@@ -550,28 +861,23 @@ const AptId = styled.div`
   line-height: 1.1;
 `;
 
-const FloorTag = styled.div`
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  opacity: 0;
-  transform: translateY(4px);
-  transition:
-    opacity 350ms ease,
-    transform 450ms ease;
-
-  ${ApartmentRow}:hover & {
-    opacity: 0.62;
-    transform: translateY(0);
-  }
-`;
-
 const Size = styled.div`
   font-size: 13px;
   letter-spacing: 0.01em;
   opacity: 0.78;
   text-align: center;
   min-width: 0;
+
+  @media (max-width: 980px) {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    min-width: 0;
+  }
 `;
 
 const Price = styled.div`
@@ -582,11 +888,15 @@ const Price = styled.div`
   min-width: 0;
 
   @media (max-width: 980px) {
-    text-align: right;
+    grid-row: 2;
+    grid-column: 3;
+    justify-self: center;
+    text-align: center;
     font-size: 12px;
     letter-spacing: 0;
     width: 100%;
-    justify-self: end;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 `;
 
@@ -599,7 +909,7 @@ const PriceRow = styled.div`
   max-width: 100%;
 
   @media (max-width: 980px) {
-    justify-content: flex-end;
+    justify-content: center;
     gap: 8px;
   }
 `;
@@ -620,8 +930,8 @@ const StandbyArrow = styled(MdArrowOutward)`
   transition: opacity 250ms ease;
   color: rgba(245, 243, 239, 0.92);
 
-  ${ApartmentRow}:hover &,
-  ${ApartmentRow}:focus-visible & {
+  ${ApartmentRow}:hover:not(:disabled) &,
+  ${ApartmentRow}:focus-visible:not(:disabled) & {
     opacity: 0;
   }
 `;
@@ -638,8 +948,8 @@ const HoverArrow = styled(IoArrowForwardSharp)`
     transform 300ms ease;
   color: rgba(245, 243, 239, 0.92);
 
-  ${ApartmentRow}:hover &,
-  ${ApartmentRow}:focus-visible & {
+  ${ApartmentRow}:hover:not(:disabled) &,
+  ${ApartmentRow}:focus-visible:not(:disabled) & {
     opacity: 1;
     transform: translateX(3px) rotate(180deg);
   }
