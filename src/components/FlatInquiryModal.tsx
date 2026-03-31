@@ -2,12 +2,17 @@ import {
   useCallback,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
   type FormEvent,
 } from 'react'
 import { createPortal } from 'react-dom'
 import styled from 'styled-components'
+import {
+  getFlatHoverOverlaySrc,
+  getFloorPlanAlt,
+} from '../content/apartmentImages'
 import type { Lang } from '../i18n/LanguageContext'
 import { t } from '../i18n/dictionary'
 import { submitApartmentInquiry } from '../lib/inquiryApi'
@@ -52,6 +57,15 @@ export function FlatInquiryModal({
 
   const iq = t.apartments.inquiry
 
+  const flatPlanSrc = useMemo(
+    () => getFlatHoverOverlaySrc({ id: flat.id, floor: flat.floor }),
+    [flat.floor, flat.id],
+  )
+  const flatPlanAlt = useMemo(
+    () => `${getFloorPlanAlt(flat.floor, flat.buildingId, lang)} — ${flat.id}`,
+    [flat.buildingId, flat.floor, flat.id, lang],
+  )
+
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -61,12 +75,16 @@ export function FlatInquiryModal({
 
   useEffect(() => {
     document.addEventListener('keydown', handleEscape)
-    const prev = document.body.style.overflow
+    const html = document.documentElement
+    const prevHtmlOverflow = html.style.overflow
+    const prevBodyOverflow = document.body.style.overflow
+    html.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
     const tId = window.setTimeout(() => firstFieldRef.current?.focus(), 80)
     return () => {
       document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = prev
+      html.style.overflow = prevHtmlOverflow
+      document.body.style.overflow = prevBodyOverflow
       window.clearTimeout(tId)
     }
   }, [handleEscape])
@@ -124,8 +142,17 @@ export function FlatInquiryModal({
         aria-labelledby={titleId}
         onClick={(e) => e.stopPropagation()}
       >
-        <PanelHeader>
-          <div>
+        <CloseBtn
+          type="button"
+          data-cursor="hover"
+          aria-label={iq.closeAria[lang]}
+          onClick={onClose}
+        >
+          ×
+        </CloseBtn>
+
+        <PanelBody>
+          <PanelIntro>
             <PanelEyebrow>{iq.flatLabel[lang]}</PanelEyebrow>
             <PanelTitle id={titleId}>{iq.title[lang]}</PanelTitle>
             <FlatSummary>
@@ -135,18 +162,18 @@ export function FlatInquiryModal({
                 · {flat.sizeM2.toFixed(1)} m² · {formatKc(flat.priceKc)}
               </FlatMeta>
             </FlatSummary>
+            <FlatPlanFigure>
+              <FlatPlanImg
+                src={flatPlanSrc}
+                alt={flatPlanAlt}
+                loading="eager"
+                decoding="async"
+              />
+            </FlatPlanFigure>
             <PanelSubtitle>{iq.subtitle[lang]}</PanelSubtitle>
-          </div>
-          <CloseBtn
-            type="button"
-            data-cursor="hover"
-            aria-label={iq.closeAria[lang]}
-            onClick={onClose}
-          >
-            ×
-          </CloseBtn>
-        </PanelHeader>
+          </PanelIntro>
 
+          <PanelFormColumn>
         {sent ? (
           <ThanksWrap>
             <Thanks>{iq.thanks[lang]}</Thanks>
@@ -229,7 +256,6 @@ export function FlatInquiryModal({
                 />
               </Field>
             </FieldGrid>
-            <StubNote>{iq.stubNote[lang]}</StubNote>
             <Actions>
               <SubmitBtn
                 type="submit"
@@ -244,6 +270,8 @@ export function FlatInquiryModal({
             </Actions>
           </Form>
         )}
+          </PanelFormColumn>
+        </PanelBody>
       </Panel>
     </Root>
   )
@@ -259,6 +287,8 @@ const Root = styled.div`
   align-items: center;
   justify-content: center;
   padding: clamp(16px, 4vw, 32px);
+  overflow: hidden;
+  overscroll-behavior: none;
   pointer-events: none;
 
   & > * {
@@ -281,10 +311,15 @@ const Backdrop = styled.button`
 const Panel = styled.div`
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
   width: min(100%, 440px);
   max-height: min(92vh, 720px);
   overflow: auto;
-  padding: clamp(26px, 4vw, 34px);
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: clamp(48px, 5vw, 56px) clamp(22px, 4vw, 36px) clamp(26px, 4vw, 34px);
   border-radius: 2px;
   background: linear-gradient(
     165deg,
@@ -296,14 +331,40 @@ const Panel = styled.div`
     0 0 0 1px rgba(0, 0, 0, 0.35),
     0 32px 80px rgba(0, 0, 0, 0.55);
   color: #f5f3ef;
+
+  @media (min-width: 720px) {
+    width: min(100%, 560px);
+    max-height: min(94vh, 800px);
+  }
+
+  @media (min-width: 960px) {
+    width: min(100%, 920px);
+    max-height: min(96vh, 860px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: clamp(44px, 4vw, 52px) clamp(28px, 3vw, 40px) clamp(28px, 3vw, 36px);
+  }
 `
 
-const PanelHeader = styled.div`
+const PanelBody = styled.div`
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: clamp(22px, 3vw, 28px);
+  flex-direction: column;
+  gap: clamp(22px, 3vw, 28px);
+
+  @media (min-width: 960px) {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.95fr) minmax(320px, 1.05fr);
+    gap: clamp(28px, 3.5vw, 40px);
+    align-items: start;
+  }
+`
+
+const PanelIntro = styled.div`
+  min-width: 0;
+`
+
+const PanelFormColumn = styled.div`
+  min-width: 0;
 `
 
 const PanelEyebrow = styled.div`
@@ -352,10 +413,50 @@ const PanelSubtitle = styled.p`
   letter-spacing: 0.03em;
   color: rgba(245, 243, 239, 0.62);
   max-width: 36ch;
+
+  @media (min-width: 960px) {
+    max-width: none;
+  }
+`
+
+const FlatPlanFigure = styled.div`
+  margin: 14px 0 16px;
+  padding: 10px;
+  border-radius: 2px;
+  background: #0a0a0a;
+  border: 1px solid rgba(245, 243, 239, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  max-height: min(240px, 34vh);
+
+  @media (min-width: 960px) {
+    margin: 12px 0 0;
+    max-height: min(280px, 42vh);
+    min-height: 140px;
+  }
+`
+
+const FlatPlanImg = styled.img`
+  display: block;
+  max-width: 100%;
+  max-height: min(220px, 32vh);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+
+  @media (min-width: 960px) {
+    max-height: min(260px, 40vh);
+  }
 `
 
 const CloseBtn = styled.button`
-  flex: 0 0 auto;
+  position: absolute;
+  top: clamp(14px, 2.5vw, 22px);
+  right: clamp(14px, 2.5vw, 22px);
+  z-index: 2;
   appearance: none;
   border: none;
   background: transparent;
@@ -364,7 +465,8 @@ const CloseBtn = styled.button`
   line-height: 1;
   width: 40px;
   height: 40px;
-  margin: -8px -8px 0 0;
+  margin: 0;
+  padding: 0;
   cursor: pointer;
   border-radius: 2px;
   transition: color 0.35s ease, transform 0.35s ease;
@@ -377,7 +479,11 @@ const CloseBtn = styled.button`
 
 const Form = styled.form`
   display: grid;
-  gap: 20px;
+  gap: clamp(16px, 2vw, 20px);
+
+  @media (min-width: 960px) {
+    gap: 16px;
+  }
 `
 
 const FormError = styled.div`
@@ -417,6 +523,10 @@ const FieldGrid = styled.div`
 
   @media (max-width: 420px) {
     grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 960px) {
+    gap: 14px 16px;
   }
 `
 
@@ -473,6 +583,10 @@ const Textarea = styled.textarea`
   box-sizing: border-box;
   min-height: 96px;
   padding: 12px 14px;
+
+  @media (min-width: 960px) {
+    min-height: 72px;
+  }
   font-family: ${({ theme }) => theme.fonts.body};
   font-size: 14px;
   font-weight: 400;
@@ -502,14 +616,6 @@ const Textarea = styled.textarea`
     border-color: rgba(232, 215, 176, 0.55);
     box-shadow: 0 0 0 1px rgba(232, 215, 176, 0.2);
   }
-`
-
-const StubNote = styled.p`
-  margin: 0;
-  font-size: 11px;
-  line-height: 1.5;
-  letter-spacing: 0.04em;
-  color: rgba(245, 243, 239, 0.38);
 `
 
 const Actions = styled.div`

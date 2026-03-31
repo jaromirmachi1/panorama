@@ -77,8 +77,7 @@ function parseRequestJson(req: { body?: unknown }):
     return {
       ok: false,
       error: "empty_body",
-      detail:
-        "Request body was empty. On Vercel, ensure POST /api/inquiry is handled by the serverless function (see docs/RESEND.md).",
+      detail: "Request body was empty.",
     };
   }
   if (typeof raw === "string") {

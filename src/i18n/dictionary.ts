@@ -88,18 +88,14 @@ export const t = {
       close: { cz: "Zavřít", en: "Close" },
       closeAria: { cz: "Zavřít formulář", en: "Close form" },
       backdropAria: { cz: "Zavřít", en: "Close" },
-      stubNote: {
-        cz: "Údaje odesíláme z e-mailu přes Resend (server na Vercelu). Viz docs/RESEND.md.",
-        en: "We send your details via Resend (server on Vercel). See docs/RESEND.md.",
-      },
       sending: { cz: "Odesílám…", en: "Sending…" },
       sendError: {
         cz: "Odeslání se nepovedlo. Zkuste to znovu nebo nás kontaktujte přímo e-mailem.",
         en: "Could not send. Please try again or email us directly.",
       },
       sendErrorConfig: {
-        cz: "E-mail není nakonfigurován (na Vercelu chybí RESEND_* / INQUIRY_TO_EMAIL, nebo použijte vercel dev). Viz docs/RESEND.md.",
-        en: "Email is not configured (missing Resend env on Vercel, or use vercel dev locally). See docs/RESEND.md.",
+        cz: "Odeslání se zatím nepovedlo. Zkuste to prosím později nebo nás kontaktujte přímo.",
+        en: "We could not send your message yet. Please try again later or contact us directly.",
       },
       thanks: {
         cz: "Děkujeme. Brzy se vám ozveme.",
