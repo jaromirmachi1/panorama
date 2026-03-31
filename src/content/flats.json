@@ -16,14 +16,14 @@
           "floor": 1,
           "sizeM2": 35.3,
           "priceKc": 6947000,
-          "status": "sold"
+          "status": "available"
         },
         {
           "id": "103 1+kk",
           "floor": 1,
           "sizeM2": 28.36,
           "priceKc": 5736000,
-          "status": "reserved"
+          "status": "available"
         },
         {
           "id": "104 S",

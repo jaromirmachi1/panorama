@@ -196,7 +196,7 @@ const WordmarkStack = styled.div`
 
 const WordmarkLogo = styled.img`
   display: block;
-  width: min(100%, clamp(160px, 40vw, 360px));
+  width: min(100%, clamp(104px, 27vw, 230px));
   height: auto;
   object-fit: contain;
 `;
