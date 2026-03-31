@@ -3,7 +3,9 @@ import styled, { css } from "styled-components";
 import { gsap } from "../../lib/gsap";
 import flatsJson from "../../content/flats.json";
 import {
-  apartmentImages,
+  getApartmentBaseSketchAlt,
+  getApartmentBaseSketchSrc,
+  getFlatHoverOverlaySrc,
   getFloorPlanAlt,
   getFloorPlanSrc,
 } from "../../content/apartmentImages";
@@ -130,6 +132,16 @@ export function ApartmentSection() {
   }, [flatsOnFloor, safePage]);
 
   const defaultBuildingId = allFlats[0]?.buildingId ?? "A";
+
+  const baseSketchSrc = useMemo(
+    () => getApartmentBaseSketchSrc(safeActiveFloor),
+    [safeActiveFloor],
+  );
+  const baseSketchAlt = useMemo(
+    () =>
+      getApartmentBaseSketchAlt(safeActiveFloor, defaultBuildingId, lang),
+    [safeActiveFloor, defaultBuildingId, lang],
+  );
 
   useLayoutEffect(() => {
     const root = rootRef.current;
@@ -268,8 +280,8 @@ export function ApartmentSection() {
       return;
     }
 
-    const nextSrc = getFloorPlanSrc(hovered.floor);
-    const nextAlt = getFloorPlanAlt(hovered.floor, hovered.buildingId, lang);
+    const nextSrc = getFlatHoverOverlaySrc(hovered);
+    const nextAlt = `${getFloorPlanAlt(hovered.floor, hovered.buildingId, lang)} — ${hovered.id}`;
     if (floorPlanImgRef.current) {
       floorPlanImgRef.current.src = nextSrc;
       floorPlanImgRef.current.alt = nextAlt;
@@ -277,7 +289,7 @@ export function ApartmentSection() {
 
     gsap.to(baseImgRef.current, {
       opacity: 0,
-      scale: 1.02,
+      scale: 1,
       duration: 0.5,
       ease: "power3.out",
       force3D: true,
@@ -286,7 +298,7 @@ export function ApartmentSection() {
 
     gsap.to(floorPlanImgRef.current, {
       opacity: 1,
-      scale: 1.05,
+      scale: 1,
       duration: 0.6,
       ease: "power3.out",
       force3D: true,
@@ -410,8 +422,8 @@ export function ApartmentSection() {
             <Layer $zIndex={1}>
               <LayerImg
                 ref={baseImgRef}
-                src={apartmentImages.base.src}
-                alt={apartmentImages.base.alt}
+                src={baseSketchSrc}
+                alt={baseSketchAlt}
                 loading="lazy"
                 decoding="async"
               />
@@ -970,6 +982,7 @@ const ImageViewer = styled.div`
   height: clamp(320px, 46vh, 560px);
   margin-top: 0px;
   overflow: hidden;
+  background: #0a0a0a;
 
   @media (max-width: 980px) {
     align-self: center;
@@ -987,9 +1000,9 @@ const Layer = styled.div<{ $zIndex?: number }>`
 const LayerImg = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   display: block;
-  transform: translate3d(0, 0, 0) scale(1.02);
 `;
 
 const HoverInfo = styled.div`
