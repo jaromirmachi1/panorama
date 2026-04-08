@@ -338,11 +338,11 @@ const Panel = styled.div`
   }
 
   @media (min-width: 960px) {
-    width: min(100%, 920px);
-    max-height: min(96vh, 860px);
+    width: min(100%, 1180px);
+    max-height: min(96vh, 920px);
     overflow-y: auto;
     overflow-x: hidden;
-    padding: clamp(44px, 4vw, 52px) clamp(28px, 3vw, 40px) clamp(28px, 3vw, 36px);
+    padding: clamp(44px, 4vw, 52px) clamp(28px, 3vw, 44px) clamp(28px, 3vw, 36px);
   }
 `
 
@@ -353,8 +353,8 @@ const PanelBody = styled.div`
 
   @media (min-width: 960px) {
     display: grid;
-    grid-template-columns: minmax(260px, 0.95fr) minmax(320px, 1.05fr);
-    gap: clamp(28px, 3.5vw, 40px);
+    grid-template-columns: minmax(380px, 1.38fr) minmax(300px, 1fr);
+    gap: clamp(32px, 4vw, 48px);
     align-items: start;
   }
 `
@@ -433,8 +433,8 @@ const FlatPlanFigure = styled.div`
 
   @media (min-width: 960px) {
     margin: 12px 0 0;
-    max-height: min(280px, 42vh);
-    min-height: 140px;
+    max-height: min(380px, 52vh);
+    min-height: 200px;
   }
 `
 
@@ -448,7 +448,7 @@ const FlatPlanImg = styled.img`
   object-position: center;
 
   @media (min-width: 960px) {
-    max-height: min(260px, 40vh);
+    max-height: min(360px, 50vh);
   }
 `
 

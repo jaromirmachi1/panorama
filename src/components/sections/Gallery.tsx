@@ -1,26 +1,31 @@
-import { useLayoutEffect, useRef } from 'react'
-import styled from 'styled-components'
-import { gsap, stOnce } from '../../lib/gsap'
-import { images } from '../../content/images'
-import { Section } from '../Section'
-import { Eyebrow, H2 } from '../TextBlock'
-import { useLang } from '../../i18n/LanguageContext'
-import { t } from '../../i18n/dictionary'
+import { useLayoutEffect, useRef } from "react";
+import styled from "styled-components";
+import { gsap, stOnce } from "../../lib/gsap";
+import { images } from "../../content/images";
+import { Section } from "../Section";
+import { Eyebrow, H2 } from "../TextBlock";
+import { useLang } from "../../i18n/LanguageContext";
+import { t } from "../../i18n/dictionary";
 
 export function Gallery() {
-  const rootRef = useRef<HTMLElement | null>(null)
-  const { lang } = useLang()
+  const rootRef = useRef<HTMLElement | null>(null);
+  const { lang } = useLang();
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      const root = rootRef.current
-      if (!root) return
+      const root = rootRef.current;
+      if (!root) return;
 
-      const items = gsap.utils.toArray<HTMLElement>('[data-gallery-item]', root)
+      const items = gsap.utils.toArray<HTMLElement>(
+        "[data-gallery-item]",
+        root,
+      );
       items.forEach((item) => {
-        const img = item.querySelector('img')
-        const caption = item.querySelector<HTMLElement>('[data-gallery-caption]')
-        if (!img) return
+        const img = item.querySelector("img");
+        const caption = item.querySelector<HTMLElement>(
+          "[data-gallery-caption]",
+        );
+        if (!img) return;
 
         /* One-shot rise + settle (no scrub): same section feel, far less scroll-linked work. */
         gsap.fromTo(
@@ -30,11 +35,11 @@ export function Gallery() {
             y: 0,
             scale: 1,
             duration: 1.15,
-            ease: 'power2.out',
+            ease: "power2.out",
             force3D: true,
-            scrollTrigger: stOnce(item, 'top 86%'),
+            scrollTrigger: stOnce(item, "top 86%"),
           },
-        )
+        );
 
         gsap.fromTo(
           item,
@@ -42,10 +47,10 @@ export function Gallery() {
           {
             opacity: 1,
             duration: 1.0,
-            ease: 'power3.out',
-            scrollTrigger: stOnce(item, 'top 80%'),
+            ease: "power3.out",
+            scrollTrigger: stOnce(item, "top 80%"),
           },
-        )
+        );
 
         if (caption) {
           gsap.fromTo(
@@ -55,17 +60,17 @@ export function Gallery() {
               opacity: 1,
               y: 0,
               duration: 0.85,
-              ease: 'power3.out',
+              ease: "power3.out",
               force3D: true,
-              scrollTrigger: stOnce(item, 'top 82%'),
+              scrollTrigger: stOnce(item, "top 82%"),
             },
-          )
+          );
         }
-      })
-    }, rootRef)
+      });
+    }, rootRef);
 
-    return () => ctx.revert()
-  }, [])
+    return () => ctx.revert();
+  }, []);
 
   return (
     <Section
@@ -80,7 +85,6 @@ export function Gallery() {
           <H2>{t.gallery.title[lang]}</H2>
         </Head>
       </HeadOuter>
-
       <Rail>
         {images.gallery.map((img, idx) => (
           <Item key={img.src} data-gallery-item tabIndex={0}>
@@ -102,16 +106,16 @@ export function Gallery() {
         ))}
       </Rail>
     </Section>
-  )
+  );
 }
 
 const Head = styled.div`
   margin-bottom: clamp(26px, 4vw, 46px);
-`
+`;
 
 const HeadOuter = styled.div`
   padding: 0 clamp(18px, 4vw, 38px);
-`
+`;
 
 const Rail = styled.div`
   display: grid;
@@ -126,7 +130,7 @@ const Rail = styled.div`
   @media (max-width: 620px) {
     grid-template-columns: 1fr;
   }
-`
+`;
 
 const Item = styled.figure`
   margin: 0;
@@ -178,29 +182,33 @@ const Item = styled.figure`
   }
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 18px;
     pointer-events: none;
     opacity: 0.9;
     z-index: 2;
   }
-`
+`;
 
 const Img = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
   transform: translate3d(0, 0, 0);
-`
+`;
 
 const Shade = styled.div`
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(120% 120% at 20% 10%, rgba(255, 255, 255, 0.09), transparent 55%),
+    radial-gradient(
+      120% 120% at 20% 10%,
+      rgba(255, 255, 255, 0.09),
+      transparent 55%
+    ),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.26), rgba(0, 0, 0, 0.68)),
     repeating-linear-gradient(
       to right,
@@ -225,7 +233,7 @@ const Shade = styled.div`
   ${Item}:hover & {
     opacity: 0.9;
   }
-`
+`;
 
 const Caption = styled.figcaption`
   position: absolute;
@@ -252,19 +260,19 @@ const Caption = styled.figcaption`
     opacity: 1;
     transform: translateY(0);
   }
-`
+`;
 
 const CapLeft = styled.div`
   display: grid;
   gap: 6px;
-`
+`;
 
 const CapKicker = styled.div`
   font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   opacity: 0.72;
-`
+`;
 
 const CapTitle = styled.div`
   font-family: ${({ theme }) => theme.fonts.serif};
@@ -273,11 +281,10 @@ const CapTitle = styled.div`
   font-size: 16px;
   line-height: 1.1;
   opacity: 0.95;
-`
+`;
 
 const CapRule = styled.div`
   width: 64px;
   height: 1px;
   background: rgba(255, 255, 255, 0.22);
-`
-
+`;

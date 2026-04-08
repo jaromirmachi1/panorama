@@ -7,175 +7,175 @@
         {
           "id": "101 2+kk",
           "floor": 1,
-          "sizeM2": 39.71,
+          "sizeM2": 74.16,
           "priceKc": 7990000,
           "status": "available"
         },
         {
           "id": "102 1+kk",
           "floor": 1,
-          "sizeM2": 35.3,
+          "sizeM2": 42.88,
           "priceKc": 6947000,
           "status": "available"
         },
         {
           "id": "103 1+kk",
           "floor": 1,
-          "sizeM2": 28.36,
+          "sizeM2": 35.94,
           "priceKc": 5736000,
           "status": "available"
         },
         {
           "id": "104 S",
           "floor": 1,
-          "sizeM2": 18.18,
+          "sizeM2": 21.9,
           "priceKc": 4290000,
           "status": "available"
         },
         {
           "id": "105 S",
           "floor": 1,
-          "sizeM2": 18.18,
+          "sizeM2": 21.9,
           "priceKc": 4290000,
           "status": "available"
         },
         {
           "id": "106 S",
           "floor": 1,
-          "sizeM2": 18.17,
+          "sizeM2": 21.8,
           "priceKc": 4290000,
           "status": "available"
         },
         {
           "id": "107 S",
           "floor": 1,
-          "sizeM2": 18.18,
+          "sizeM2": 21.9,
           "priceKc": 4390000,
           "status": "available"
         },
         {
           "id": "108 S",
           "floor": 1,
-          "sizeM2": 18.17,
+          "sizeM2": 21.8,
           "priceKc": 4390000,
           "status": "available"
         },
         {
           "id": "109 S",
           "floor": 1,
-          "sizeM2": 18.18,
+          "sizeM2": 21.9,
           "priceKc": 4390000,
           "status": "available"
         },
         {
           "id": "110 2+kk",
           "floor": 1,
-          "sizeM2": 38.56,
+          "sizeM2": 46.14,
           "priceKc": 7546000,
           "status": "available"
         },
         {
           "id": "111 1+kk",
           "floor": 1,
-          "sizeM2": 28.56,
+          "sizeM2": 73.25,
           "priceKc": 6136000,
           "status": "available"
         },
         {
           "id": "112 1+kk",
           "floor": 1,
-          "sizeM2": 25.26,
+          "sizeM2": 45.34,
           "priceKc": 5071000,
           "status": "available"
         },
         {
           "id": "113 1+kk",
           "floor": 1,
-          "sizeM2": 25.36,
+          "sizeM2": 45.77,
           "priceKc": 5091000,
           "status": "available"
         },
         {
           "id": "114 1+kk",
           "floor": 1,
-          "sizeM2": 26.87,
+          "sizeM2": 53.35,
           "priceKc": 5423000,
           "status": "available"
         },
         {
           "id": "201 2+kk",
           "floor": 2,
-          "sizeM2": 39.72,
+          "sizeM2": 47.4,
           "priceKc": 7849000,
           "status": "available"
         },
         {
           "id": "202 1+kk",
           "floor": 2,
-          "sizeM2": 35.3,
+          "sizeM2": 42.88,
           "priceKc": 6991000,
           "status": "available"
         },
         {
           "id": "203 1+kk",
           "floor": 2,
-          "sizeM2": 27.9,
+          "sizeM2": 35.48,
           "priceKc": 5846000,
           "status": "available"
         },
         {
           "id": "204 2+kk",
           "floor": 2,
-          "sizeM2": 37.47,
+          "sizeM2": 45.05,
           "priceKc": 7494000,
           "status": "available"
         },
         {
           "id": "205 2+kk",
           "floor": 2,
-          "sizeM2": 37.55,
+          "sizeM2": 44.99,
           "priceKc": 7594000,
           "status": "available"
         },
         {
           "id": "206 2+kk",
           "floor": 2,
-          "sizeM2": 37.6,
+          "sizeM2": 45.18,
           "priceKc": 7724000,
           "status": "available"
         },
         {
           "id": "207 2+kk",
           "floor": 2,
-          "sizeM2": 38.75,
+          "sizeM2": 54.13,
           "priceKc": 8174000,
           "status": "available"
         },
         {
           "id": "208 1+kk",
           "floor": 2,
-          "sizeM2": 29.56,
+          "sizeM2": 37.24,
           "priceKc": 6188000,
           "status": "available"
         },
         {
           "id": "209 1+kk",
           "floor": 2,
-          "sizeM2": 25.26,
+          "sizeM2": 32.76,
           "priceKc": 5327000,
           "status": "available"
         },
         {
           "id": "210 1+kk",
           "floor": 2,
-          "sizeM2": 25.32,
+          "sizeM2": 32.82,
           "priceKc": 5384000,
           "status": "available"
         },
         {
           "id": "211 1+kk",
           "floor": 2,
-          "sizeM2": 27.87,
+          "sizeM2": 38.84,
           "priceKc": 5942000,
           "status": "available"
         }
