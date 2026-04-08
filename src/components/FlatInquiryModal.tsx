@@ -152,28 +152,21 @@ export function FlatInquiryModal({
         </CloseBtn>
 
         <PanelBody>
-          <PanelIntro>
-            <PanelEyebrow>{iq.flatLabel[lang]}</PanelEyebrow>
-            <PanelTitle id={titleId}>{iq.title[lang]}</PanelTitle>
-            <FlatSummary>
-              <FlatId>{flat.id}</FlatId>
-              <FlatMeta>
-                {buildingLabel} · {t.apartments.floorLabel[lang]} {flat.floor}{' '}
-                · {flat.sizeM2.toFixed(1)} m² · {formatKc(flat.priceKc)}
-              </FlatMeta>
-            </FlatSummary>
-            <FlatPlanFigure>
-              <FlatPlanImg
-                src={flatPlanSrc}
-                alt={flatPlanAlt}
-                loading="eager"
-                decoding="async"
-              />
-            </FlatPlanFigure>
-            <PanelSubtitle>{iq.subtitle[lang]}</PanelSubtitle>
-          </PanelIntro>
+          <PanelTop>
+            <PanelIntro>
+              <PanelEyebrow>{iq.flatLabel[lang]}</PanelEyebrow>
+              <PanelTitle id={titleId}>{iq.title[lang]}</PanelTitle>
+              <FlatSummary>
+                <FlatId>{flat.id}</FlatId>
+                <FlatMeta>
+                  {buildingLabel} · {t.apartments.floorLabel[lang]} {flat.floor}{' '}
+                  · {flat.sizeM2.toFixed(1)} m² · {formatKc(flat.priceKc)}
+                </FlatMeta>
+              </FlatSummary>
+              <PanelSubtitle>{iq.subtitle[lang]}</PanelSubtitle>
+            </PanelIntro>
 
-          <PanelFormColumn>
+            <PanelFormColumn>
         {sent ? (
           <ThanksWrap>
             <Thanks>{iq.thanks[lang]}</Thanks>
@@ -270,7 +263,19 @@ export function FlatInquiryModal({
             </Actions>
           </Form>
         )}
-          </PanelFormColumn>
+            </PanelFormColumn>
+          </PanelTop>
+
+          <FlatPlanRow>
+            <FlatPlanFigure>
+              <FlatPlanImg
+                src={flatPlanSrc}
+                alt={flatPlanAlt}
+                loading="eager"
+                decoding="async"
+              />
+            </FlatPlanFigure>
+          </FlatPlanRow>
         </PanelBody>
       </Panel>
     </Root>
@@ -349,7 +354,15 @@ const Panel = styled.div`
 const PanelBody = styled.div`
   display: flex;
   flex-direction: column;
+  gap: clamp(20px, 2.5vw, 28px);
+  min-width: 0;
+`
+
+const PanelTop = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: clamp(22px, 3vw, 28px);
+  min-width: 0;
 
   @media (min-width: 960px) {
     display: grid;
@@ -360,6 +373,11 @@ const PanelBody = styled.div`
 `
 
 const PanelIntro = styled.div`
+  min-width: 0;
+`
+
+const FlatPlanRow = styled.div`
+  width: 100%;
   min-width: 0;
 `
 
@@ -420,35 +438,33 @@ const PanelSubtitle = styled.p`
 `
 
 const FlatPlanFigure = styled.div`
-  margin: 14px 0 16px;
-  padding: 10px;
-  border-radius: 2px;
-  background: #0a0a0a;
-  border: 1px solid rgba(245, 243, 239, 0.08);
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100px;
-  max-height: min(240px, 34vh);
+  min-height: 80px;
+  max-height: min(220px, 32vh);
 
   @media (min-width: 960px) {
-    margin: 12px 0 0;
-    max-height: min(380px, 52vh);
-    min-height: 200px;
+    max-height: min(320px, 38vh);
+    min-height: 120px;
   }
 `
 
 const FlatPlanImg = styled.img`
   display: block;
   max-width: 100%;
-  max-height: min(220px, 32vh);
+  max-height: min(200px, 30vh);
   width: auto;
   height: auto;
   object-fit: contain;
   object-position: center;
 
   @media (min-width: 960px) {
-    max-height: min(360px, 50vh);
+    max-height: min(300px, 36vh);
   }
 `
 
