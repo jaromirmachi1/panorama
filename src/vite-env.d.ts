@@ -2,6 +2,11 @@
 
 interface ImportMetaEnv {
   /**
+   * Public site origin (no trailing slash). Canonical URLs, OG/Twitter images, JSON-LD.
+   * Default in build: https://panorama-zabiny.cz
+   */
+  readonly VITE_SITE_URL?: string;
+  /**
    * Optional absolute origin for the inquiry API (no trailing slash).
    * Use when running `vite` alone to point at a deployed preview: `https://your-app.vercel.app`
    */
