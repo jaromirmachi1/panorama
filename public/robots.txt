@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://panorama-zabiny.cz/sitemap.xml
+Sitemap: https://panoramazabiny.cz/sitemap.xml

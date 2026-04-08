@@ -1,12 +1,25 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
-/** Replaces %SITE_URL% in index.html (no trailing slash). Set VITE_SITE_URL for staging. */
-function siteUrlHtmlPlugin(siteUrl: string): Plugin {
+/**
+ * index.html: %SITE_URL% → canonical origin; optional Google Search Console meta from env.
+ */
+function indexHtmlPlugin(siteUrl: string, googleSiteVerification?: string): Plugin {
   return {
-    name: 'html-site-url',
+    name: 'index-html',
     transformIndexHtml(html) {
-      return html.replace(/%SITE_URL%/g, siteUrl)
+      let out = html.replace(/%SITE_URL%/g, siteUrl)
+      const gsc = googleSiteVerification?.trim()
+      if (gsc) {
+        const safe = gsc.replace(/"/g, '&quot;')
+        out = out.replace(
+          /<!--\s*VITE_GSC_VERIFICATION\s*-->/,
+          `<meta name="google-site-verification" content="${safe}" />`,
+        )
+      } else {
+        out = out.replace(/\s*<!--\s*VITE_GSC_VERIFICATION\s*-->/, '')
+      }
+      return out
     },
   }
 }
@@ -14,11 +27,14 @@ function siteUrlHtmlPlugin(siteUrl: string): Plugin {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const siteUrl = (env.VITE_SITE_URL || 'https://panorama-zabiny.cz').replace(
+  const siteUrl = (env.VITE_SITE_URL || 'https://panoramazabiny.cz').replace(
     /\/$/,
     '',
   )
   return {
-    plugins: [react(), siteUrlHtmlPlugin(siteUrl)],
+    plugins: [
+      react(),
+      indexHtmlPlugin(siteUrl, env.VITE_GOOGLE_SITE_VERIFICATION),
+    ],
   }
 })

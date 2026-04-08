@@ -5,7 +5,7 @@ The inquiry form posts to **`/api/inquiry`**, a Vercel serverless function that 
 ## 1. Resend account and domain
 
 1. Sign up at [resend.com](https://resend.com/) and open the dashboard.
-2. **Domains** → add your domain (e.g. `panorama-zabiny.cz`) and add the DNS records Resend shows.
+2. **Domains** → add your domain (e.g. `panoramazabiny.cz`) and add the DNS records Resend shows.
 3. After verification, you can send from an address like `Poptávky <poptavky@yourdomain.com>`.
 
 For quick tests only, Resend may allow sending from `onboarding@resend.dev` to your own account email—check current Resend docs for limits.
@@ -72,10 +72,10 @@ Follow this order once; after that, new deploys from `main` keep working as long
 
 1. Create a [Resend](https://resend.com/) account.
 2. **API Keys** → create a key → copy it (starts with `re_`). You will paste this as **`RESEND_API_KEY`** on Vercel.
-3. **Domains** → **Add domain** → enter the domain you send from (often the same as your site, e.g. `panorama-zabiny.cz`).
+3. **Domains** → **Add domain** → enter the domain you send from (often the same as your site, e.g. `panoramazabiny.cz`).
 4. At your **DNS provider** (where the domain is registered), add exactly the DNS records Resend shows (usually TXT + MX or CNAME). Save and wait until Resend shows the domain as **Verified** (can take a few minutes to hours).
 5. Decide two addresses:
-   - **`RESEND_FROM_EMAIL`** — the visible sender (must use your **verified** domain), e.g. `Panorama Žabiny <poptavky@panorama-zabiny.cz>`.
+   - **`RESEND_FROM_EMAIL`** — the visible sender (must use your **verified** domain), e.g. `Panorama Žabiny <poptavky@panoramazabiny.cz>`.
    - **`INQUIRY_TO_EMAIL`** — **your** inbox where you want every form submission (can be the same domain or Gmail, etc.). This is only stored in Vercel env; users never see it.
 
 ### C. Environment variables on Vercel (this makes the form actually send mail)

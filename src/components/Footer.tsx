@@ -101,13 +101,13 @@ export function Footer() {
                 <ColTitle>{t.footer.columns.contact[lang]}</ColTitle>
                 <ColLink
                   data-cursor="hover"
-                  href="mailto:info@panorama-zabiny.cz"
+                  href="mailto:info@panoramazabiny.cz"
                   onClick={(e) => {
                     // keep default mailto behavior
                     e.stopPropagation();
                   }}
                 >
-                  info@panorama-zabiny.cz
+                  info@panoramazabiny.cz
                 </ColLink>
                 <ColLink
                   data-cursor="hover"
