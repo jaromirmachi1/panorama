@@ -13,6 +13,7 @@ import {
   getFlatHoverOverlaySrc,
   getFloorPlanAlt,
 } from '../content/apartmentImages'
+import flatRoomMeasurements from '../content/flatRoomMeasurements.json'
 import type { Lang } from '../i18n/LanguageContext'
 import { t } from '../i18n/dictionary'
 import { submitApartmentInquiry } from '../lib/inquiryApi'
@@ -34,6 +35,13 @@ type Props = {
 
 function formatKc(value: number) {
   return `${new Intl.NumberFormat('cs-CZ').format(value)} Kč`
+}
+
+function formatM2(value: number) {
+  return `${new Intl.NumberFormat('cs-CZ', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)} m²`
 }
 
 export function FlatInquiryModal({
@@ -65,6 +73,11 @@ export function FlatInquiryModal({
     () => `${getFloorPlanAlt(flat.floor, flat.buildingId, lang)} — ${flat.id}`,
     [flat.buildingId, flat.floor, flat.id, lang],
   )
+
+  const roomRows = useMemo(() => {
+    const rows = flatRoomMeasurements[flat.id as keyof typeof flatRoomMeasurements]
+    return Array.isArray(rows) ? rows : []
+  }, [flat.id])
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -153,120 +166,140 @@ export function FlatInquiryModal({
 
         <PanelBody>
           <PanelTop>
-            <PanelIntro>
-              <PanelEyebrow>{iq.flatLabel[lang]}</PanelEyebrow>
-              <PanelTitle id={titleId}>{iq.title[lang]}</PanelTitle>
-              <FlatSummary>
-                <FlatId>{flat.id}</FlatId>
-                <FlatMeta>
-                  {buildingLabel} · {t.apartments.floorLabel[lang]} {flat.floor}{' '}
-                  · {flat.sizeM2.toFixed(1)} m² · {formatKc(flat.priceKc)}
-                </FlatMeta>
-              </FlatSummary>
-              <PanelSubtitle>{iq.subtitle[lang]}</PanelSubtitle>
-            </PanelIntro>
+            <PanelLeftColumn>
+              <PanelIntro>
+                <PanelEyebrow>{iq.flatLabel[lang]}</PanelEyebrow>
+                <PanelTitle id={titleId}>{iq.title[lang]}</PanelTitle>
+                <FlatSummary>
+                  <FlatId>{flat.id}</FlatId>
+                  <FlatMeta>
+                    {buildingLabel} · {t.apartments.floorLabel[lang]} {flat.floor}{' '}
+                    · {flat.sizeM2.toFixed(1)} m² · {formatKc(flat.priceKc)}
+                  </FlatMeta>
+                </FlatSummary>
+                <PanelSubtitle>{iq.subtitle[lang]}</PanelSubtitle>
+              </PanelIntro>
+
+              <MeasurementsColumn aria-labelledby="inquiry-room-areas-title">
+                <MeasurementsTitle id="inquiry-room-areas-title">
+                  {iq.roomAreasTitle[lang]}
+                </MeasurementsTitle>
+                {roomRows.length > 0 ? (
+                  <MeasurementsList>
+                    {roomRows.map((row, idx) => (
+                      <MeasurementsRow key={`${row.name}-${idx}`}>
+                        <MeasurementsName>{row.name}</MeasurementsName>
+                        <MeasurementsValue>{formatM2(row.m2)}</MeasurementsValue>
+                      </MeasurementsRow>
+                    ))}
+                  </MeasurementsList>
+                ) : (
+                  <MeasurementsEmpty>{iq.roomAreasEmpty[lang]}</MeasurementsEmpty>
+                )}
+              </MeasurementsColumn>
+            </PanelLeftColumn>
 
             <PanelFormColumn>
-        {sent ? (
-          <ThanksWrap>
-            <Thanks>{iq.thanks[lang]}</Thanks>
-            <GhostBtn type="button" data-cursor="hover" onClick={onClose}>
-              {iq.close[lang]}
-            </GhostBtn>
-          </ThanksWrap>
-        ) : (
-          <Form onSubmit={handleSubmit}>
-            {sendError ? (
-              <FormError role="alert">
-                {sendError.split('\n\n').map((chunk, i) => (
-                  <FormErrorLine key={i} $muted={i > 0}>
-                    {chunk}
-                  </FormErrorLine>
-                ))}
-              </FormError>
-            ) : null}
-            <FieldGrid>
-              <Field>
-                <Label htmlFor="inquiry-first">{iq.firstName[lang]}</Label>
-                <Input
-                  id="inquiry-first"
-                  ref={firstFieldRef}
-                  name="firstName"
-                  autoComplete="given-name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                />
-              </Field>
-              <Field>
-                <Label htmlFor="inquiry-last">{iq.lastName[lang]}</Label>
-                <Input
-                  id="inquiry-last"
-                  name="lastName"
-                  autoComplete="family-name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                />
-              </Field>
-              <Field $wide>
-                <Label htmlFor="inquiry-email">{iq.email[lang]}</Label>
-                <Input
-                  id="inquiry-email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  inputMode="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </Field>
-              <Field $wide>
-                <Label htmlFor="inquiry-phone">{iq.phone[lang]}</Label>
-                <Input
-                  id="inquiry-phone"
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  inputMode="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required
-                />
-              </Field>
-              <Field $wide>
-                <Label htmlFor="inquiry-note">{iq.note[lang]}</Label>
-                <Textarea
-                  id="inquiry-note"
-                  name="note"
-                  rows={4}
-                  maxLength={2000}
-                  autoComplete="off"
-                  placeholder={iq.notePlaceholder[lang]}
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                />
-              </Field>
-            </FieldGrid>
-            <Actions>
-              <SubmitBtn
-                type="submit"
-                data-cursor="hover"
-                disabled={submitting}
-              >
-                {submitting ? iq.sending[lang] : iq.submit[lang]}
-              </SubmitBtn>
-              <GhostBtn type="button" data-cursor="hover" onClick={onClose}>
-                {iq.close[lang]}
-              </GhostBtn>
-            </Actions>
-          </Form>
-        )}
+              {sent ? (
+                <ThanksWrap>
+                  <Thanks>{iq.thanks[lang]}</Thanks>
+                  <GhostBtn type="button" data-cursor="hover" onClick={onClose}>
+                    {iq.close[lang]}
+                  </GhostBtn>
+                </ThanksWrap>
+              ) : (
+                <Form onSubmit={handleSubmit}>
+                  {sendError ? (
+                    <FormError role="alert">
+                      {sendError.split('\n\n').map((chunk, i) => (
+                        <FormErrorLine key={i} $muted={i > 0}>
+                          {chunk}
+                        </FormErrorLine>
+                      ))}
+                    </FormError>
+                  ) : null}
+                  <FieldGrid>
+                    <Field>
+                      <Label htmlFor="inquiry-first">{iq.firstName[lang]}</Label>
+                      <Input
+                        id="inquiry-first"
+                        ref={firstFieldRef}
+                        name="firstName"
+                        autoComplete="given-name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                      />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="inquiry-last">{iq.lastName[lang]}</Label>
+                      <Input
+                        id="inquiry-last"
+                        name="lastName"
+                        autoComplete="family-name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                      />
+                    </Field>
+                    <Field $wide>
+                      <Label htmlFor="inquiry-email">{iq.email[lang]}</Label>
+                      <Input
+                        id="inquiry-email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        inputMode="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                    </Field>
+                    <Field $wide>
+                      <Label htmlFor="inquiry-phone">{iq.phone[lang]}</Label>
+                      <Input
+                        id="inquiry-phone"
+                        name="phone"
+                        type="tel"
+                        autoComplete="tel"
+                        inputMode="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        required
+                      />
+                    </Field>
+                  </FieldGrid>
+                  <Field $wide>
+                    <Label htmlFor="inquiry-note">{iq.note[lang]}</Label>
+                    <Textarea
+                      id="inquiry-note"
+                      name="note"
+                      rows={4}
+                      maxLength={2000}
+                      autoComplete="off"
+                      placeholder={iq.notePlaceholder[lang]}
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                    />
+                  </Field>
+                  <Actions>
+                    <SubmitBtn
+                      type="submit"
+                      data-cursor="hover"
+                      disabled={submitting}
+                    >
+                      {submitting ? iq.sending[lang] : iq.submit[lang]}
+                    </SubmitBtn>
+                    <GhostBtn type="button" data-cursor="hover" onClick={onClose}>
+                      {iq.close[lang]}
+                    </GhostBtn>
+                  </Actions>
+                </Form>
+              )}
             </PanelFormColumn>
           </PanelTop>
 
-          <FlatPlanRow>
+          <ModalFlatPlanRow>
             <FlatPlanFigure>
               <FlatPlanImg
                 src={flatPlanSrc}
@@ -275,7 +308,7 @@ export function FlatInquiryModal({
                 decoding="async"
               />
             </FlatPlanFigure>
-          </FlatPlanRow>
+          </ModalFlatPlanRow>
         </PanelBody>
       </Panel>
     </Root>
@@ -354,8 +387,19 @@ const Panel = styled.div`
 const PanelBody = styled.div`
   display: flex;
   flex-direction: column;
-  gap: clamp(20px, 2.5vw, 28px);
+  gap: 0;
   min-width: 0;
+`
+
+const ModalFlatPlanRow = styled.div`
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: clamp(18px, 2.5vw, 28px);
+  margin-top: clamp(10px, 1.8vw, 20px);
+  border-top: 1px solid rgba(245, 243, 239, 0.1);
 `
 
 const PanelTop = styled.div`
@@ -366,9 +410,21 @@ const PanelTop = styled.div`
 
   @media (min-width: 960px) {
     display: grid;
-    grid-template-columns: minmax(380px, 1.38fr) minmax(300px, 1fr);
-    gap: clamp(32px, 4vw, 48px);
+    grid-template-columns: minmax(260px, 1fr) minmax(300px, 1.22fr);
+    gap: clamp(28px, 4vw, 48px);
     align-items: start;
+  }
+`
+
+const PanelLeftColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.2vw, 26px);
+  min-width: 0;
+
+  @media (min-width: 960px) {
+    padding-right: clamp(8px, 1.5vw, 20px);
+    border-right: 1px solid rgba(245, 243, 239, 0.1);
   }
 `
 
@@ -376,13 +432,76 @@ const PanelIntro = styled.div`
   min-width: 0;
 `
 
-const FlatPlanRow = styled.div`
-  width: 100%;
+const PanelFormColumn = styled.div`
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.2vw, 26px);
+`
+
+const MeasurementsColumn = styled.aside`
+  min-width: 0;
+  margin: 0;
+  padding-top: clamp(14px, 2vw, 22px);
+  border-top: 1px solid rgba(245, 243, 239, 0.1);
+`
+
+const MeasurementsTitle = styled.h3`
+  margin: 0 0 14px;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(245, 243, 239, 0.45);
+  font-weight: 400;
+`
+
+const MeasurementsList = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+`
+
+const MeasurementsRow = styled.li`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(245, 243, 239, 0.08);
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+`
+
+const MeasurementsName = styled.span`
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  color: rgba(245, 243, 239, 0.78);
+  padding-right: 12px;
+  flex: 1.1;
   min-width: 0;
 `
 
-const PanelFormColumn = styled.div`
-  min-width: 0;
+const MeasurementsValue = styled.span`
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(232, 215, 176, 0.88);
+  flex-shrink: 0;
+`
+
+const MeasurementsEmpty = styled.p`
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: 0.03em;
+  color: rgba(245, 243, 239, 0.48);
 `
 
 const PanelEyebrow = styled.div`
@@ -438,6 +557,8 @@ const PanelSubtitle = styled.p`
 `
 
 const FlatPlanFigure = styled.div`
+  box-sizing: border-box;
+  width: 100%;
   margin: 0;
   padding: 0;
   background: transparent;
@@ -445,17 +566,18 @@ const FlatPlanFigure = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 80px;
+  min-height: 72px;
   max-height: min(220px, 32vh);
 
   @media (min-width: 960px) {
-    max-height: min(320px, 38vh);
-    min-height: 120px;
+    max-height: min(280px, 34vh);
+    min-height: 100px;
   }
 `
 
 const FlatPlanImg = styled.img`
   display: block;
+  margin: 0 auto;
   max-width: 100%;
   max-height: min(200px, 30vh);
   width: auto;

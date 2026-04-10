@@ -1,0 +1,160 @@
+{
+  "101 2+kk": [
+    { "name": "Předsíň", "m2": 5.54 },
+    { "name": "Obývací pokoj + kk", "m2": 18.01 },
+    { "name": "Pokoj", "m2": 11.37 },
+    { "name": "Koupelna", "m2": 4.79 },
+    { "name": "Terasa", "m2": 125.44 }
+  ],
+  "102 1+kk": [
+    { "name": "Předsíň", "m2": 5.37 },
+    { "name": "Obývací pokoj + kk", "m2": 26.47 },
+    { "name": "Koupelna", "m2": 3.46 },
+    { "name": "Balkon", "m2": 7.58 }
+  ],
+  "103 1+kk": [
+    { "name": "Předsíň", "m2": 3.07 },
+    { "name": "Obývací pokoj + kk", "m2": 21.51 },
+    { "name": "Koupelna", "m2": 3.78 },
+    { "name": "Balkon", "m2": 7.58 }
+  ],
+  "104 S": [
+    { "name": "Předsíň", "m2": 2.91 },
+    { "name": "Nebytový prostor", "m2": 11.79 },
+    { "name": "Koupelna", "m2": 3.47 },
+    { "name": "Balkon", "m2": 3.72 }
+  ],
+  "105 S": [
+    { "name": "Předsíň", "m2": 2.92 },
+    { "name": "Nebytový prostor", "m2": 11.79 },
+    { "name": "Koupelna", "m2": 3.47 },
+    { "name": "Balkon", "m2": 3.72 }
+  ],
+  "106 S": [
+    { "name": "Předsíň", "m2": 2.91 },
+    { "name": "Nebytový prostor", "m2": 11.79 },
+    { "name": "Koupelna", "m2": 3.47 },
+    { "name": "Balkon", "m2": 3.72 }
+  ],
+  "107 S": [
+    { "name": "Předsíň", "m2": 2.92 },
+    { "name": "Nebytový prostor", "m2": 11.79 },
+    { "name": "Koupelna", "m2": 3.47 },
+    { "name": "Balkon", "m2": 3.72 }
+  ],
+  "108 S": [
+    { "name": "Předsíň", "m2": 2.91 },
+    { "name": "Nebytový prostor", "m2": 11.79 },
+    { "name": "Koupelna", "m2": 3.47 },
+    { "name": "Balkon", "m2": 3.72 }
+  ],
+  "109 S": [
+    { "name": "Předsíň", "m2": 2.92 },
+    { "name": "Nebytový prostor", "m2": 11.79 },
+    { "name": "Koupelna", "m2": 3.47 },
+    { "name": "Balkon", "m2": 3.72 }
+  ],
+  "110 2+kk": [
+    { "name": "Předsíň", "m2": 6.44 },
+    { "name": "Obývací pokoj + kk", "m2": 18.17 },
+    { "name": "Pokoj", "m2": 8.19 },
+    { "name": "Koupelna", "m2": 5.64 },
+    { "name": "Balkon", "m2": 7.58 }
+  ],
+  "111 1+kk": [
+    { "name": "Předsíň", "m2": 2.06 },
+    { "name": "Obývací pokoj + kk", "m2": 22.52 },
+    { "name": "Koupelna", "m2": 3.98 },
+    { "name": "Terasa", "m2": 93.56 }
+  ],
+  "112 1+kk": [
+    { "name": "Předsíň", "m2": 2.53 },
+    { "name": "Obývací pokoj + kk", "m2": 19.15 },
+    { "name": "Koupelna", "m2": 3.58 },
+    { "name": "Terasa", "m2": 53.96 }
+  ],
+  "113 1+kk": [
+    { "name": "Předsíň", "m2": 2.53 },
+    { "name": "Obývací pokoj + kk", "m2": 19.25 },
+    { "name": "Koupelna", "m2": 3.58 },
+    { "name": "Terasa", "m2": 54 }
+  ],
+  "114 1+kk": [
+    { "name": "Předsíň", "m2": 2.53 },
+    { "name": "Obývací pokoj + kk", "m2": 20.65 },
+    { "name": "Koupelna", "m2": 3.69 },
+    { "name": "Terasa", "m2": 69.12 }
+  ],
+  "201 2+kk": [
+    { "name": "Předsíň", "m2": 5.54 },
+    { "name": "Obývací pokoj + kk", "m2": 18.01 },
+    { "name": "Pokoj", "m2": 11.37 },
+    { "name": "Koupelna", "m2": 4.8 },
+    { "name": "Balkon", "m2": 7.68 }
+  ],
+  "202 1+kk": [
+    { "name": "Předsíň", "m2": 5.37 },
+    { "name": "Obývací pokoj + kk", "m2": 26.47 },
+    { "name": "Koupelna", "m2": 3.46 },
+    { "name": "Balkon", "m2": 7.58 }
+  ],
+  "203 1+kk": [
+    { "name": "Předsíň", "m2": 3.04 },
+    { "name": "Obývací pokoj + kk", "m2": 21.17 },
+    { "name": "Koupelna", "m2": 3.69 },
+    { "name": "Balkon", "m2": 7.58 }
+  ],
+  "204 2+kk": [
+    { "name": "Předsíň", "m2": 4.97 },
+    { "name": "Obývací pokoj + kk", "m2": 17.36 },
+    { "name": "Pokoj", "m2": 10.1 },
+    { "name": "Koupelna", "m2": 5.04 },
+    { "name": "Balkon", "m2": 7.58 }
+  ],
+  "205 2+kk": [
+    { "name": "Předsíň", "m2": 5.05 },
+    { "name": "Obývací pokoj + kk", "m2": 17.4 },
+    { "name": "Pokoj", "m2": 10.06 },
+    { "name": "Koupelna", "m2": 5.04 },
+    { "name": "Balkon", "m2": 7.44 }
+  ],
+  "206 2+kk": [
+    { "name": "Předsíň", "m2": 5.09 },
+    { "name": "Obývací pokoj + kk", "m2": 17.4 },
+    { "name": "Pokoj", "m2": 10.07 },
+    { "name": "Koupelna", "m2": 5.04 },
+    { "name": "Balkon", "m2": 7.58 }
+  ],
+  "207 2+kk": [
+    { "name": "Předsíň", "m2": 6.55 },
+    { "name": "Obývací pokoj + kk", "m2": 17.71 },
+    { "name": "Pokoj", "m2": 8.55 },
+    { "name": "Koupelna", "m2": 5.94 },
+    { "name": "Balkon", "m2": 7.58 },
+    { "name": "Balkon", "m2": 7.8 }
+  ],
+  "208 1+kk": [
+    { "name": "Předsíň", "m2": 2.06 },
+    { "name": "Obývací pokoj + kk", "m2": 23.52 },
+    { "name": "Koupelna", "m2": 3.98 },
+    { "name": "Balkon", "m2": 7.68 }
+  ],
+  "209 1+kk": [
+    { "name": "Předsíň", "m2": 2.53 },
+    { "name": "Obývací pokoj + kk", "m2": 19.15 },
+    { "name": "Koupelna", "m2": 3.58 },
+    { "name": "Balkon", "m2": 7.5 }
+  ],
+  "210 1+kk": [
+    { "name": "Předsíň", "m2": 2.53 },
+    { "name": "Obývací pokoj + kk", "m2": 19.21 },
+    { "name": "Koupelna", "m2": 3.58 },
+    { "name": "Balkon", "m2": 7.5 }
+  ],
+  "211 1+kk": [
+    { "name": "Předsíň", "m2": 2.53 },
+    { "name": "Obývací pokoj + kk", "m2": 20.65 },
+    { "name": "Koupelna", "m2": 3.69 },
+    { "name": "Balkon", "m2": 10.97 }
+  ]
+}

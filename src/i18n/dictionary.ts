@@ -101,6 +101,14 @@ export const t = {
         cz: "Děkujeme. Brzy se vám ozveme.",
         en: "Thank you. We will be in touch shortly.",
       },
+      roomAreasTitle: {
+        cz: "Plochy místností (m²)",
+        en: "Room areas (m²)",
+      },
+      roomAreasEmpty: {
+        cz: "Plochy místností pro tuto jednotku doplníme.",
+        en: "Room areas for this unit will be added.",
+      },
     },
   },
 

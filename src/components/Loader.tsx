@@ -95,21 +95,37 @@ const Wrap = styled.div`
   z-index: 1000;
   display: grid;
   place-items: center;
+  box-sizing: border-box;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
   background: ${({ theme }) => theme.colors.black};
   pointer-events: none;
 `;
 
 const Title = styled.h1`
   margin: 0;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   font-family: ${({ theme }) => theme.fonts.heading};
   font-weight: 400;
-  font-size: clamp(40px, 6vw, 88px);
+  /* Avoid a high px floor (e.g. 40px) — it overflows on narrow Android viewports */
+  font-size: clamp(0.875rem, 3.6vw + 1.75vmin, 5.5rem);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   line-height: 1;
   color: rgba(255, 255, 255, 0.92);
   display: inline-flex;
+  flex-wrap: nowrap;
+  justify-content: center;
   gap: 0.02em;
+  text-align: center;
+
+  @media (max-width: 520px) {
+    font-size: clamp(0.75rem, 5.2vw + 1.25vmin, 2.75rem);
+    letter-spacing: 0.05em;
+  }
 `;
 
 const Sub = styled.div`
