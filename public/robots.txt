@@ -1,5 +1,15 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Disallow: /*.png$
+Disallow: /*.jpg$
+Disallow: /*.jpeg$
+Disallow: /*.gif$
+Disallow: /*.webp$
+Disallow: /*.avif$
+Disallow: /*.svg$
+
+User-agent: Googlebot-Image
+Disallow: /
 
 Sitemap: https://panoramazabiny.cz/sitemap.xml

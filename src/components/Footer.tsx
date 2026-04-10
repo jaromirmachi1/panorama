@@ -4,6 +4,7 @@ import { useLang } from "../i18n/LanguageContext";
 import { t } from "../i18n/dictionary";
 import { FaGlobe, FaInstagram } from "react-icons/fa";
 import { useMemo, type MouseEvent } from "react";
+import logoWhite from "../assets/public-images/[LOGO]panoramaBezBgBile.png";
 
 export function Footer() {
   const { lang } = useLang();
@@ -40,7 +41,7 @@ export function Footer() {
         <FooterInner>
           <WordmarkStack>
             <WordmarkLogo
-              src="/[LOGO]panoramaBezBgBile.png"
+              src={logoWhite}
               alt={t.hero.wordmarkAria[lang]}
               loading="lazy"
               decoding="async"
@@ -51,7 +52,7 @@ export function Footer() {
             <BrandBlock>
               <Brand>
                 <LogoImg
-                  src="/[LOGO]panoramaBezBgBile.png"
+                  src={logoWhite}
                   alt="Panorama Žabiny logo"
                   loading="lazy"
                   decoding="async"

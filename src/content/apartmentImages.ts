@@ -1,3 +1,11 @@
+import floorSketch1 from "../assets/public-images/1patroNakres.png";
+import floorSketch2 from "../assets/public-images/2patroNakres.png";
+
+const flatOverlayImages = import.meta.glob("../assets/public-images/*flat.png", {
+  eager: true,
+  import: "default",
+}) as Record<string, string>;
+
 export const apartmentImages = {
   base: {
     src: "/panorama.webp",
@@ -10,8 +18,8 @@ export const apartmentImages = {
  */
 export function getApartmentBaseSketchSrc(floor: number): string {
   const f = Math.floor(floor);
-  if (f <= 1) return "/1patroNakres.png";
-  if (f === 2) return "/2patroNakres.png";
+  if (f <= 1) return floorSketch1;
+  if (f === 2) return floorSketch2;
   return "/2patro.webp";
 }
 
@@ -28,7 +36,10 @@ export function parseFlatNumericId(id: string): string | null {
 export function getFlatHoverOverlaySrc(flat: { id: string; floor: number }): string {
   const n = parseFlatNumericId(flat.id);
   const f = Math.floor(flat.floor);
-  if (n && (f === 1 || f === 2)) return `/${n}flat.png`;
+  if (n && (f === 1 || f === 2)) {
+    const src = flatOverlayImages[`../assets/public-images/${n}flat.png`];
+    if (src) return src;
+  }
   return getFloorPlanSrc(flat.floor);
 }
 
