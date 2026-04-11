@@ -32,7 +32,7 @@ export const t = {
   projectIntro: {
     title: { cz: "O projektu", en: "About the project" },
     body1: {
-      cz: `Klidný ráj v Žabovřeskách na Kroftově je zasazená do zelené zóny blízko Palackého vrchu, s výhledem na městskou panoramatu Brna. Díky poloze v zeleni vyniká příjemným mikroklimatem: v létě osvěží chlad lesa, v zimě sněhová pokrývka. Lákavým cílem procházek pro rodiny s dětmi je nedaleký lesopark s loukami a stezkami.`,
+      cz: `Klidný ráj v Žabovřeskách na Kroftově je zasazen do zelené zóny blízko Palackého vrchu, s výhledem na panorama města Brna. Díky poloze v zeleni vyniká příjemným mikroklimatem: v létě osvěží chlad lesa, v zimě sněhová pokrývka. Lákavým cílem procházek pro rodiny s dětmi je nedaleký lesopark s loukami a stezkami.`,
       en: `A calm paradise in Žabovřesky on Kroftova is set within a green zone near Palacký Hill, with views of Brno's city skyline. Thanks to its position in the greenery, it boasts a pleasant microclimate: in summer, the cool of the forest refreshes; in winter, snow blankets the area. A tempting destination for walks for families with children is the nearby forest park with meadows and trails.`,
     },
     body2: {
