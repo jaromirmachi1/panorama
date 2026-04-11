@@ -18,3 +18,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+/** Set by gtag.js in index.html */
+interface Window {
+  dataLayer?: unknown[];
+  gtag?: (...args: unknown[]) => void;
+}

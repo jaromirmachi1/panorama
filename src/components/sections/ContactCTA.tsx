@@ -1,6 +1,7 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { gsap, stOnce } from "../../lib/gsap";
+import { FlatInquiryModal } from "../FlatInquiryModal";
 import { Container } from "../Section";
 import { useLang } from "../../i18n/LanguageContext";
 import { t } from "../../i18n/dictionary";
@@ -8,6 +9,7 @@ import { t } from "../../i18n/dictionary";
 export function ContactCTA() {
   const rootRef = useRef<HTMLElement | null>(null);
   const { lang } = useLang();
+  const [inquiryOpen, setInquiryOpen] = useState(false);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -45,7 +47,11 @@ export function ContactCTA() {
           <Title data-cta>{t.contact.title[lang]}</Title>
           <Copy data-cta>{t.contact.copy[lang]}</Copy>
           <Actions data-cta>
-            <Button data-cursor="hover" href="mailto:info@lvlreality.cz">
+            <Button
+              type="button"
+              data-cursor="hover"
+              onClick={() => setInquiryOpen(true)}
+            >
               {t.contact.buttonPrimary[lang]}
             </Button>
             <Ghost data-cursor="hover" href="#top">
@@ -54,6 +60,13 @@ export function ContactCTA() {
           </Actions>
         </Center>
       </Container>
+      {inquiryOpen ? (
+        <FlatInquiryModal
+          mode="general"
+          lang={lang}
+          onClose={() => setInquiryOpen(false)}
+        />
+      ) : null}
     </ContactSection>
   );
 }
@@ -102,7 +115,7 @@ const Actions = styled.div`
   flex-wrap: wrap;
 `;
 
-const Button = styled.a`
+const buttonStyles = `
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -115,6 +128,10 @@ const Button = styled.a`
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
   transition:
     transform 700ms ease,
     background 700ms ease,
@@ -127,7 +144,12 @@ const Button = styled.a`
   }
 `;
 
-const Ghost = styled(Button)`
+const Button = styled.button`
+  ${buttonStyles}
+`;
+
+const Ghost = styled.a`
+  ${buttonStyles}
   background: transparent;
   border-color: rgba(255, 255, 255, 0.14);
   color: rgba(255, 255, 255, 0.78);

@@ -159,6 +159,11 @@ export const t = {
     },
     buttonPrimary: { cz: "Nezávazně poptat", en: "Request information" },
     buttonGhost: { cz: "Zpět nahoru", en: "Back to top" },
+    inquiryTitle: { cz: "Nezávazná poptávka", en: "Non-binding inquiry" },
+    inquirySubtitle: {
+      cz: "Vyplňte údaje a ozveme se s dostupností a materiály k projektu.",
+      en: "Leave your details and we will follow up with availability and project materials.",
+    },
   },
 
   footer: {

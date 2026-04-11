@@ -16,6 +16,7 @@ import {
 import flatRoomMeasurements from '../content/flatRoomMeasurements.json'
 import type { Lang } from '../i18n/LanguageContext'
 import { t } from '../i18n/dictionary'
+import { reportGoogleAdsLeadConversion } from '../lib/googleAds'
 import { submitApartmentInquiry } from '../lib/inquiryApi'
 
 export type InquiryFlat = {
@@ -26,11 +27,19 @@ export type InquiryFlat = {
   buildingId: 'A' | 'B'
 }
 
-type Props = {
-  flat: InquiryFlat
-  buildingLabel: string
-  lang: Lang
-  onClose: () => void
+export type FlatInquiryModalProps =
+  | { mode: 'general'; lang: Lang; onClose: () => void }
+  | {
+      flat: InquiryFlat
+      buildingLabel: string
+      lang: Lang
+      onClose: () => void
+    }
+
+function isGeneralInquiry(
+  props: FlatInquiryModalProps,
+): props is { mode: 'general'; lang: Lang; onClose: () => void } {
+  return 'mode' in props && props.mode === 'general'
 }
 
 function formatKc(value: number) {
@@ -44,12 +53,11 @@ function formatM2(value: number) {
   }).format(value)} m²`
 }
 
-export function FlatInquiryModal({
-  flat,
-  buildingLabel,
-  lang,
-  onClose,
-}: Props) {
+export function FlatInquiryModal(props: FlatInquiryModalProps) {
+  const isGeneral = isGeneralInquiry(props)
+  const { lang, onClose } = props
+  const flat = isGeneral ? null : props.flat
+  const buildingLabel = isGeneral ? '' : props.buildingLabel
   const titleId = useId()
   const panelRef = useRef<HTMLDivElement>(null)
   const firstFieldRef = useRef<HTMLInputElement>(null)
@@ -65,19 +73,21 @@ export function FlatInquiryModal({
 
   const iq = t.apartments.inquiry
 
-  const flatPlanSrc = useMemo(
-    () => getFlatHoverOverlaySrc({ id: flat.id, floor: flat.floor }),
-    [flat.floor, flat.id],
-  )
-  const flatPlanAlt = useMemo(
-    () => `${getFloorPlanAlt(flat.floor, flat.buildingId, lang)} — ${flat.id}`,
-    [flat.buildingId, flat.floor, flat.id, lang],
-  )
+  const flatPlanSrc = useMemo(() => {
+    if (!flat) return ''
+    return getFlatHoverOverlaySrc({ id: flat.id, floor: flat.floor })
+  }, [flat])
+
+  const flatPlanAlt = useMemo(() => {
+    if (!flat) return ''
+    return `${getFloorPlanAlt(flat.floor, flat.buildingId, lang)} — ${flat.id}`
+  }, [flat, lang])
 
   const roomRows = useMemo(() => {
+    if (!flat) return []
     const rows = flatRoomMeasurements[flat.id as keyof typeof flatRoomMeasurements]
     return Array.isArray(rows) ? rows : []
-  }, [flat.id])
+  }, [flat])
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -106,25 +116,47 @@ export function FlatInquiryModal({
     e.preventDefault()
     setSendError(null)
 
-    const body = {
-      flat_id: flat.id,
-      building: flat.buildingId,
-      building_label: buildingLabel,
-      floor: flat.floor,
-      size_m2: flat.sizeM2,
-      price_kc: flat.priceKc,
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      user_email: email.trim(),
-      user_phone: phone.trim(),
-      note: note.trim(),
-    }
+    const body = isGeneral
+      ? {
+          flat_id: 'OBECNY-DOTAZ',
+          building: '-',
+          building_label: 'Panorama Žabiny — kontaktní formulář',
+          floor: 0,
+          size_m2: 0,
+          price_kc: 0,
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          user_email: email.trim(),
+          user_phone: phone.trim(),
+          note: note.trim(),
+        }
+      : {
+          flat_id: flat!.id,
+          building: flat!.buildingId,
+          building_label: buildingLabel,
+          floor: flat!.floor,
+          size_m2: flat!.sizeM2,
+          price_kc: flat!.priceKc,
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          user_email: email.trim(),
+          user_phone: phone.trim(),
+          note: note.trim(),
+        }
 
     setSubmitting(true)
     try {
       const result = await submitApartmentInquiry(body)
       if (result.ok) {
         setSent(true)
+        if (isGeneral) {
+          reportGoogleAdsLeadConversion({ value: 1.0, currency: 'CZK' })
+        } else {
+          reportGoogleAdsLeadConversion({
+            value: Math.max(1, props.flat.priceKc),
+            currency: 'CZK',
+          })
+        }
       } else if (result.reason === 'not_configured') {
         setSendError(iq.sendErrorConfig[lang])
       } else {
@@ -168,35 +200,47 @@ export function FlatInquiryModal({
           <PanelTop>
             <PanelLeftColumn>
               <PanelIntro>
-                <PanelEyebrow>{iq.flatLabel[lang]}</PanelEyebrow>
-                <PanelTitle id={titleId}>{iq.title[lang]}</PanelTitle>
-                <FlatSummary>
-                  <FlatId>{flat.id}</FlatId>
-                  <FlatMeta>
-                    {buildingLabel} · {t.apartments.floorLabel[lang]} {flat.floor}{' '}
-                    · {flat.sizeM2.toFixed(1)} m² · {formatKc(flat.priceKc)}
-                  </FlatMeta>
-                </FlatSummary>
-                <PanelSubtitle>{iq.subtitle[lang]}</PanelSubtitle>
+                {isGeneral ? (
+                  <>
+                    <PanelEyebrow>{t.contact.eyebrow[lang]}</PanelEyebrow>
+                    <PanelTitle id={titleId}>{t.contact.inquiryTitle[lang]}</PanelTitle>
+                    <PanelSubtitle>{t.contact.inquirySubtitle[lang]}</PanelSubtitle>
+                  </>
+                ) : (
+                  <>
+                    <PanelEyebrow>{iq.flatLabel[lang]}</PanelEyebrow>
+                    <PanelTitle id={titleId}>{iq.title[lang]}</PanelTitle>
+                    <FlatSummary>
+                      <FlatId>{flat!.id}</FlatId>
+                      <FlatMeta>
+                        {buildingLabel} · {t.apartments.floorLabel[lang]} {flat!.floor}{' '}
+                        · {flat!.sizeM2.toFixed(1)} m² · {formatKc(flat!.priceKc)}
+                      </FlatMeta>
+                    </FlatSummary>
+                    <PanelSubtitle>{iq.subtitle[lang]}</PanelSubtitle>
+                  </>
+                )}
               </PanelIntro>
 
-              <MeasurementsColumn aria-labelledby="inquiry-room-areas-title">
-                <MeasurementsTitle id="inquiry-room-areas-title">
-                  {iq.roomAreasTitle[lang]}
-                </MeasurementsTitle>
-                {roomRows.length > 0 ? (
-                  <MeasurementsList>
-                    {roomRows.map((row, idx) => (
-                      <MeasurementsRow key={`${row.name}-${idx}`}>
-                        <MeasurementsName>{row.name}</MeasurementsName>
-                        <MeasurementsValue>{formatM2(row.m2)}</MeasurementsValue>
-                      </MeasurementsRow>
-                    ))}
-                  </MeasurementsList>
-                ) : (
-                  <MeasurementsEmpty>{iq.roomAreasEmpty[lang]}</MeasurementsEmpty>
-                )}
-              </MeasurementsColumn>
+              {!isGeneral ? (
+                <MeasurementsColumn aria-labelledby="inquiry-room-areas-title">
+                  <MeasurementsTitle id="inquiry-room-areas-title">
+                    {iq.roomAreasTitle[lang]}
+                  </MeasurementsTitle>
+                  {roomRows.length > 0 ? (
+                    <MeasurementsList>
+                      {roomRows.map((row, idx) => (
+                        <MeasurementsRow key={`${row.name}-${idx}`}>
+                          <MeasurementsName>{row.name}</MeasurementsName>
+                          <MeasurementsValue>{formatM2(row.m2)}</MeasurementsValue>
+                        </MeasurementsRow>
+                      ))}
+                    </MeasurementsList>
+                  ) : (
+                    <MeasurementsEmpty>{iq.roomAreasEmpty[lang]}</MeasurementsEmpty>
+                  )}
+                </MeasurementsColumn>
+              ) : null}
             </PanelLeftColumn>
 
             <PanelFormColumn>
@@ -299,16 +343,18 @@ export function FlatInquiryModal({
             </PanelFormColumn>
           </PanelTop>
 
-          <ModalFlatPlanRow>
-            <FlatPlanFigure>
-              <FlatPlanImg
-                src={flatPlanSrc}
-                alt={flatPlanAlt}
-                loading="eager"
-                decoding="async"
-              />
-            </FlatPlanFigure>
-          </ModalFlatPlanRow>
+          {!isGeneral ? (
+            <ModalFlatPlanRow>
+              <FlatPlanFigure>
+                <FlatPlanImg
+                  src={flatPlanSrc}
+                  alt={flatPlanAlt}
+                  loading="eager"
+                  decoding="async"
+                />
+              </FlatPlanFigure>
+            </ModalFlatPlanRow>
+          ) : null}
         </PanelBody>
       </Panel>
     </Root>
