@@ -8,6 +8,7 @@ import { Hero } from './components/Hero'
 import { ProjectIntro } from './components/sections/ProjectIntro'
 import { ApartmentSection } from './components/sections/ApartmentSection'
 import { Gallery } from './components/sections/Gallery'
+import { InteriorStandards } from './components/sections/InteriorStandards'
 import { Features } from './components/sections/Features'
 import { ContactCTA } from './components/sections/ContactCTA'
 import { Footer } from './components/Footer'
@@ -43,6 +44,7 @@ export default function App() {
           <ProjectIntro />
           <ApartmentSection />
           <Gallery />
+          <InteriorStandards />
           <Features />
           <SiteClosing>
             <ContactCTA />

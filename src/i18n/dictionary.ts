@@ -117,6 +117,94 @@ export const t = {
     title: { cz: "Světlo v pohybu", en: "Light in motion" },
   },
 
+  interiorStandards: {
+    eyebrow: { cz: "Interiér", en: "Interior" },
+    title: {
+      cz: "Standardy vybavení",
+      en: "Fit-out standards",
+    },
+    groups: [
+      {
+        title: { cz: "Kuchyň a povrchy", en: "Kitchen and surfaces" },
+        bullets: [
+          {
+            cz: "Moderní kuchyňská linka IKEA s odolnou laminátovou pracovní deskou, horními skříňkami nad dřezem, spodními skříněmi včetně varné desky a vestavěné lednice, trouby a myčky – vše připravené k okamžitému užití.",
+            en: "Modern IKEA kitchen with durable laminate worktop, wall cabinets above the sink, base units including hob, built-in fridge, oven, and dishwasher — ready to use from day one.",
+          },
+          {
+            cz: "Kvalitní vinylová podlaha s korkovým podkladem v obývacích prostorách a kuchyni pro snadnou údržbu a teplo domova.",
+            en: "Quality vinyl flooring with cork underlay in living areas and the kitchen for easy upkeep and a warmer feel underfoot.",
+          },
+          {
+            cz: "Čistá bílá výmalba na stěnách i stropě – světlý a nadčasový design.",
+            en: "Clean white paint on walls and ceiling — a bright, timeless look.",
+          },
+        ],
+      },
+      {
+        title: {
+          cz: "Elektroinstalace a osvětlení",
+          en: "Electrical installation and lighting",
+        },
+        bullets: [
+          {
+            cz: "Plná příprava na svítidla: vývody se spínači a objímkami v každé místnosti (žárovky na vás).",
+            en: "Full preparation for light fittings: switched outlets with batten holders in every room (lamps are yours to choose).",
+          },
+          {
+            cz: "Prémiové zásuvky Schrack Visio – bílé 50 Classic a černé 55 Hubic, plně podle norem, včetně kuchyňského nástavce – bezpečné a stylové.",
+            en: "Premium Schrack Visio sockets — white 50 Classic and black 55 Hubic, fully compliant, including a kitchen strip — safe and refined.",
+          },
+        ],
+      },
+      {
+        title: {
+          cz: "Koupelna a sanitární vybavení",
+          en: "Bathroom and sanitary fittings",
+        },
+        bullets: [
+          {
+            cz: "Luxusně obložená koupelna keramickými obklady až do stropu včetně WC zóny.",
+            en: "Fully tiled bathroom with ceramics to the ceiling, including the WC zone.",
+          },
+          {
+            cz: "Kompletní sanitární sada: závěsné WC Villeroy & Boch Architectura Combi Pack, umyvadlo Villeroy & Boch Avento s baterií Grohe Cubeo a sprchový kout Grohe Tempesta System 250 s obložením – elegance a funkčnost v jednom.",
+            en: "Complete sanitary package: wall-hung Villeroy & Boch Architectura Combi Pack WC, Villeroy & Boch Avento basin with Grohe Cubeo mixer, and Grohe Tempesta System 250 shower enclosure with tiling — elegance and function in one.",
+          },
+          {
+            cz: "Přípojky na pračku v koupelně nebo kuchyni pro maximální flexibilitu.",
+            en: "Washing machine connections in the bathroom or kitchen for maximum flexibility.",
+          },
+        ],
+      },
+      {
+        title: { cz: "Dveře a interiér", en: "Doors and interior" },
+        bullets: [
+          {
+            cz: "Plné bezfalcové vnitřní dveře s obložkami v rámech a černým kováním – moderní estetika a tichý chod.",
+            en: "Solid flush interior doors with jambs and black ironmongery — modern aesthetics and quiet operation.",
+          },
+          {
+            cz: "Protipožární vstupní dveře – maximální bezpečnost a soukromí.",
+            en: "Fire-rated entrance doors — maximum safety and privacy.",
+          },
+          {
+            cz: "Podomítkové kazety pro elektro – čisté linie bez viditelných kabelů.",
+            en: "Flush-mounted boxes for wiring — clean lines without visible cables.",
+          },
+        ],
+      },
+    ],
+    closing: {
+      cz: "Všechny standardy splňují nejvyšší evropské normy. Připraveno k nastěhování – žádné kompromisy!",
+      en: "All specifications meet the highest European standards. Move-in ready — no compromises.",
+    },
+    mobileScrollHint: {
+      cz: "Potáhněte řádek do stran — další standardy jsou vedle.",
+      en: "Swipe the row sideways — more standards are next.",
+    },
+  },
+
   features: {
     eyebrow: { cz: "Prodej projektu", en: "Project sales" },
     title: {
