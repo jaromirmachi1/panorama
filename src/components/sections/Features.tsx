@@ -21,7 +21,7 @@ const REALTORS = [
     phoneDisplay: "722 033 055",
     phoneTel: "+420722033055",
     email: "info@lvlreality.cz",
-    photoSrc: null as string | null,
+    photoSrc: "/davidsaid.webp" as string | null,
     initials: "DS",
   },
 ] as const;
