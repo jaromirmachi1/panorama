@@ -4,7 +4,7 @@
     { "name": "Obývací pokoj + kk", "m2": 18.01 },
     { "name": "Pokoj", "m2": 11.37 },
     { "name": "Koupelna", "m2": 4.79 },
-    { "name": "Terasa", "m2": 125.44 }
+    { "name": "Terasa", "m2": 34.45 }
   ],
   "102 1+kk": [
     { "name": "Předsíň", "m2": 5.37 },
@@ -65,25 +65,25 @@
     { "name": "Předsíň", "m2": 2.06 },
     { "name": "Obývací pokoj + kk", "m2": 22.52 },
     { "name": "Koupelna", "m2": 3.98 },
-    { "name": "Terasa", "m2": 93.56 }
+    { "name": "Terasa", "m2": 44.69 }
   ],
   "112 1+kk": [
     { "name": "Předsíň", "m2": 2.53 },
     { "name": "Obývací pokoj + kk", "m2": 19.15 },
     { "name": "Koupelna", "m2": 3.58 },
-    { "name": "Terasa", "m2": 53.96 }
+    { "name": "Terasa", "m2": 20.08 }
   ],
   "113 1+kk": [
     { "name": "Předsíň", "m2": 2.53 },
     { "name": "Obývací pokoj + kk", "m2": 19.25 },
     { "name": "Koupelna", "m2": 3.58 },
-    { "name": "Terasa", "m2": 54 }
+    { "name": "Terasa", "m2": 20.41 }
   ],
   "114 1+kk": [
     { "name": "Předsíň", "m2": 2.53 },
     { "name": "Obývací pokoj + kk", "m2": 20.65 },
     { "name": "Koupelna", "m2": 3.69 },
-    { "name": "Terasa", "m2": 69.12 }
+    { "name": "Terasa", "m2": 26.48 }
   ],
   "201 2+kk": [
     { "name": "Předsíň", "m2": 5.54 },
