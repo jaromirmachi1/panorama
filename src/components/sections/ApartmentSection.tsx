@@ -37,6 +37,7 @@ type FlatsData = {
 
 type FlatWithBuilding = Flat & { buildingId: Building["id"] };
 type Hovered = FlatWithBuilding | null;
+type FloorFilter = number | "storage";
 
 const flatsData = flatsJson as unknown as FlatsData;
 
@@ -88,20 +89,33 @@ export function ApartmentSection() {
     );
   }, []);
 
+  const storageUnit = useMemo<FlatWithBuilding>(
+    () => ({
+      id: "Sklepní kóje",
+      floor: 0,
+      sizeM2: 2.5,
+      priceKc: 250000,
+      status: "available",
+      buildingId: "A",
+    }),
+    [],
+  );
+
   const floorNumbers = useMemo(() => {
     const s = new Set<number>();
     allFlats.forEach((f) => s.add(f.floor));
     return Array.from(s).sort((a, b) => a - b);
   }, [allFlats]);
 
-  const [activeFloor, setActiveFloor] = useState<number>(1);
+  const [activeFloor, setActiveFloor] = useState<FloorFilter>(1);
 
-  const safeActiveFloor = floorNumbers.includes(activeFloor)
-    ? activeFloor
+  const safeActiveFloor =
+    typeof activeFloor === "number" && floorNumbers.includes(activeFloor)
+      ? activeFloor
     : (floorNumbers[0] ?? 1);
 
   useEffect(() => {
-    if (!floorNumbers.includes(activeFloor)) {
+    if (typeof activeFloor === "number" && !floorNumbers.includes(activeFloor)) {
       setActiveFloor(floorNumbers[0] ?? 1);
     }
   }, [floorNumbers, activeFloor]);
@@ -113,8 +127,11 @@ export function ApartmentSection() {
   }, [activeFloor]);
 
   const flatsOnFloor = useMemo(
-    () => allFlats.filter((f) => f.floor === safeActiveFloor),
-    [allFlats, safeActiveFloor],
+    () =>
+      activeFloor === "storage"
+        ? [storageUnit]
+        : allFlats.filter((f) => f.floor === safeActiveFloor),
+    [activeFloor, allFlats, safeActiveFloor, storageUnit],
   );
 
   const totalPages = useMemo(() => {
@@ -132,15 +149,15 @@ export function ApartmentSection() {
   }, [flatsOnFloor, safePage]);
 
   const defaultBuildingId = allFlats[0]?.buildingId ?? "A";
+  const visualFloor = activeFloor === "storage" ? 2 : safeActiveFloor;
 
   const baseSketchSrc = useMemo(
-    () => getApartmentBaseSketchSrc(safeActiveFloor),
-    [safeActiveFloor],
+    () => getApartmentBaseSketchSrc(visualFloor),
+    [visualFloor],
   );
   const baseSketchAlt = useMemo(
-    () =>
-      getApartmentBaseSketchAlt(safeActiveFloor, defaultBuildingId, lang),
-    [safeActiveFloor, defaultBuildingId, lang],
+    () => getApartmentBaseSketchAlt(visualFloor, defaultBuildingId, lang),
+    [visualFloor, defaultBuildingId, lang],
   );
 
   useLayoutEffect(() => {
@@ -280,8 +297,12 @@ export function ApartmentSection() {
       return;
     }
 
-    const nextSrc = getFlatHoverOverlaySrc(hovered);
-    const nextAlt = `${getFloorPlanAlt(hovered.floor, hovered.buildingId, lang)} — ${hovered.id}`;
+    const hoveredVisualFloor = activeFloor === "storage" ? 2 : hovered.floor;
+    const nextSrc =
+      activeFloor === "storage"
+        ? getApartmentBaseSketchSrc(2)
+        : getFlatHoverOverlaySrc(hovered);
+    const nextAlt = `${getFloorPlanAlt(hoveredVisualFloor, hovered.buildingId, lang)} — ${hovered.id}`;
     if (floorPlanImgRef.current) {
       floorPlanImgRef.current.src = nextSrc;
       floorPlanImgRef.current.alt = nextAlt;
@@ -304,7 +325,7 @@ export function ApartmentSection() {
       force3D: true,
       overwrite: "auto",
     });
-  }, [hovered, lang]);
+  }, [hovered, activeFloor, lang]);
 
   return (
     <Wrap
@@ -326,13 +347,23 @@ export function ApartmentSection() {
                 key={f}
                 type="button"
                 data-cursor="hover"
-                $active={safeActiveFloor === f}
-                aria-pressed={safeActiveFloor === f}
+                $active={activeFloor !== "storage" && safeActiveFloor === f}
+                aria-pressed={activeFloor !== "storage" && safeActiveFloor === f}
                 onClick={() => setActiveFloor(f)}
               >
                 {t.apartments.floorTabWord[lang]} {f}
               </FloorTabButton>
             ))}
+            <FloorTabButton
+              key="storage"
+              type="button"
+              data-cursor="hover"
+              $active={activeFloor === "storage"}
+              aria-pressed={activeFloor === "storage"}
+              onClick={() => setActiveFloor("storage")}
+            >
+              {lang === "cz" ? "sklepní kóje" : "storage unit"}
+            </FloorTabButton>
           </FloorTabs>
 
           <ApartmentList aria-label={t.apartments.listAria[lang]}>
@@ -431,8 +462,8 @@ export function ApartmentSection() {
             <Layer $zIndex={2}>
               <LayerImg
                 ref={floorPlanImgRef}
-                src={getFloorPlanSrc(safeActiveFloor)}
-                alt={getFloorPlanAlt(safeActiveFloor, defaultBuildingId, lang)}
+                src={getFloorPlanSrc(visualFloor)}
+                alt={getFloorPlanAlt(visualFloor, defaultBuildingId, lang)}
                 loading="lazy"
                 decoding="async"
               />
