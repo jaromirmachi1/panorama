@@ -30,14 +30,14 @@
           "floor": 1,
           "sizeM2": 21.9,
           "priceKc": 4290000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "105 S",
           "floor": 1,
           "sizeM2": 21.9,
           "priceKc": 4290000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "106 S",
@@ -86,14 +86,14 @@
           "floor": 1,
           "sizeM2": 45.34,
           "priceKc": 5071000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "113 1+kk",
           "floor": 1,
           "sizeM2": 45.77,
           "priceKc": 5091000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "114 1+kk",
@@ -128,7 +128,7 @@
           "floor": 2,
           "sizeM2": 45.05,
           "priceKc": 7494000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "205 2+kk",
@@ -142,7 +142,7 @@
           "floor": 2,
           "sizeM2": 45.18,
           "priceKc": 7724000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "207 2+kk",
@@ -170,7 +170,7 @@
           "floor": 2,
           "sizeM2": 32.82,
           "priceKc": 5384000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "211 1+kk",
