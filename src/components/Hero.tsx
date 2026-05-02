@@ -244,6 +244,7 @@ export function Hero() {
       gsap.set(q('[data-hero="wordmark"]'), { opacity: 0, y: -14 });
       gsap.set(q('[data-hero="nav"]'), { opacity: 0, y: -10 });
       gsap.set(q('[data-hero="mobile-menu"]'), { opacity: 0, y: -10 });
+      gsap.set(q('[data-hero="announcement"]'), { opacity: 0, y: -10 });
 
       gsap.to(q('[data-hero="wordmark"]'), {
         opacity: 1,
@@ -267,6 +268,14 @@ export function Hero() {
         duration: 1.05,
         ease: "expo.out",
         delay: 0.18,
+      });
+
+      gsap.to(q('[data-hero="announcement"]'), {
+        opacity: 1,
+        y: 0,
+        duration: 1.05,
+        ease: "expo.out",
+        delay: 0.28,
       });
 
       gsap.fromTo(
@@ -389,6 +398,25 @@ export function Hero() {
           </LangCluster>
         </Nav>
       </Top>
+
+      <AnnouncementStamp
+        data-hero="announcement"
+        aria-label={t.hero.announcement[lang].join(" ")}
+      >
+        <AnnouncementStampInner>
+          <AnnouncementStampKicker>
+            {lang === "cz" ? "Připraveno" : "Ready"}
+          </AnnouncementStampKicker>
+          <AnnouncementStampText>
+            <AnnouncementStampLine>
+              {t.hero.announcement[lang][0]}
+            </AnnouncementStampLine>
+            <AnnouncementStampLine>
+              {t.hero.announcement[lang][1]}
+            </AnnouncementStampLine>
+          </AnnouncementStampText>
+        </AnnouncementStampInner>
+      </AnnouncementStamp>
 
       {typeof document !== "undefined" &&
         mobileNavOpen &&
@@ -696,6 +724,91 @@ const Nav = styled.nav`
     grid-template-columns: 1fr auto;
     row-gap: 13px;
   }
+`;
+
+const AnnouncementStamp = styled.aside`
+  position: absolute;
+  right: clamp(22px, 6vw, 82px);
+  bottom: clamp(54px, 10vw, 112px);
+  z-index: 2;
+  width: clamp(154px, 14vw, 218px);
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(10, 10, 10, 0.16);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 22px 70px rgba(0, 0, 0, 0.28);
+  transform: rotate(-7deg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  @media (min-width: ${MOBILE_NAV_MAX_PX + 1}px) {
+    bottom: clamp(28px, 6vw, 72px);
+  }
+
+  @media (max-width: ${MOBILE_NAV_MAX_PX}px) {
+    right: clamp(18px, 6vw, 30px);
+    bottom: clamp(44px, 12vw, 70px);
+    width: clamp(132px, 38vw, 164px);
+    padding: 9px;
+  }
+`;
+
+const AnnouncementStampInner = styled.div`
+  box-sizing: border-box;
+  flex: 0 1 auto;
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1.8vw, 10px);
+  padding: clamp(12px, 3.2vw, 18px);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 50%;
+  text-align: center;
+`;
+
+const AnnouncementStampKicker = styled.span`
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: clamp(9px, 0.72vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+`;
+
+const AnnouncementStampText = styled.div`
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.06em;
+  font-family: ${({ theme }) => theme.fonts.heading};
+  font-size: clamp(14px, 1.25vw, 20px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+`;
+
+const AnnouncementStampLine = styled.span`
+  display: block;
+  line-height: 1.12;
+  white-space: nowrap;
 `;
 
 const NavGroup = styled.div`

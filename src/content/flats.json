@@ -7,7 +7,7 @@
         {
           "id": "101 2+kk",
           "floor": 1,
-          "sizeM2": 74.16,
+          "sizeM2": 164.71,
           "priceKc": 7990000,
           "status": "available"
         },
@@ -28,7 +28,7 @@
         {
           "id": "104 S",
           "floor": 1,
-          "sizeM2": 21.9,
+          "sizeM2": 21.89,
           "priceKc": 4290000,
           "status": "reserved"
         },
@@ -42,7 +42,7 @@
         {
           "id": "106 S",
           "floor": 1,
-          "sizeM2": 21.8,
+          "sizeM2": 21.89,
           "priceKc": 4290000,
           "status": "available"
         },
@@ -56,7 +56,7 @@
         {
           "id": "108 S",
           "floor": 1,
-          "sizeM2": 21.8,
+          "sizeM2": 21.89,
           "priceKc": 4390000,
           "status": "available"
         },
@@ -70,37 +70,37 @@
         {
           "id": "110 2+kk",
           "floor": 1,
-          "sizeM2": 46.14,
+          "sizeM2": 46.02,
           "priceKc": 7546000,
           "status": "available"
         },
         {
           "id": "111 1+kk",
           "floor": 1,
-          "sizeM2": 73.25,
+          "sizeM2": 122.56,
           "priceKc": 6136000,
           "status": "available"
         },
         {
           "id": "112 1+kk",
           "floor": 1,
-          "sizeM2": 45.34,
+          "sizeM2": 79.26,
           "priceKc": 5071000,
           "status": "reserved"
         },
         {
           "id": "113 1+kk",
           "floor": 1,
-          "sizeM2": 45.77,
+          "sizeM2": 79.36,
           "priceKc": 5091000,
           "status": "reserved"
         },
         {
           "id": "114 1+kk",
           "floor": 1,
-          "sizeM2": 53.35,
+          "sizeM2": 95.87,
           "priceKc": 5423000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "201 2+kk",
@@ -175,7 +175,7 @@
         {
           "id": "211 1+kk",
           "floor": 2,
-          "sizeM2": 38.84,
+          "sizeM2": 37.84,
           "priceKc": 5942000,
           "status": "reserved"
         }
