@@ -23,6 +23,10 @@ export const t = {
 
   hero: {
     wordmarkAria: { cz: "Panorama Žabiny", en: "Panorama Žabiny" },
+    announcement: {
+      cz: ["Od září 2026", "k nastěhování"],
+      en: ["Move-in from", "September 2026"],
+    },
   },
 
   loader: {
