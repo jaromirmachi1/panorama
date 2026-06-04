@@ -75,6 +75,7 @@ export function Features() {
           <Eyebrow>{tf.eyebrow[lang]}</Eyebrow>
           <H2>{tf.title[lang]}</H2>
           <Lead>{tf.lead[lang]}</Lead>
+          <SellerNote>{tf.seller[lang]}</SellerNote>
         </Head>
 
         <Main>
@@ -147,6 +148,15 @@ const Head = styled.div`
 
 const Lead = styled(P)`
   max-width: 68ch;
+`;
+
+const SellerNote = styled.p`
+  margin: clamp(12px, 2vw, 18px) 0 0;
+  max-width: 68ch;
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: rgba(10, 10, 10, 0.58);
 `;
 
 const Main = styled.div`

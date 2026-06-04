@@ -12,6 +12,9 @@ type InquiryPayload = {
   user_email: string;
   user_phone: string;
   note: string;
+  gdpr_consent: true;
+  gdpr_consent_at: string;
+  gdpr_consent_text: string;
 };
 
 type VercelApiResponse = {
@@ -34,17 +37,33 @@ function parsePayload(body: unknown): InquiryPayload | null {
   const note = String(body.note ?? "")
     .trim()
     .slice(0, 2000);
+  const gdpr_consent = body.gdpr_consent === true;
+  const gdpr_consent_at = String(body.gdpr_consent_at ?? "").trim();
+  const gdpr_consent_text = String(body.gdpr_consent_text ?? "")
+    .trim()
+    .slice(0, 1000);
   const floor = Number(body.floor);
   const size_m2 = Number(body.size_m2);
   const price_kc = Number(body.price_kc);
 
-  if (!flat_id || !building || !first_name || !last_name || !user_email || !user_phone) {
+  if (
+    !flat_id ||
+    !building ||
+    !first_name ||
+    !last_name ||
+    !user_email ||
+    !user_phone ||
+    !gdpr_consent ||
+    !gdpr_consent_at ||
+    !gdpr_consent_text
+  ) {
     return null;
   }
   if (!Number.isFinite(floor) || !Number.isFinite(size_m2) || !Number.isFinite(price_kc)) {
     return null;
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_email)) return null;
+  if (Number.isNaN(Date.parse(gdpr_consent_at))) return null;
 
   return {
     flat_id,
@@ -58,6 +77,9 @@ function parsePayload(body: unknown): InquiryPayload | null {
     user_email,
     user_phone,
     note,
+    gdpr_consent: true,
+    gdpr_consent_at,
+    gdpr_consent_text,
   };
 }
 
@@ -137,6 +159,9 @@ export default async function handler(
     <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>E-mail</strong></td><td>${escapeHtml(payload.user_email)}</td></tr>
     <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>Telefon</strong></td><td>${escapeHtml(payload.user_phone)}</td></tr>
     <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>Poznámka</strong></td><td style="white-space:pre-wrap;">${payload.note ? escapeHtml(payload.note) : "—"}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>GDPR souhlas</strong></td><td>Ano</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>Čas souhlasu</strong></td><td>${escapeHtml(payload.gdpr_consent_at)}</td></tr>
+    <tr><td style="padding:6px 12px 6px 0;vertical-align:top;"><strong>Text souhlasu</strong></td><td>${escapeHtml(payload.gdpr_consent_text)}</td></tr>
   </table>
   `;
 

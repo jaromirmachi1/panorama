@@ -67,6 +67,7 @@ export function FlatInquiryModal(props: FlatInquiryModalProps) {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [note, setNote] = useState('')
+  const [gdprConsent, setGdprConsent] = useState(false)
   const [sent, setSent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [sendError, setSendError] = useState<string | null>(null)
@@ -116,6 +117,9 @@ export function FlatInquiryModal(props: FlatInquiryModalProps) {
     e.preventDefault()
     setSendError(null)
 
+    const gdprConsentText = iq.gdprConsent[lang]
+    const gdprConsentAt = new Date().toISOString()
+
     const body = isGeneral
       ? {
           flat_id: 'OBECNY-DOTAZ',
@@ -129,6 +133,9 @@ export function FlatInquiryModal(props: FlatInquiryModalProps) {
           user_email: email.trim(),
           user_phone: phone.trim(),
           note: note.trim(),
+          gdpr_consent: true as const,
+          gdpr_consent_at: gdprConsentAt,
+          gdpr_consent_text: gdprConsentText,
         }
       : {
           flat_id: flat!.id,
@@ -142,6 +149,9 @@ export function FlatInquiryModal(props: FlatInquiryModalProps) {
           user_email: email.trim(),
           user_phone: phone.trim(),
           note: note.trim(),
+          gdpr_consent: true as const,
+          gdpr_consent_at: gdprConsentAt,
+          gdpr_consent_text: gdprConsentText,
         }
 
     setSubmitting(true)
@@ -326,11 +336,21 @@ export function FlatInquiryModal(props: FlatInquiryModalProps) {
                       onChange={(e) => setNote(e.target.value)}
                     />
                   </Field>
+                  <ConsentLabel>
+                    <ConsentInput
+                      name="gdprConsent"
+                      type="checkbox"
+                      checked={gdprConsent}
+                      onChange={(e) => setGdprConsent(e.target.checked)}
+                      required
+                    />
+                    <ConsentText>{iq.gdprConsent[lang]}</ConsentText>
+                  </ConsentLabel>
                   <Actions>
                     <SubmitBtn
                       type="submit"
                       data-cursor="hover"
-                      disabled={submitting}
+                      disabled={submitting || !gdprConsent}
                     >
                       {submitting ? iq.sending[lang] : iq.submit[lang]}
                     </SubmitBtn>
@@ -800,6 +820,50 @@ const Textarea = styled.textarea`
     border-color: rgba(232, 215, 176, 0.55);
     box-shadow: 0 0 0 1px rgba(232, 215, 176, 0.2);
   }
+`
+
+const ConsentLabel = styled.label`
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  cursor: pointer;
+  color: rgba(245, 243, 239, 0.68);
+`
+
+const ConsentInput = styled.input`
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  border: 1px solid rgba(245, 243, 239, 0.28);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  &:checked {
+    background:
+      linear-gradient(135deg, transparent 45%, rgba(12, 12, 12, 0.95) 45% 55%, transparent 55%),
+      linear-gradient(45deg, transparent 52%, rgba(12, 12, 12, 0.95) 52% 62%, transparent 62%),
+      rgba(232, 215, 176, 0.92);
+    border-color: rgba(232, 215, 176, 0.92);
+  }
+
+  &:focus-visible {
+    border-color: rgba(232, 215, 176, 0.7);
+    box-shadow: 0 0 0 2px rgba(232, 215, 176, 0.18);
+    outline: none;
+  }
+`
+
+const ConsentText = styled.span`
+  font-size: 11px;
+  line-height: 1.65;
+  letter-spacing: 0.04em;
 `
 
 const Actions = styled.div`

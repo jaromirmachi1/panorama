@@ -11,6 +11,9 @@ export type InquiryRequestBody = {
   user_phone: string;
   /** Optional message from the visitor */
   note: string;
+  gdpr_consent: true;
+  gdpr_consent_at: string;
+  gdpr_consent_text: string;
 };
 
 function inquiryUrl(): string {

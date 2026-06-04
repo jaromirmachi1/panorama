@@ -88,6 +88,10 @@ export const t = {
         cz: "Dotaz nebo doplňující informace (nepovinné)",
         en: "Question or extra details (optional)",
       },
+      gdprConsent: {
+        cz: "Souhlasím se zpracováním osobních údajů za účelem vyřízení mé poptávky a následné komunikace k projektu Panorama Žabiny.",
+        en: "I agree to the processing of my personal data for the purpose of handling my inquiry and follow-up communication about Panorama Žabiny.",
+      },
       submit: { cz: "Odeslat poptávku", en: "Send inquiry" },
       close: { cz: "Zavřít", en: "Close" },
       closeAria: { cz: "Zavřít formulář", en: "Close form" },
@@ -219,6 +223,10 @@ export const t = {
       cz: "Kontaktujte naše makléře ohledně prodeje a prohlídek v Panorama Žabiny.",
       en: "Contact our agents for sales and viewings at Panorama Žabiny.",
     },
+    seller: {
+      cz: "Prodávající: AS LIVING s.r.o., Brno, IČO 19982305",
+      en: "Seller: AS LIVING s.r.o., Brno, Company ID 19982305",
+    },
     mapLabel: { cz: "Adresa", en: "Address" },
     mapAddress: {
       cz: "Kroftova 2191/80, 679 04 Brno",
@@ -283,6 +291,7 @@ export const t = {
     },
     legal: { cz: "LEGALS", en: "LEGALS" },
     privacy: { cz: "PRIVACY POLICY", en: "PRIVACY POLICY" },
+    cookies: { cz: "Nastavení cookies", en: "Cookie settings" },
   },
 } as const satisfies Record<string, unknown>;
 

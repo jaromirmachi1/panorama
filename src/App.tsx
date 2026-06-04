@@ -13,6 +13,7 @@ import { Features } from './components/sections/Features'
 import { ContactCTA } from './components/sections/ContactCTA'
 import { Footer } from './components/Footer'
 import { SiteClosing } from './components/SiteClosing'
+import { CookieConsent } from './components/CookieConsent'
 import { LanguageProvider } from './i18n/LanguageContext'
 
 function isReloadNavigation(): boolean {
@@ -51,6 +52,7 @@ export default function App() {
             <Footer />
           </SiteClosing>
         </Layout>
+        <CookieConsent />
       </ThemeProvider>
     </LanguageProvider>
   )

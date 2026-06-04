@@ -5,6 +5,7 @@ import { t } from "../i18n/dictionary";
 import { FaGlobe, FaInstagram } from "react-icons/fa";
 import { useMemo, type MouseEvent } from "react";
 import logoWhite from "../assets/public-images/[LOGO]panoramaBezBgBile.png";
+import { COOKIE_SETTINGS_EVENT } from "../lib/cookieConsent";
 
 export function Footer() {
   const { lang } = useLang();
@@ -33,6 +34,10 @@ export function Footer() {
     });
 
     window.history.replaceState({}, "", `#${id}`);
+  }
+
+  function openCookieSettings() {
+    window.dispatchEvent(new CustomEvent(COOKIE_SETTINGS_EVENT));
   }
 
   return (
@@ -134,6 +139,13 @@ export function Footer() {
           <Bottom>
             <BottomLeft>
               <Small>© {year}</Small>
+              <CookieButton
+                data-cursor="hover"
+                type="button"
+                onClick={openCookieSettings}
+              >
+                {t.footer.cookies[lang]}
+              </CookieButton>
             </BottomLeft>
 
             <BottomCenter>
@@ -366,6 +378,23 @@ const Small = styled.div`
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.84);
+`;
+
+const CookieButton = styled.button`
+  width: fit-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.58);
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: color 220ms ease;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+  }
 `;
 
 const SocialLink = styled.a`
