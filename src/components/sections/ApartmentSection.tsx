@@ -709,11 +709,20 @@ const ApartmentRow = styled.button<{ $isHovered: boolean; $sold?: boolean }>`
     $sold &&
     css`
       cursor: not-allowed;
-      opacity: 0.78;
+      opacity: 1;
+      color: rgba(248, 232, 230, 0.84);
+      border-bottom-color: rgba(122, 58, 64, 0.42);
+      background: linear-gradient(
+        90deg,
+        rgba(110, 50, 56, 0.2) 0%,
+        rgba(110, 50, 56, 0.07) 58%,
+        transparent 100%
+      );
 
       &:hover {
         transform: none;
-        color: rgba(245, 243, 239, 0.88);
+        color: rgba(248, 232, 230, 0.84);
+        border-bottom-color: rgba(122, 58, 64, 0.42);
       }
 
       &:hover::before,
@@ -819,9 +828,14 @@ const StatusBadge = styled.span<{ $status: FlatStatus }>`
   ${({ $status }) =>
     $status === "sold" &&
     css`
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.48);
-      color: rgba(245, 243, 239, 0.95);
+      background: linear-gradient(
+        135deg,
+        rgba(122, 54, 60, 0.96),
+        rgba(92, 40, 46, 0.98)
+      );
+      border: 1px solid rgba(196, 118, 122, 0.34);
+      color: rgba(252, 238, 236, 0.96);
+      box-shadow: inset 0 0 0 1px rgba(255, 220, 216, 0.08);
     `}
 
   ${ApartmentRow}:hover:not(:disabled) & {
@@ -843,8 +857,13 @@ const StatusBadge = styled.span<{ $status: FlatStatus }>`
     ${({ $status }) =>
       $status === "sold" &&
       css`
-        border-color: rgba(10, 10, 10, 0.35);
-        color: rgba(10, 10, 10, 0.9);
+        background: linear-gradient(
+          135deg,
+          rgba(122, 54, 60, 0.96),
+          rgba(92, 40, 46, 0.98)
+        );
+        border-color: rgba(196, 118, 122, 0.34);
+        color: rgba(252, 238, 236, 0.96);
       `}
   }
 `;
