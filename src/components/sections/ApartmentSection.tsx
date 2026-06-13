@@ -389,7 +389,11 @@ export function ApartmentSection() {
                       setSelectedFlat(apt);
                       setInquiryOpen(true);
                     }}
-                    aria-label={`${apt.id}, ${flatStatusLabel(apt.status, lang)}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`}
+                    aria-label={
+                      sold
+                        ? `${apt.id}, ${flatStatusLabel(apt.status, lang)}, ${apt.sizeM2} m²`
+                        : `${apt.id}, ${flatStatusLabel(apt.status, lang)}, ${apt.sizeM2} m², ${formatKc(apt.priceKc)}`
+                    }
                   >
                     <AptMeta>
                       <LeftCol>
@@ -400,14 +404,16 @@ export function ApartmentSection() {
                     <StatusBadge $status={apt.status} aria-hidden="true">
                       {flatStatusLabel(apt.status, lang)}
                     </StatusBadge>
-                    <Price>
-                      <PriceRow>
-                        {formatKc(apt.priceKc)}
-                        <ArrowSlot aria-hidden="true">
-                          <StandbyArrow size={16} />
-                          <HoverArrow size={16} />
-                        </ArrowSlot>
-                      </PriceRow>
+                    <Price $hidden={sold}>
+                      {!sold ? (
+                        <PriceRow>
+                          {formatKc(apt.priceKc)}
+                          <ArrowSlot aria-hidden="true">
+                            <StandbyArrow size={16} />
+                            <HoverArrow size={16} />
+                          </ArrowSlot>
+                        </PriceRow>
+                      ) : null}
                     </Price>
                   </ApartmentRow>
                 );
@@ -935,12 +941,13 @@ const Size = styled.div`
   }
 `;
 
-const Price = styled.div`
+const Price = styled.div<{ $hidden?: boolean }>`
   text-align: center;
   font-size: 13px;
   letter-spacing: 0.01em;
-  opacity: 0.82;
+  opacity: ${({ $hidden }) => ($hidden ? 0 : 0.82)};
   min-width: 0;
+  min-height: ${({ $hidden }) => ($hidden ? "1em" : "auto")};
 
   @media (max-width: 980px) {
     grid-row: 2;

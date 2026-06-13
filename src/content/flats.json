@@ -44,7 +44,7 @@
           "floor": 1,
           "sizeM2": 21.89,
           "priceKc": 4290000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "107 S",
@@ -58,7 +58,7 @@
           "floor": 1,
           "sizeM2": 21.89,
           "priceKc": 4390000,
-          "status": "sold"
+          "status": "reserved"
         },
         {
           "id": "109 S",
