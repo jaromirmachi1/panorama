@@ -6,6 +6,7 @@ import { FaGlobe, FaInstagram } from "react-icons/fa";
 import { useMemo, type MouseEvent } from "react";
 import logoWhite from "../assets/public-images/[LOGO]panoramaBezBgBile.png";
 import { COOKIE_SETTINGS_EVENT } from "../lib/cookieConsent";
+import { reportSklikContactConversion } from "../lib/sklik";
 
 export function Footer() {
   const { lang } = useLang();
@@ -109,7 +110,7 @@ export function Footer() {
                   data-cursor="hover"
                   href="mailto:info@panoramazabiny.cz"
                   onClick={(e) => {
-                    // keep default mailto behavior
+                    reportSklikContactConversion();
                     e.stopPropagation();
                   }}
                 >
@@ -119,7 +120,7 @@ export function Footer() {
                   data-cursor="hover"
                   href="tel:+420000000000"
                   onClick={(e) => {
-                    // keep default tel behavior
+                    reportSklikContactConversion();
                     e.stopPropagation();
                   }}
                 >

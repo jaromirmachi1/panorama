@@ -7,7 +7,7 @@ import {
   saveCookieConsent,
   type CookieConsentPreferences,
 } from '../lib/cookieConsent'
-import { applyCookieConsent } from '../lib/googleAds'
+import { applyMarketingConsent } from '../lib/marketingTracking'
 
 const defaultPreferences: CookieConsentPreferences = {
   necessary: true,
@@ -45,8 +45,8 @@ const copy = {
     en: 'Marketing',
   },
   marketingText: {
-    cz: 'Umožní měření reklam a konverzí, například Google Ads.',
-    en: 'Allows ad and conversion measurement, for example Google Ads.',
+    cz: 'Umožní měření reklam a konverzí, například Sklik a Google Ads.',
+    en: 'Allows ad and conversion measurement, for example Sklik and Google Ads.',
   },
   accept: {
     cz: 'Přijmout vše',
@@ -76,7 +76,7 @@ export function CookieConsent() {
   )
 
   useEffect(() => {
-    applyCookieConsent(storedConsent)
+    applyMarketingConsent(storedConsent)
 
     function openSettings() {
       setDraft(getCookieConsent() ?? defaultPreferences)
@@ -90,7 +90,7 @@ export function CookieConsent() {
 
   function persist(preferences: CookieConsentPreferences) {
     saveCookieConsent(preferences)
-    applyCookieConsent(preferences)
+    applyMarketingConsent(preferences)
     setDraft(preferences)
     setSettingsOpen(false)
     setVisible(false)

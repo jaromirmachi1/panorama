@@ -6,6 +6,7 @@ import { Eyebrow, H2, P } from "../TextBlock";
 
 import { useLang } from "../../i18n/LanguageContext";
 import { t } from "../../i18n/dictionary";
+import { reportSklikContactConversion } from "../../lib/sklik";
 
 const REALTORS = [
   {
@@ -117,6 +118,7 @@ export function Features() {
                       <ContactValue
                         href={`tel:${agent.phoneTel}`}
                         data-cursor="hover"
+                        onClick={() => reportSklikContactConversion()}
                       >
                         {agent.phoneDisplay}
                       </ContactValue>
@@ -126,6 +128,7 @@ export function Features() {
                       <ContactValue
                         href={`mailto:${agent.email}`}
                         data-cursor="hover"
+                        onClick={() => reportSklikContactConversion()}
                       >
                         {agent.email}
                       </ContactValue>

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { GlobalStyle } from './styles/GlobalStyle'
 import { theme } from './styles/theme'
@@ -15,6 +15,7 @@ import { Footer } from './components/Footer'
 import { SiteClosing } from './components/SiteClosing'
 import { CookieConsent } from './components/CookieConsent'
 import { LanguageProvider } from './i18n/LanguageContext'
+import { initMarketingTracking } from './lib/marketingTracking'
 
 function isReloadNavigation(): boolean {
   const nav = performance.getEntriesByType?.(
@@ -25,6 +26,10 @@ function isReloadNavigation(): boolean {
 
 export default function App() {
   const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    initMarketingTracking()
+  }, [])
 
   useLayoutEffect(() => {
     if (!isReloadNavigation()) return

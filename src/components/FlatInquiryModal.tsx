@@ -17,6 +17,7 @@ import flatRoomMeasurements from '../content/flatRoomMeasurements.json'
 import type { Lang } from '../i18n/LanguageContext'
 import { t } from '../i18n/dictionary'
 import { reportGoogleAdsLeadConversion } from '../lib/googleAds'
+import { reportSklikFormConversion } from '../lib/sklik'
 import { submitApartmentInquiry } from '../lib/inquiryApi'
 
 export type InquiryFlat = {
@@ -161,11 +162,14 @@ export function FlatInquiryModal(props: FlatInquiryModalProps) {
         setSent(true)
         if (isGeneral) {
           reportGoogleAdsLeadConversion({ value: 1.0, currency: 'CZK' })
+          reportSklikFormConversion(null)
         } else {
+          const value = Math.max(1, props.flat.priceKc)
           reportGoogleAdsLeadConversion({
-            value: Math.max(1, props.flat.priceKc),
+            value,
             currency: 'CZK',
           })
+          reportSklikFormConversion(value)
         }
       } else if (result.reason === 'not_configured') {
         setSendError(iq.sendErrorConfig[lang])

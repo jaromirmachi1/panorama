@@ -19,8 +19,25 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
-/** Set by gtag.js in index.html */
+/** Set by gtag.js / Google Ads loader */
 interface Window {
   dataLayer?: unknown[];
   gtag?: (...args: unknown[]) => void;
+  /** Seznam Sklik retargeting / conversion API (rc.js) */
+  rc?: {
+    retargetingHit: (config: {
+      rtgId: number;
+      consent: 0 | 1;
+    }) => void;
+    conversionHit: (config: {
+      id: number;
+      value: number | null;
+      consent: 0 | 1;
+    }) => void;
+  };
+  sznIVA?: {
+    IS?: {
+      updateIdentities: (config: { eid: string | null }) => void;
+    };
+  };
 }
