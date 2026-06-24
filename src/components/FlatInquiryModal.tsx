@@ -19,6 +19,7 @@ import { t } from '../i18n/dictionary'
 import { reportGoogleAdsLeadConversion } from '../lib/googleAds'
 import { reportSklikFormConversion } from '../lib/sklik'
 import { submitApartmentInquiry } from '../lib/inquiryApi'
+import { privacyPolicyHref } from '../lib/siteRoutes'
 
 export type InquiryFlat = {
   id: string
@@ -118,7 +119,7 @@ export function FlatInquiryModal(props: FlatInquiryModalProps) {
     e.preventDefault()
     setSendError(null)
 
-    const gdprConsentText = iq.gdprConsent[lang]
+    const gdprConsentText = `${iq.gdprConsentLead[lang]} ${iq.gdprConsentLink[lang]}${iq.gdprConsentTail[lang]}`
     const gdprConsentAt = new Date().toISOString()
 
     const body = isGeneral
@@ -348,7 +349,18 @@ export function FlatInquiryModal(props: FlatInquiryModalProps) {
                       onChange={(e) => setGdprConsent(e.target.checked)}
                       required
                     />
-                    <ConsentText>{iq.gdprConsent[lang]}</ConsentText>
+                    <ConsentText>
+                      {iq.gdprConsentLead[lang]}{' '}
+                      <ConsentLink
+                        href={privacyPolicyHref()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {iq.gdprConsentLink[lang]}
+                      </ConsentLink>
+                      {iq.gdprConsentTail[lang]}
+                    </ConsentText>
                   </ConsentLabel>
                   <Actions>
                     <SubmitBtn
@@ -868,6 +880,17 @@ const ConsentText = styled.span`
   font-size: 11px;
   line-height: 1.65;
   letter-spacing: 0.04em;
+`
+
+const ConsentLink = styled.a`
+  color: rgba(232, 215, 176, 0.92);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 220ms ease;
+
+  &:hover {
+    color: rgba(240, 225, 190, 0.98);
+  }
 `
 
 const Actions = styled.div`

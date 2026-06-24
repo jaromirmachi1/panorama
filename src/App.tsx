@@ -15,7 +15,10 @@ import { Footer } from './components/Footer'
 import { SiteClosing } from './components/SiteClosing'
 import { CookieConsent } from './components/CookieConsent'
 import { LanguageProvider } from './i18n/LanguageContext'
+import { usePathname } from './hooks/usePathname'
 import { initMarketingTracking } from './lib/marketingTracking'
+import { isPrivacyPolicyPath } from './lib/siteRoutes'
+import { GdprPage } from './pages/GdprPage'
 
 function isReloadNavigation(): boolean {
   const nav = performance.getEntriesByType?.(
@@ -24,12 +27,8 @@ function isReloadNavigation(): boolean {
   return nav?.type === 'reload'
 }
 
-export default function App() {
+function HomePage() {
   const [ready, setReady] = useState(false)
-
-  useEffect(() => {
-    initMarketingTracking()
-  }, [])
 
   useLayoutEffect(() => {
     if (!isReloadNavigation()) return
@@ -41,22 +40,43 @@ export default function App() {
   }, [])
 
   return (
+    <>
+      {!ready && <Loader onComplete={() => setReady(true)} />}
+      <Layout ariaHidden={!ready}>
+        <Hero />
+        <ProjectIntro />
+        <ApartmentSection />
+        <Gallery />
+        <InteriorStandards />
+        <Features />
+        <SiteClosing>
+          <ContactCTA />
+          <Footer />
+        </SiteClosing>
+      </Layout>
+    </>
+  )
+}
+
+export default function App() {
+  const pathname = usePathname()
+  const showPrivacyPage = isPrivacyPolicyPath(pathname)
+
+  useEffect(() => {
+    initMarketingTracking()
+  }, [])
+
+  useEffect(() => {
+    if (showPrivacyPage) {
+      window.scrollTo(0, 0)
+    }
+  }, [showPrivacyPage])
+
+  return (
     <LanguageProvider>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        {!ready && <Loader onComplete={() => setReady(true)} />}
-        <Layout ariaHidden={!ready}>
-          <Hero />
-          <ProjectIntro />
-          <ApartmentSection />
-          <Gallery />
-          <InteriorStandards />
-          <Features />
-          <SiteClosing>
-            <ContactCTA />
-            <Footer />
-          </SiteClosing>
-        </Layout>
+        {showPrivacyPage ? <GdprPage /> : <HomePage />}
         <CookieConsent />
       </ThemeProvider>
     </LanguageProvider>

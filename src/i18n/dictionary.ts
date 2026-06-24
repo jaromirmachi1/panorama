@@ -88,9 +88,17 @@ export const t = {
         cz: "Dotaz nebo doplňující informace (nepovinné)",
         en: "Question or extra details (optional)",
       },
-      gdprConsent: {
-        cz: "Souhlasím se zpracováním osobních údajů za účelem vyřízení mé poptávky a následné komunikace k projektu Panorama Žabiny.",
-        en: "I agree to the processing of my personal data for the purpose of handling my inquiry and follow-up communication about Panorama Žabiny.",
+      gdprConsentLead: {
+        cz: 'Souhlasím se zpracováním osobních údajů podle',
+        en: 'I agree to personal data processing under the',
+      },
+      gdprConsentLink: {
+        cz: 'zásad ochrany osobních údajů',
+        en: 'privacy policy',
+      },
+      gdprConsentTail: {
+        cz: ' za účelem vyřízení mé poptávky a následné komunikace k projektu Panorama Žabiny.',
+        en: ' for handling my inquiry and follow-up communication about Panorama Žabiny.',
       },
       submit: { cz: "Odeslat poptávku", en: "Send inquiry" },
       close: { cz: "Zavřít", en: "Close" },
@@ -290,7 +298,7 @@ export const t = {
       en: "LVL Reality website — lvlreality.cz",
     },
     legal: { cz: "LEGALS", en: "LEGALS" },
-    privacy: { cz: "PRIVACY POLICY", en: "PRIVACY POLICY" },
+    privacy: { cz: "Ochrana osobních údajů", en: "Privacy policy" },
     cookies: { cz: "Nastavení cookies", en: "Cookie settings" },
   },
 } as const satisfies Record<string, unknown>;

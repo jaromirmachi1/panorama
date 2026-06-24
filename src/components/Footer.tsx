@@ -7,6 +7,7 @@ import { useMemo, type MouseEvent } from "react";
 import logoWhite from "../assets/public-images/[LOGO]panoramaBezBgBile.png";
 import { COOKIE_SETTINGS_EVENT } from "../lib/cookieConsent";
 import { reportSklikContactConversion } from "../lib/sklik";
+import { privacyPolicyHref } from "../lib/siteRoutes";
 
 export function Footer() {
   const { lang } = useLang();
@@ -147,6 +148,9 @@ export function Footer() {
               >
                 {t.footer.cookies[lang]}
               </CookieButton>
+              <PrivacyLink data-cursor="hover" href={privacyPolicyHref()}>
+                {t.footer.privacy[lang]}
+              </PrivacyLink>
             </BottomLeft>
 
             <BottomCenter>
@@ -391,6 +395,20 @@ const CookieButton = styled.button`
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  transition: color 220ms ease;
+
+  &:hover {
+    color: rgba(255, 255, 255, 0.9);
+  }
+`;
+
+const PrivacyLink = styled.a`
+  width: fit-content;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
   transition: color 220ms ease;
 
   &:hover {
