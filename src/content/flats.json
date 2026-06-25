@@ -29,7 +29,7 @@
           "id": "104 S",
           "floor": 1,
           "sizeM2": 21.89,
-          "priceKc": 4290000,
+          "priceKc": 3990000,
           "status": "available"
         },
         {
@@ -43,8 +43,8 @@
           "id": "106 S",
           "floor": 1,
           "sizeM2": 21.89,
-          "priceKc": 4290000,
-          "status": "reserved"
+          "priceKc": 3990000,
+          "status": "available"
         },
         {
           "id": "107 S",
@@ -57,7 +57,7 @@
           "id": "108 S",
           "floor": 1,
           "sizeM2": 21.89,
-          "priceKc": 4390000,
+          "priceKc": 3990000,
           "status": "reserved"
         },
         {
@@ -79,7 +79,7 @@
           "floor": 1,
           "sizeM2": 122.56,
           "priceKc": 6136000,
-          "status": "available"
+          "status": "reserved"
         },
         {
           "id": "112 1+kk",
