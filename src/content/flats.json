@@ -15,7 +15,7 @@
           "id": "102 1+kk",
           "floor": 1,
           "sizeM2": 42.88,
-          "priceKc": 6390000,
+          "priceKc": 6190000,
           "status": "available"
         },
         {
@@ -36,7 +36,7 @@
           "id": "105 S",
           "floor": 1,
           "sizeM2": 21.9,
-          "priceKc": 4290000,
+          "priceKc": 3990000,
           "status": "available"
         },
         {
@@ -65,7 +65,7 @@
           "floor": 1,
           "sizeM2": 21.9,
           "priceKc": 4390000,
-          "status": "sold"
+          "status": "available"
         },
         {
           "id": "110 2+kk",
@@ -113,7 +113,7 @@
           "id": "202 1+kk",
           "floor": 2,
           "sizeM2": 42.88,
-          "priceKc": 6490000,
+          "priceKc": 6240000,
           "status": "available"
         },
         {
